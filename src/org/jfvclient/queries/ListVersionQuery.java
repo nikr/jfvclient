@@ -11,13 +11,13 @@ import java.util.Map;
  * @author Niklas Rehfeld
  *
  */
-public class Version extends FVRpcQueryObject
+public class ListVersionQuery extends FVRpcQueryObject
 {
 	private String flowvisorVersion;
 	private String dbVersion;
 
 
-	public Version()
+	public ListVersionQuery()
 	{
 		super("list-version", "version-" + Math.round(Math.random() * 1000));
 //		request.
@@ -26,8 +26,8 @@ public class Version extends FVRpcQueryObject
 	@Override
 	public String toString()
 	{
-		String s = "FV Version: " + flowvisorVersion + ", ";
-		s += "DB Version: " + dbVersion;
+		String s = "FV ListVersionQuery: " + flowvisorVersion + ", ";
+		s += "DB ListVersionQuery: " + dbVersion;
 		return s;
 	}
 
