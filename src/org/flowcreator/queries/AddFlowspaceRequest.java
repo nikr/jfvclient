@@ -4,10 +4,8 @@
 package org.flowcreator.queries;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import net.minidev.json.JSONArray;
-import net.minidev.json.JSONObject;
 
 import org.flowcreator.data.FlowSpace;
 

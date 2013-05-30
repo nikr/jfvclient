@@ -3,10 +3,6 @@
  */
 package org.flowcreator.queries;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.flowcreator.data.Slice;
 
 /**

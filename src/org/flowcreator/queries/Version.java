@@ -3,7 +3,6 @@
  */
 package org.flowcreator.queries;
 
-import java.util.Collection;
 import java.util.Map;
 
 

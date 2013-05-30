@@ -7,17 +7,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
-import net.minidev.json.JSONObject;
 
 import org.apache.http.ParseException;
 import org.flowcreator.data.FlowSpace;
@@ -31,9 +24,6 @@ import org.flowcreator.queries.ListSlicesRequest;
 import org.flowcreator.queries.Version;
 
 import com.thetransactioncompany.jsonrpc2.JSONRPC2ParseException;
-import com.thetransactioncompany.jsonrpc2.JSONRPC2Parser;
-import com.thetransactioncompany.jsonrpc2.JSONRPC2Request;
-import com.thetransactioncompany.jsonrpc2.JSONRPC2Response;
 
 /**
  * @author Niklas Rehfeld

@@ -3,7 +3,6 @@
  */
 package org.flowcreator.data;
 
-import java.net.URL;
 import java.util.Map;
 
 //import com.googlecode.jsonrpc4j.JsonRpcHttpClient;

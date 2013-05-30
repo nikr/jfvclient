@@ -3,9 +3,6 @@
  */
 package org.flowcreator.data;
 
-import java.io.ObjectOutputStream.PutField;
-
-import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
 /**
