@@ -1,13 +1,13 @@
 /**
  *
  */
-package org.flowcreator.queries;
+package org.jfvclient.queries;
 
 import java.util.Arrays;
 
 import net.minidev.json.JSONArray;
 
-import org.flowcreator.data.FlowSpace;
+import org.jfvclient.data.FlowSpace;
 
 /**
  *
@@ -86,7 +86,7 @@ public class AddFlowspaceRequest extends FVRpcQueryObject
 	}
 
 	/* (non-Javadoc)
-	 * @see org.flowcreator.queries.FVRpcQueryObject#getParameterCount()
+	 * @see org.jfvclient.queries.FVRpcQueryObject#getParameterCount()
 	 */
 	@Override
 	public int getMinParameterCount()

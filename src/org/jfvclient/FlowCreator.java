@@ -1,7 +1,7 @@
 /**
  *
  */
-package org.flowcreator;
+package org.jfvclient;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,15 +13,15 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.http.ParseException;
-import org.flowcreator.data.FlowSpace;
-import org.flowcreator.data.MatchStruct;
-import org.flowcreator.data.Slice;
-import org.flowcreator.data.SliceAction;
-import org.flowcreator.net.FVRpcConnector;
-import org.flowcreator.queries.AddFlowspaceRequest;
-import org.flowcreator.queries.AddSliceRequest;
-import org.flowcreator.queries.ListSlicesRequest;
-import org.flowcreator.queries.Version;
+import org.jfvclient.data.FlowSpace;
+import org.jfvclient.data.MatchStruct;
+import org.jfvclient.data.Slice;
+import org.jfvclient.data.SliceAction;
+import org.jfvclient.net.FVRpcConnector;
+import org.jfvclient.queries.AddFlowspaceRequest;
+import org.jfvclient.queries.AddSliceRequest;
+import org.jfvclient.queries.ListSlicesRequest;
+import org.jfvclient.queries.Version;
 
 import com.thetransactioncompany.jsonrpc2.JSONRPC2ParseException;
 

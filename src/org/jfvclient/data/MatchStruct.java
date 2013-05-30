@@ -1,7 +1,7 @@
 /**
  *
  */
-package org.flowcreator.data;
+package org.jfvclient.data;
 
 import java.util.Collection;
 import java.util.HashMap;

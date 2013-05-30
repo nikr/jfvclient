@@ -1,7 +1,7 @@
 /**
  *
  */
-package org.flowcreator.queries;
+package org.jfvclient.queries;
 
 
 /**
@@ -22,7 +22,7 @@ public class ListSlicesRequest extends FVRpcQueryObject
 	}
 
 	/* (non-Javadoc)
-	 * @see org.flowcreator.queries.FVRpcQueryObject#getParameterCount()
+	 * @see org.jfvclient.queries.FVRpcQueryObject#getParameterCount()
 	 */
 	@Override
 	public int getMinParameterCount()

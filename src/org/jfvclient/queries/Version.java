@@ -1,7 +1,7 @@
 /**
  *
  */
-package org.flowcreator.queries;
+package org.jfvclient.queries;
 
 import java.util.Map;
 

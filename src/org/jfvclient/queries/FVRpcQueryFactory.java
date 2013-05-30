@@ -1,7 +1,7 @@
 /**
  *
  */
-package org.flowcreator.queries;
+package org.jfvclient.queries;
 
 /**
  * @author Niklas Rehfeld

@@ -1,7 +1,7 @@
 /**
  *
  */
-package org.flowcreator.net;
+package org.jfvclient.net;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -19,8 +19,8 @@ import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.BasicClientConnectionManager;
-import org.flowcreator.queries.FVRpcQueryObject;
-import org.flowcreator.queries.Version;
+import org.jfvclient.queries.FVRpcQueryObject;
+import org.jfvclient.queries.Version;
 
 import com.thetransactioncompany.jsonrpc2.JSONRPC2ParseException;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Response;

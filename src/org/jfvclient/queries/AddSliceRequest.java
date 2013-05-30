@@ -1,9 +1,9 @@
 /**
  *
  */
-package org.flowcreator.queries;
+package org.jfvclient.queries;
 
-import org.flowcreator.data.Slice;
+import org.jfvclient.data.Slice;
 
 /**
  * @author rehfelnikl
