@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import net.minidev.json.JSONObject;
+
 /**
  * This Class is simply a filtered {@see java.util.Hashmap}. It only allows adding values for a predefined set of keys.
  *
@@ -18,7 +20,7 @@ import java.util.Map;
  * @author Niklas Rehfeld
  *
  */
-public class MatchStruct extends HashMap<String, Object>
+public class MatchStruct extends JSONObject
 {
 	static Collection<String> MATCH_KEYS;
 
