@@ -9,34 +9,39 @@ import org.jfvclient.data.Slice;
  * @author rehfelnikl
  *
  */
-public class AddSliceRequest extends FVRpcQueryObject
+public class AddSliceRequest extends FVRpcObjectQueryRequest
 {
 
-	public AddSliceRequest()
+	public AddSliceRequest(String hostURL)
 	{
-		super("add-slice");
+		super(hostURL, "add-slice");
 	}
 
-	public AddSliceRequest(Slice slice)
+	public AddSliceRequest(String hostURL, Slice slice)
 	{
-		this();
-		configureSlice(slice);
+		this(hostURL);
+//		configureSlice(slice);
+		put(PARAMS, slice);
 
 	}
 
-	public void configureSlice(Slice slice)
-	{
-		addNamedParameter("slice-name", slice.getName());
-		addNamedParameter("controller-url", slice.getControllerURL());
-		addNamedParameter("admin-contact", slice.getAdminEmail());
-		addNamedParameter("password", slice.getPassword());
-	}
-
+	/* (non-Javadoc)
+	 * @see org.jfvclient.queries.FVRpcQueryRequest#returns()
+	 */
 	@Override
-	public int getMinParameterCount()
+	public ParamType returns()
 	{
-		return 4;
+		return ParamType.OBJECT;
 	}
+
+
+//	public void configureSlice(Slice slice)
+//	{
+//		put("slice-name", slice.getName());
+//		addNamedParameter("controller-url", slice.getControllerURL());
+//		addNamedParameter("admin-contact", slice.getAdminEmail());
+//		addNamedParameter("password", slice.getPassword());
+//	}
 
 
 }
