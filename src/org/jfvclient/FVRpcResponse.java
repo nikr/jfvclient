@@ -13,44 +13,97 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.jfvclient;
 
 import org.jfvclient.responses.Error;
 
 /**
+ * Represents a JSON-RPC response from the FlowVisor. Takes the form
+ *
+ * <pre>
+ * {
+ * "id" : &lt;id&gt;,
+ * "result" : &lt result object &gt;,
+ * "error" : {
+ *      "code" : &lt;errorcode&gt;,
+ *      "msg" : &lt;message&gt;,
+ *      "data" : &lt; data &gt;
+ *      },
+ * "jsonrpc" : "2.0"
+ * }
+ * </pre>
+ *
+ * The
+ * <code>error</code> part will be there if and only if the response is an error
+ * response and the
+ * <code>result</code> part will be there if and only if the response is not an
+ * error response.
+ *
+ * @param <V> the result object type.
  *
  * @author Niklas Rehfeld
  */
-public class FVRpcResponse<V> {
+public class FVRpcResponse<V>
+{
+
     String id;
     V result;
     Error error;
-    String jsonrpc = "2.0";
-    
+    final String jsonrpc = "2.0";
+
+    /**
+     * Returns the result object if this response is a successful response. To
+     * test if this is an error response, use {@link #isError()}.
+     *
+     * @return The result object, or <code>null</code> if the response is an
+     * error response.
+     */
     public V getResult()
     {
         return result;
     }
-    
+
+    /**
+     * Returns the error object associated with this response.
+     * 
+     * @return The error object, or null if this is not an error response. 
+     * @see org.jfvclient.responses.Error
+     */
     public Error getError()
     {
         return error;
     }
-    
+
+    /**
+     * Returns the request/response ID.
+     * 
+     * @return the Request/Response ID. 
+     */
     public String getID()
     {
         return id;
     }
-    
+
+    /**
+     *
+     * @return true iff this is an error response.
+     */
+    public boolean isError()
+    {
+        return error != null;
+    }
+
     @Override
     public String toString()
     {
         if (result != null)
-            return "id = " + id + ", res = " + result.toString() + ", jsonrpc = " +jsonrpc;
+        {
+            return "id = " + id + ", res = " + result.toString() + ", jsonrpc = " + jsonrpc;
+        }
         if (error != null)
-            return "id = " + id + ", err = " + error.toString() + ", jsonrpc = " +jsonrpc;
+        {
+            return "id = " + id + ", err = " + error.toString() + ", jsonrpc = " + jsonrpc;
+        }
         return "";
     }
-    
 }
