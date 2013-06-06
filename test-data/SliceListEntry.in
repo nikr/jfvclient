@@ -1,4 +1,4 @@
 { 
  "slice-name" : "Slice1",
- "admin-status" true
+ "admin-status" : true
 }
