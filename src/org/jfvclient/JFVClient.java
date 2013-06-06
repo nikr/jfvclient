@@ -17,15 +17,16 @@
 package org.jfvclient;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.List;
-import org.apache.http.client.HttpClient;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.jfvclient.data.Dpid;
+import org.jfvclient.deserialisers.DpidDeserialiser;
 import org.jfvclient.responses.DatapathInfo;
 import org.jfvclient.responses.Link;
 import org.jfvclient.responses.SliceListEntry;
+import org.jfvclient.serialisers.DpidSerialiser;
 
 /**
  *
@@ -35,7 +36,8 @@ public class JFVClient {
 
     public static void main(String[] args)
     {
-        Gson g = new Gson();
+//        Gson g = new Gson();
+        Gson g = getGson();
         FVRpcRequest r = new FVRpcRequest("list-version", "list-version-1", null);
         System.out.println(g.toJson(r));
         
@@ -78,7 +80,13 @@ public class JFVClient {
         
     }
     
-    
+    private static Gson getGson()
+    {
+        GsonBuilder gb = new GsonBuilder();
+        gb.registerTypeAdapter(Dpid.class, DpidSerialiser.class);
+        gb.registerTypeAdapter(Dpid.class, DpidDeserialiser.class);
+        return gb.create();
+    }
     
     
 }
