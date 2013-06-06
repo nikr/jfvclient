@@ -20,10 +20,12 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.List;
-import org.jfvclient.requests.FVRpcRequest;
+import org.apache.http.client.HttpClient;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.jfvclient.responses.DatapathInfo;
-import org.jfvclient.responses.FVRpcResponse;
 import org.jfvclient.responses.Link;
+import org.jfvclient.responses.SliceListEntry;
 
 /**
  *
@@ -36,6 +38,11 @@ public class JFVClient {
         Gson g = new Gson();
         FVRpcRequest r = new FVRpcRequest("list-version", "list-version-1", null);
         System.out.println(g.toJson(r));
+        
+        r = new FVRpcRequest(FVRpcRequest.NoParamType.list_links, "listlinks07662");
+        System.out.println(g.toJson(r));
+        
+//        HttpClient c = new DefaultHttpClient();
         
         String result = "{\"id\":\"fdsa\", \"result\":\"chickens\",\"jsonrpc\":\"2.0\"}";
         FVRpcResponse resp = g.fromJson(result, FVRpcResponse.class);
@@ -56,11 +63,19 @@ public class JFVClient {
         rll = g.fromJson(result, respLink);
         System.out.println(rll);
         
+        result = "{\"id\":\"fdsa\", \"result\":[{\"slice-name\" : \"fdsa\", \"admin-status\" : true}],\"jsonrpc\":\"2.0\"}";
+        FVRpcResponse<List<SliceListEntry>> sll;
+        respLink = new TypeToken<FVRpcResponse<List<SliceListEntry>>>(){}.getType();
+        sll = g.fromJson(result, respLink);
+        System.out.println(sll);
+        
         result = "{\"id\":\"fdsa\", \"result\":{\"current-flowmod-usage\" : {\"fdsa\" : 1234 ,\"slice2\" : 3456}},\"jsonrpc\":\"2.0\"}";
         FVRpcResponse<DatapathInfo> dpr;
         respLink = new TypeToken<FVRpcResponse<DatapathInfo>>(){}.getType();
         dpr = g.fromJson(result, respLink);
         System.out.println(dpr.getResult().getCurrentFlowmodUsage());
+        
+        
     }
     
     
