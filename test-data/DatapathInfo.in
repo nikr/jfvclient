@@ -1,5 +1,5 @@
 {
-"dpid" : "00:00:00:ff:f1:01:01::02",
+"dpid" : "00:00:00:ff:f1:01:01:02",
 "num-ports" : 2,
 "port-list" : [2,32],
 "port-names" : ["s1-eth0", "s1-eth1"],
