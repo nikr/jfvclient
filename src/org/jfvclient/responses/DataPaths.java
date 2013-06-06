@@ -17,11 +17,21 @@
 package org.jfvclient.responses;
 
 import java.util.List;
+import org.jfvclient.data.Dpid;
 
 /**
- *
+ * TODO This class needs to be redone. At the moment it will not work. 
+ * All of the classes that are actually arrays of single objects need to be 
+ * dealt with somehow.
+ * 
+ * 
  * @author Niklas Rehfeld
  */
 public class DataPaths {
-private List<String> dpids;
+private List<Dpid> dpids;
+
+    public List<Dpid> getDpids()
+    {
+        return dpids;
+    }
 }

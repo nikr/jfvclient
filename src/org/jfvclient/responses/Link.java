@@ -16,6 +16,7 @@
 package org.jfvclient.responses;
 
 import com.google.gson.annotations.SerializedName;
+import org.jfvclient.data.Dpid;
 
 /**
  * One link in a response to "list-links"
@@ -26,17 +27,17 @@ public class Link
 {
 
     @SerializedName("src-dpid")
-    private String src_dpid;
+    private Dpid src_dpid;
     @SerializedName("src-port")
     private int src_port;
     @SerializedName("dst-dpid")
-    private String dst_dpid;
+    private Dpid dst_dpid;
     @SerializedName("dst-port")
     private int dst_port;
 
     public String getSrc_dpid()
     {
-        return src_dpid;
+        return src_dpid.getDpid();
     }
 
     public int getSrc_port()
@@ -46,7 +47,7 @@ public class Link
 
     public String getDst_dpid()
     {
-        return dst_dpid;
+        return dst_dpid.getDpid();
     }
 
     public int getDst_port()
@@ -57,6 +58,6 @@ public class Link
    @Override
    public String toString()
    {
-       return dst_dpid + dst_port + src_dpid + src_port;
+       return dst_dpid.getDpid() + dst_port + src_dpid.getDpid() + src_port;
    }
 }

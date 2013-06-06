@@ -18,6 +18,7 @@ package org.jfvclient.responses;
 import com.google.gson.annotations.SerializedName;
 import java.util.List;
 import java.util.Map;
+import org.jfvclient.data.Dpid;
 
 /**
  *
@@ -26,7 +27,7 @@ import java.util.Map;
 public class DatapathInfo
 {
 
-    private String dpid;
+    private Dpid dpid;
     @SerializedName("num-ports")
     private int numPorts;
     @SerializedName("port-list")
@@ -39,7 +40,7 @@ public class DatapathInfo
 
     public String getDpid()
     {
-        return dpid;
+        return dpid.getDpid();
     }
 
     public int getNumPorts()

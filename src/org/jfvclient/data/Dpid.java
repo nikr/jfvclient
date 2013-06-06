@@ -13,20 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.jfvclient.requests;
-
-import org.jfvclient.data.Dpid;
+package org.jfvclient.data;
 
 /**
  *
  * @author Niklas Rehfeld
  */
-public class ListDatapathInfo {
-private Dpid dpid;
+public class Dpid
+{
 
+    private String dpid;
+    private final String matchRegex = "([a-fA-F0-9]{2}:){7}[a-fA-F0-9]{2}";
+
+    public Dpid(String dpid)
+    {
+        this.dpid = dpid;
+    }
+    
     public String getDpid()
     {
-        return dpid.getDpid();
+        return dpid;
+    }
+
+    public boolean isValid()
+    {
+        if (dpid.matches(matchRegex))
+        {
+            return true;
+        }
+        if (dpid.equals("any") || dpid.equals("all") || dpid.equals("ALL_DPIDS"))
+        {
+            return true;
+        }
+        return false;
+
     }
 }
