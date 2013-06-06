@@ -37,6 +37,31 @@ public class DatapathInfo
     @SerializedName("current-flowmod-usage")
     private Map<String, Integer> currentFlowmodUsage;
 
+    public String getDpid()
+    {
+        return dpid;
+    }
+
+    public int getNumPorts()
+    {
+        return numPorts;
+    }
+
+    public List<Integer> getPortList()
+    {
+        return portList;
+    }
+
+    public List<String> getPortNames()
+    {
+        return portNames;
+    }
+
+    public String getConnection()
+    {
+        return connection;
+    }
+
     public Map<String, Integer> getCurrentFlowmodUsage()
     {
         return currentFlowmodUsage;
