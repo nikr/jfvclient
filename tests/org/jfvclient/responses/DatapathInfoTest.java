@@ -4,7 +4,12 @@
  */
 package org.jfvclient.responses;
 
+import com.google.gson.Gson;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -22,16 +27,13 @@ import org.junit.BeforeClass;
 public class DatapathInfoTest
 {
 
-    public DatapathInfoTest()
+    DatapathInfo instance;
+
+    public DatapathInfoTest() throws IOException
     {
-    }
-
-    @BeforeClass
-    public static void setUp() throws IOException
-    {
-
-        String input = TestUtils.readInput(DatapathInfo.class);
-
+        String input = TestUtils.readTestInput(DatapathInfo.class);
+        Gson g = new Gson();
+        instance = g.fromJson(input, DatapathInfo.class);
     }
 
     /**
@@ -41,12 +43,9 @@ public class DatapathInfoTest
     public void testGetDpid()
     {
         System.out.println("getDpid");
-        DatapathInfo instance = new DatapathInfo();
-        String expResult = "";
+        String expResult = "00:00:00:ff:f1:01:01:02";
         String result = instance.getDpid();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -56,12 +55,10 @@ public class DatapathInfoTest
     public void testGetNumPorts()
     {
         System.out.println("getNumPorts");
-        DatapathInfo instance = new DatapathInfo();
-        int expResult = 0;
+        int expResult = 2;
         int result = instance.getNumPorts();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
     }
 
     /**
@@ -71,12 +68,13 @@ public class DatapathInfoTest
     public void testGetPortList()
     {
         System.out.println("getPortList");
-        DatapathInfo instance = new DatapathInfo();
-        List expResult = null;
-        List result = instance.getPortList();
+
+        List<Integer> expResult = Arrays.asList(new Integer[] {2, 32});
+        List<Integer> result = instance.getPortList();
+
+        
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+//        assertArrayEquals(expResult, result.toArray());
     }
 
     /**
@@ -86,12 +84,11 @@ public class DatapathInfoTest
     public void testGetPortNames()
     {
         System.out.println("getPortNames");
-        DatapathInfo instance = new DatapathInfo();
-        List expResult = null;
-        List result = instance.getPortNames();
+    
+        List<String> expResult = Arrays.asList(new String[] {"s1-eth0", "s1-eth1"});
+        List<String> result = instance.getPortNames();
+//        assertArrayEquals(expResult, result.toArray());
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -101,12 +98,9 @@ public class DatapathInfoTest
     public void testGetConnection()
     {
         System.out.println("getConnection");
-        DatapathInfo instance = new DatapathInfo();
-        String expResult = "";
+        String expResult = "/192.168.1.1:8765-->/192.168.1.32:9876";
         String result = instance.getConnection();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -116,11 +110,13 @@ public class DatapathInfoTest
     public void testGetCurrentFlowmodUsage()
     {
         System.out.println("getCurrentFlowmodUsage");
-        DatapathInfo instance = new DatapathInfo();
-        Map expResult = null;
-        Map result = instance.getCurrentFlowmodUsage();
+        
+        Map<String, Integer> expResult = new HashMap<String, Integer>();
+        expResult.put("Slice1", 23);
+        expResult.put("fvadmin", 2);
+        Map<String, Integer> result = instance.getCurrentFlowmodUsage();
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+//        fail("The test case is a prototype.");
     }
 }
