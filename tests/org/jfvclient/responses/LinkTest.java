@@ -20,7 +20,7 @@ public class LinkTest
     private Link instance;
     public LinkTest() 
     {
-        Gson g = new Gson();
+        Gson g = TestUtils.getGson();
         
         try
         {

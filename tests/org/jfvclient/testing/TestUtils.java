@@ -16,21 +16,27 @@
 
 package org.jfvclient.testing;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.CharBuffer;
+import org.jfvclient.data.Dpid;
+import org.jfvclient.deserialisers.DpidDeserialiser;
+import org.jfvclient.serialisers.DpidSerialiser;
 
 /**
- *
+ *Useful methods for reading in test data and suchlike.
+ * 
+ * 
  * @author Niklas Rehfeld
  */
 public class TestUtils {
 
     static File testDataFolder = new File("test-data");
     
-    public static String readInput(Class testclass) throws IOException
+    public static String readTestInput(Class testclass) throws IOException
     {
         if (!testDataFolderValid())
             throw new IOException("Test data folder " + testDataFolder.getAbsolutePath() + "is not a readable directory.");
@@ -49,4 +55,15 @@ public class TestUtils {
         return (testDataFolder.isDirectory() && testDataFolder.canRead());
     }
     
+    /**
+     * 
+     * @return a Gson instance set up with the correct serialisers and deserialisers.
+     */
+    public static Gson getGson()
+    {
+             GsonBuilder gb = new GsonBuilder();
+        gb.registerTypeAdapter(Dpid.class, new DpidDeserialiser());
+        gb.registerTypeAdapter(Dpid.class, new DpidSerialiser());
+        return gb.create();
+    }
 }

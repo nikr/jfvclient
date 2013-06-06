@@ -4,18 +4,27 @@
  */
 package org.jfvclient.requests;
 
+import com.google.gson.Gson;
+import java.io.IOException;
+import org.jfvclient.testing.TestUtils;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 
 /**
  *
  * @author Niklas Rehfeld
  */
+@Ignore("No test data yet")
 public class ListDatapathInfoTest
 {
+    ListDatapathInfo instance;
     
-    public ListDatapathInfoTest()
+    public ListDatapathInfoTest() throws IOException
     {
+        String s = TestUtils.readTestInput(ListDatapathInfo.class);
+        Gson g = TestUtils.getGson();
+        instance = g.fromJson(s, ListDatapathInfo.class);
     }
 
     /**
@@ -25,11 +34,8 @@ public class ListDatapathInfoTest
     public void testGetDpid()
     {
         System.out.println("getDpid");
-        ListDatapathInfo instance = new ListDatapathInfo();
-        String expResult = "";
+        String expResult = "00:00:00:ff:f1:01:01:02";
         String result = instance.getDpid();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 }

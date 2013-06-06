@@ -6,19 +6,13 @@ package org.jfvclient.responses;
 
 import com.google.gson.Gson;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jfvclient.testing.TestUtils;
-import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.BeforeClass;
 
 /**
  *
@@ -32,7 +26,9 @@ public class DatapathInfoTest
     public DatapathInfoTest() throws IOException
     {
         String input = TestUtils.readTestInput(DatapathInfo.class);
-        Gson g = new Gson();
+//        Gson g = new Gson();
+   
+        Gson g = TestUtils.getGson();
         instance = g.fromJson(input, DatapathInfo.class);
     }
 
