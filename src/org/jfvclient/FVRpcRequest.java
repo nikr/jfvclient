@@ -15,11 +15,19 @@
  */
 package org.jfvclient;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonNull;
 
 /**
+ * This class represents a JSON-RPC request. it takes the form
+ * <pre> {
+ * "method" : &lt;method&gt;
+ * "id" : &lt;id&gt;
+ * "params" : &lt request parameters &gt;
+ * "jsonrpc" : "2.0"
+ * }
+ * </pre>
  *
+ * @param <V> the &lt;request paramerters &gt; type.
  * @author Niklas Rehfeld
  */
 public class FVRpcRequest<V>
@@ -28,8 +36,8 @@ public class FVRpcRequest<V>
     private String method;
     private String id;
     private V params;
-    private String jsonrpc = "2.0";
-
+    private final String jsonrpc = "2.0";
+    
     public FVRpcRequest(String method, String id, V params)
     {
         this.method = method;
@@ -54,10 +62,17 @@ public class FVRpcRequest<V>
     }
 
     /**
-     * Constructor used for 'empty' requests such as list-version, list-links
-     * etc.
+     * Constructor used for 'empty' requests. These are
+     * <ul>
+     * <li /> list-version
+     * <li />list-links
+     * <li /> list-slices
+     * <li /> list-datapaths
+     * <li /> list-fv-health
+     * <li /> save-config
+     * </ul>
      *
-     *
+     *@see NoParamType 
      * @param t the method
      * @param id a request ID.
      */
