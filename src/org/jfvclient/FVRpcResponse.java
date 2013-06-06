@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package org.jfvclient.responses;
+package org.jfvclient;
+
+import org.jfvclient.responses.Error;
 
 /**
  *
