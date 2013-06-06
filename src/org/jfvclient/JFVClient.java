@@ -13,14 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.jfvclient;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
+import javax.net.ssl.HttpsURLConnection;
 import org.jfvclient.data.Dpid;
 import org.jfvclient.deserialisers.DpidDeserialiser;
 import org.jfvclient.responses.DatapathInfo;
@@ -32,7 +40,8 @@ import org.jfvclient.serialisers.DpidSerialiser;
  *
  * @author Niklas Rehfeld
  */
-public class JFVClient {
+public class JFVClient
+{
 
     public static void main(String[] args)
     {
@@ -40,12 +49,13 @@ public class JFVClient {
         Gson g = getGson();
         FVRpcRequest r = new FVRpcRequest("list-version", "list-version-1", null);
         System.out.println(g.toJson(r));
-        
-        r = new FVRpcRequest(FVRpcRequest.NoParamType.list_links, "listlinks07662");
+
+        r = new FVRpcRequest(FVRpcRequest.NoParamType.list_links,
+                "listlinks07662");
         System.out.println(g.toJson(r));
-        
+
 //        HttpClient c = new DefaultHttpClient();
-        
+
         String result = "{\"id\":\"fdsa\", \"result\":\"chickens\",\"jsonrpc\":\"2.0\"}";
         FVRpcResponse resp = g.fromJson(result, FVRpcResponse.class);
         System.out.println(resp);
@@ -53,33 +63,72 @@ public class JFVClient {
         resp = g.fromJson(result, FVRpcResponse.class);
         System.out.println(resp);
         result = "{\"id\":\"fdsa\", \"result\":{\"src-dpid\" : \"fdsa\"},\"jsonrpc\":\"2.0\"}";
-        FVRpcResponse<Link> rl ;
-        Type respLink = new TypeToken<FVRpcResponse<Link>>(){}.getType();
+        FVRpcResponse<Link> rl;
+        Type respLink = new TypeToken<FVRpcResponse<Link>>()
+        {
+        }.getType();
         rl = g.fromJson(result, respLink);
         System.out.println(rl);
-        
-        
+
+
         result = "{\"id\":\"fdsa\", \"result\":[{\"src-dpid\" : \"fdsa\"},{\"src-dpid\" : \"fdsaffddd\"}],\"jsonrpc\":\"2.0\"}";
         FVRpcResponse<List<Link>> rll;
-        respLink = new TypeToken<FVRpcResponse<List<Link>>>(){}.getType();
+        respLink = new TypeToken<FVRpcResponse<List<Link>>>()
+        {
+        }.getType();
         rll = g.fromJson(result, respLink);
         System.out.println(rll);
-        
+
         result = "{\"id\":\"fdsa\", \"result\":[{\"slice-name\" : \"fdsa\", \"admin-status\" : true}],\"jsonrpc\":\"2.0\"}";
         FVRpcResponse<List<SliceListEntry>> sll;
-        respLink = new TypeToken<FVRpcResponse<List<SliceListEntry>>>(){}.getType();
+        respLink = new TypeToken<FVRpcResponse<List<SliceListEntry>>>()
+        {
+        }.getType();
         sll = g.fromJson(result, respLink);
         System.out.println(sll);
-        
+
         result = "{\"id\":\"fdsa\", \"result\":{\"current-flowmod-usage\" : {\"fdsa\" : 1234 ,\"slice2\" : 3456}},\"jsonrpc\":\"2.0\"}";
         FVRpcResponse<DatapathInfo> dpr;
-        respLink = new TypeToken<FVRpcResponse<DatapathInfo>>(){}.getType();
+        respLink = new TypeToken<FVRpcResponse<DatapathInfo>>()
+        {
+        }.getType();
         dpr = g.fromJson(result, respLink);
         System.out.println(dpr.getResult().getCurrentFlowmodUsage());
-        
-        
+
+
     }
-    
+
+    private static Object send(Gson g, Object request) throws MalformedURLException, IOException
+    {
+        HttpsURLConnection con = (HttpsURLConnection) new URL(
+                "https://bordeaux:8001").openConnection();
+        con.setRequestMethod("POST");
+        con.setRequestProperty("User-Agent", "jfvclient");
+        con.setDoOutput(true);
+        OutputStreamWriter w = new OutputStreamWriter(new BufferedOutputStream(
+                con.getOutputStream()));
+        w.write(g.toJson(request));
+        w.flush();
+        w.close();
+        
+        if (con.getResponseCode() != 200)
+        {
+            System.out.println("Response is not OK -- " + con.getResponseMessage());
+        }
+        BufferedReader iw = new BufferedReader(new InputStreamReader(con.getInputStream()));
+        String response = "";
+        String in;
+        while ((in = iw.readLine()) != null)
+        {
+            response += in;
+        }
+        iw.close();
+        System.out.println("response: " + response);
+
+
+        return null;
+    }
+
     private static Gson getGson()
     {
         GsonBuilder gb = new GsonBuilder();
@@ -87,6 +136,4 @@ public class JFVClient {
         gb.registerTypeAdapter(Dpid.class, DpidDeserialiser.class);
         return gb.create();
     }
-    
-    
 }
