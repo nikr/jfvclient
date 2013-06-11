@@ -15,6 +15,8 @@
  */
 package org.jfvclient.data;
 
+import java.awt.font.NumericShaper;
+
 /**
  *
  * @author Niklas Rehfeld
@@ -29,10 +31,31 @@ public class Dpid
     {
         this.dpid = dpid;
     }
-    
+
     public String getDpid()
     {
         return dpid;
+    }
+
+    /**
+     * This is a convenience method for simple dpids in test setups, such as using Mininet.
+     * In these cases the DPIDs will be something like 00:00:...:00:01 for the first switch etc.
+     * This converts the device number into a simple DPID like that. It only works if the device number is &lteq; FF.
+     *
+     * <emph>Should not be used in production code.</emph>
+     *
+     * @param dnum
+     * @return
+     */
+    public static String toDpid(int dnum)
+    {
+    	String finalbits = Integer.toHexString(dnum);
+    	if (finalbits.length() < 2)
+    	{
+    		finalbits = "0" + finalbits;
+    	}
+
+    	return "00:00:00:00:00:00:00:" + finalbits;
     }
 
     public boolean isValid()

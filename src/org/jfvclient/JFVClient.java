@@ -15,9 +15,6 @@
  */
 package org.jfvclient;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -31,7 +28,6 @@ import java.net.Authenticator;
 import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
-import java.util.List;
 import java.util.Properties;
 
 import javax.net.ssl.HostnameVerifier;
@@ -40,10 +36,13 @@ import javax.net.ssl.SSLSession;
 
 import org.jfvclient.data.Dpid;
 import org.jfvclient.deserialisers.DpidDeserialiser;
+import org.jfvclient.requests.ListDatapathInfo;
 import org.jfvclient.responses.DatapathInfo;
-import org.jfvclient.responses.Link;
-import org.jfvclient.responses.SliceListEntry;
 import org.jfvclient.serialisers.DpidSerialiser;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 /**
  *
@@ -57,67 +56,88 @@ public class JFVClient
     	Gson g = getGson();
         FVRpcRequest r = new FVRpcRequest(FVRpcRequest.NoParamType.list_version, "lv1");
         send(g, r);
-
-    }
-
-
-    private static void test()
-    {
-//      Gson g = new Gson();
-      Gson g = getGson();
-      FVRpcRequest r = new FVRpcRequest("list-version", "list-version-1", null);
-      System.out.println(g.toJson(r));
-
-      r = new FVRpcRequest(FVRpcRequest.NoParamType.list_links,
-              "listlinks07662");
-      System.out.println(g.toJson(r));
-
-//      HttpClient c = new DefaultHttpClient();
-
-      String result = "{\"id\":\"fdsa\", \"result\":\"chickens\",\"jsonrpc\":\"2.0\"}";
-      FVRpcResponse resp = g.fromJson(result, FVRpcResponse.class);
-      System.out.println(resp);
-      result = "{\"id\":\"fdsa\", \"error\":{\"code\" : -32146, \"msg\" : \"chickens\"},\"jsonrpc\":\"2.0\"}";
-      resp = g.fromJson(result, FVRpcResponse.class);
-      System.out.println(resp);
-      result = "{\"id\":\"fdsa\", \"result\":{\"src-dpid\" : \"fdsa\"},\"jsonrpc\":\"2.0\"}";
-      FVRpcResponse<Link> rl;
-      Type respLink = new TypeToken<FVRpcResponse<Link>>()
-      {
-      }.getType();
-      rl = g.fromJson(result, respLink);
-      System.out.println(rl);
+        ListDatapathInfo l = new ListDatapathInfo();
+        l.setDpid(new Dpid(Dpid.toDpid(1)));
+        FVRpcRequest<ListDatapathInfo> ldp = new FVRpcRequest<ListDatapathInfo>("list-datapath-info", "ldpi1", l);
+        String resp = (String) send(g,ldp);
 
 
-      result = "{\"id\":\"fdsa\", \"result\":[{\"src-dpid\" : \"fdsa\"},{\"src-dpid\" : \"fdsaffddd\"}],\"jsonrpc\":\"2.0\"}";
-      FVRpcResponse<List<Link>> rll;
-      respLink = new TypeToken<FVRpcResponse<List<Link>>>()
-      {
-      }.getType();
-      rll = g.fromJson(result, respLink);
-      System.out.println(rll);
 
-      result = "{\"id\":\"fdsa\", \"result\":[{\"slice-name\" : \"fdsa\", \"admin-status\" : true}],\"jsonrpc\":\"2.0\"}";
-      FVRpcResponse<List<SliceListEntry>> sll;
-      respLink = new TypeToken<FVRpcResponse<List<SliceListEntry>>>()
-      {
-      }.getType();
-      sll = g.fromJson(result, respLink);
-      System.out.println(sll);
+        FVRpcResponse<DatapathInfo> res = null;
+        Type respLink = new TypeToken<FVRpcResponse<DatapathInfo>>()
+                {
+                }.getType();
+        res = g.fromJson(resp, respLink);
+        System.out.println(res.toString());
 
-      result = "{\"id\":\"fdsa\", \"result\":{\"current-flowmod-usage\" : {\"fdsa\" : 1234 ,\"slice2\" : 3456}},\"jsonrpc\":\"2.0\"}";
-      FVRpcResponse<DatapathInfo> dpr;
-      respLink = new TypeToken<FVRpcResponse<DatapathInfo>>()
-      {
-      }.getType();
-      dpr = g.fromJson(result, respLink);
-      System.out.println(dpr.getResult().getCurrentFlowmodUsage());
+        DatapathInfo dpi = res.getResult();
+        System.out.println("dpid : "  + dpi.getDpid());
+        System.out.println(dpi.getNumPorts());
+
+        r = new FVRpcRequest(FVRpcRequest.NoParamType.list_datapaths, "ldps12");
+        send(g, r);
 
     }
 
 
 
-    private static Object send(Gson g, Object request) throws MalformedURLException, IOException
+//    private static void test()
+//    {
+////      Gson g = new Gson();
+//      Gson g = getGson();
+//      FVRpcRequest r = new FVRpcRequest("list-version", "list-version-1", null);
+//      System.out.println(g.toJson(r));
+//
+//      r = new FVRpcRequest(FVRpcRequest.NoParamType.list_links,
+//              "listlinks07662");
+//      System.out.println(g.toJson(r));
+//
+////      HttpClient c = new DefaultHttpClient();
+//
+//      String result = "{\"id\":\"fdsa\", \"result\":\"chickens\",\"jsonrpc\":\"2.0\"}";
+//      FVRpcResponse resp = g.fromJson(result, FVRpcResponse.class);
+//      System.out.println(resp);
+//      result = "{\"id\":\"fdsa\", \"error\":{\"code\" : -32146, \"msg\" : \"chickens\"},\"jsonrpc\":\"2.0\"}";
+//      resp = g.fromJson(result, FVRpcResponse.class);
+//      System.out.println(resp);
+//      result = "{\"id\":\"fdsa\", \"result\":{\"src-dpid\" : \"fdsa\"},\"jsonrpc\":\"2.0\"}";
+//      FVRpcResponse<Link> rl;
+//      Type respLink = new TypeToken<FVRpcResponse<Link>>()
+//      {
+//      }.getType();
+//      rl = g.fromJson(result, respLink);
+//      System.out.println(rl);
+//
+//
+//      result = "{\"id\":\"fdsa\", \"result\":[{\"src-dpid\" : \"fdsa\"},{\"src-dpid\" : \"fdsaffddd\"}],\"jsonrpc\":\"2.0\"}";
+//      FVRpcResponse<List<Link>> rll;
+//      respLink = new TypeToken<FVRpcResponse<List<Link>>>()
+//      {
+//      }.getType();
+//      rll = g.fromJson(result, respLink);
+//      System.out.println(rll);
+//
+//      result = "{\"id\":\"fdsa\", \"result\":[{\"slice-name\" : \"fdsa\", \"admin-status\" : true}],\"jsonrpc\":\"2.0\"}";
+//      FVRpcResponse<List<SliceListEntry>> sll;
+//      respLink = new TypeToken<FVRpcResponse<List<SliceListEntry>>>()
+//      {
+//      }.getType();
+//      sll = g.fromJson(result, respLink);
+//      System.out.println(sll);
+//
+//      result = "{\"id\":\"fdsa\", \"result\":{\"current-flowmod-usage\" : {\"fdsa\" : 1234 ,\"slice2\" : 3456}},\"jsonrpc\":\"2.0\"}";
+//      FVRpcResponse<DatapathInfo> dpr;
+//      respLink = new TypeToken<FVRpcResponse<DatapathInfo>>()
+//      {
+//      }.getType();
+//      dpr = g.fromJson(result, respLink);
+//      System.out.println(dpr.getResult().getCurrentFlowmodUsage());
+//
+//    }
+
+
+
+    protected static Object send(Gson g, Object request) throws MalformedURLException, IOException
     {
     	Properties props = getProps();
 
@@ -164,21 +184,35 @@ public class JFVClient
         iw.close();
         System.out.println("response: " + response);
 
-
-        return null;
+        return response;
+//        return null;
     }
 
     public static class SimpleAuth extends Authenticator
     {
     	@Override
     	 public PasswordAuthentication getPasswordAuthentication () {
-            //get the properties file and read password etc. from there. NOT LIKE THIS...
-             return new PasswordAuthentication ("fvadmin", "inbound traffic".toCharArray());
+            //get the properties file and read password etc. from there. 
+    		Properties props = null;
+    		try
+			{
+				props = getProps();
+
+			} catch (Exception e)
+			{
+
+				e.printStackTrace();
+				throw new Error(e.getLocalizedMessage());
+			}
+
+    		String uname = props.getProperty("username");
+    		String pw = props.getProperty("password");
+             return new PasswordAuthentication (uname, pw.toCharArray());
 
          }
     }
 
-    private static Gson getGson()
+    protected static Gson getGson()
     {
         GsonBuilder gb = new GsonBuilder();
         gb.registerTypeAdapter(Dpid.class, new DpidSerialiser());

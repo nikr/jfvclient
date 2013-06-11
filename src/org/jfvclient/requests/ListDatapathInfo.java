@@ -22,11 +22,31 @@ import org.jfvclient.data.Dpid;
  *
  * @author Niklas Rehfeld
  */
-public class ListDatapathInfo {
-private Dpid dpid;
+public class ListDatapathInfo
+{
+	private Dpid dpid;
 
-    public String getDpid()
-    {
-        return dpid.getDpid();
-    }
+	public ListDatapathInfo()
+	{
+	}
+
+	public ListDatapathInfo(Dpid d)
+	{
+		dpid = d;
+	}
+
+	public String getDpid()
+	{
+		return dpid.getDpid();
+	}
+
+	/**
+	 *
+	 * @param d The DPID of the datapath to query. Note, this must identify a
+	 *            unique device, so cannot be "any", "all" or "ALL_DPIDS"
+	 */
+	public void setDpid(Dpid d)
+	{
+		dpid = d;
+	}
 }
