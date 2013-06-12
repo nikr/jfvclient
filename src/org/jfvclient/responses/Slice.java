@@ -23,13 +23,13 @@ import com.google.gson.annotations.SerializedName;
  *
  * @author Niklas Rehfeld
  */
-public class SliceListEntry
+public class Slice
 {
     @SerializedName("slice-name")
     private String slice_name;
     @SerializedName("admin-status")
     private boolean admin_status;
- 
+
      public String getSlice_name()
     {
         return slice_name;
@@ -39,10 +39,27 @@ public class SliceListEntry
     {
         return admin_status;
     }
-    
+
     @Override
     public String toString()
     {
         return "slice-name: " + slice_name + ", admin-status: " + admin_status;
     }
+
+    @Override
+    public boolean equals(Object o)
+    {
+    	if (o instanceof Slice)
+    	{
+    		return slice_name.equals(((Slice) o).getSlice_name());
+    	}
+    	return false;
+    }
+
+    @Override
+    public int hashCode()
+    {
+    	return slice_name.hashCode();
+    }
+
 }

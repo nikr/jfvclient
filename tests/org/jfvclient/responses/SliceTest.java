@@ -14,19 +14,19 @@ import static org.junit.Assert.*;
  *
  * @author Niklas Rehfeld
  */
-public class SliceListEntryTest
+public class SliceTest
 {
-    SliceListEntry instance;
+    Slice instance;
     
-    public SliceListEntryTest() throws IOException
+    public SliceTest() throws IOException
     {
-        String s = TestUtils.readTestInput(SliceListEntry.class);
+        String s = TestUtils.readTestInput(Slice.class);
         Gson g = TestUtils.getGson();
-        instance = g.fromJson(s, SliceListEntry.class);
+        instance = g.fromJson(s, Slice.class);
     }
 
     /**
-     * Test of getSlice_name method, of class SliceListEntry.
+     * Test of getSlice_name method, of class Slice.
      */
     @Test
     public void testGetSlice_name()
@@ -38,7 +38,7 @@ public class SliceListEntryTest
     }
 
     /**
-     * Test of isAdmin_status method, of class SliceListEntry.
+     * Test of isAdmin_status method, of class Slice.
      */
     @Test
     public void testIsAdmin_status()
