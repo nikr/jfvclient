@@ -33,9 +33,12 @@ public class ListDatapathRRTest
 
         assertTrue("Result should not be an error ", !res.isError());
         DataPaths d = res.getResult();
-        //first and only dpid shoud be 00::01.
-        assertEquals(d.get(0), new Dpid(Dpid.toDpid(1)));
-        assertEquals("Unexpected extra DPID in results", d.size(), 1);
+//        first dpid shoud be 00::06.
+//        assertEquals(d.get(0), new Dpid(Dpid.toDpid(6)));
+        assertTrue(d.contains(new Dpid(Dpid.toDpid(5))));
+        assertTrue(d.contains(new Dpid(Dpid.toDpid(6))));
+        assertTrue(d.contains(new Dpid(Dpid.toDpid(7))));
+        assertEquals("Unexpected number of DPIDs in results", d.size(), 3);
 
 	}
 

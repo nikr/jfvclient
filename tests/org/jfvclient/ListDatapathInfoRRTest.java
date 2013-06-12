@@ -29,7 +29,8 @@ public class ListDatapathInfoRRTest
 	public void testExisting() throws MalformedURLException, IOException
 	{
 		Gson g = TestUtils.getGson();
-		ListDatapathInfo ldi = new ListDatapathInfo(new Dpid(Dpid.toDpid(1)));
+		//list datapath info for device 0::0:06
+		ListDatapathInfo ldi = new ListDatapathInfo(new Dpid(Dpid.toDpid(6)));
 		FVRpcRequest<ListDatapathInfo> ldiRequest = new FVRpcRequest<ListDatapathInfo>("list-datapath-info", "ldpi1", ldi);
 		String resp = (String) JFVClient.send(g,ldiRequest);
 
@@ -43,7 +44,7 @@ public class ListDatapathInfoRRTest
         	fail("result should not be an error.");
         }
         DatapathInfo d = res.getResult();
-        assertEquals("Expecting DPID = " + d.getDpid(), d.getDpid(), Dpid.toDpid(1));
+        assertEquals("Expecting DPID = " + d.getDpid(), Dpid.toDpid(6), d.getDpid());
         assertTrue("Expected numPorts > 0", d.getNumPorts() > 0);
 
 
