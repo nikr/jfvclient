@@ -16,11 +16,11 @@
 package org.jfvclient.responses;
 
 /**
- * Error message from FlowVisor.
+ * ErrorResponse message from FlowVisor.
  * 
  * @author Niklas Rehfeld
  */
-public class Error
+public class ErrorResponse
 {
 
     private int code;
