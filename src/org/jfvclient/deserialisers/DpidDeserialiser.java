@@ -25,8 +25,8 @@ import org.jfvclient.data.Dpid;
 import org.jfvclient.serialisers.DpidSerialiser;
 
 /**
- * Deserialiser for Dpids. 
- * 
+ * Deserialiser for Dpids.
+ *
  * @see DpidSerialiser
  *
  * @author Niklas Rehfeld

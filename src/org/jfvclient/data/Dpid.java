@@ -71,4 +71,32 @@ public class Dpid
         return false;
 
     }
+
+    /**
+     * returns true iff o is a Dpid AND the dpid strings match.
+     */
+    @Override
+    public boolean equals(Object o)
+    {
+    	Dpid other;
+    	if (!(o instanceof Dpid))
+    		return false;
+    	else
+    	{other = (Dpid) o;}
+
+    	return (other.getDpid().equalsIgnoreCase(dpid));
+
+    }
+
+    @Override
+    public int hashCode()
+    {
+    	return dpid.hashCode();
+    }
+
+    @Override
+    public String toString()
+    {
+    	return dpid;
+    }
 }
