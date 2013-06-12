@@ -16,22 +16,20 @@
 
 package org.jfvclient.responses;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.jfvclient.data.Dpid;
 
 /**
- * TODO This class needs to be redone. At the moment it will not work. 
- * All of the classes that are actually arrays of single objects need to be 
- * dealt with somehow.
- * 
- * 
+ *This is simply a wrapper for a list of Dpids. It is not the most elegant solution, but it seems to work.
+ *
  * @author Niklas Rehfeld
  */
-public class DataPaths {
-private List<Dpid> dpids;
-
+public class DataPaths extends ArrayList<Dpid>{
+//private List<Dpid> dpids;
+//
     public List<Dpid> getDpids()
     {
-        return dpids;
+        return this;
     }
 }
