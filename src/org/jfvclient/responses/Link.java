@@ -26,38 +26,64 @@ import org.jfvclient.data.Dpid;
 public class Link
 {
 
-    @SerializedName("src-dpid")
-    private Dpid src_dpid;
-    @SerializedName("src-port")
-    private int src_port;
-    @SerializedName("dst-dpid")
-    private Dpid dst_dpid;
-    @SerializedName("dst-port")
-    private int dst_port;
+	@SerializedName("srcDPID")
+	private Dpid src_dpid;
+	@SerializedName("srcPort")
+	private int src_port;
+	@SerializedName("dstDPID")
+	private Dpid dst_dpid;
+	@SerializedName("dstPort")
+	private int dst_port;
 
-    public String getSrc_dpid()
-    {
-        return src_dpid.getDpid();
-    }
+	public String getSrc_dpid()
+	{
+		return src_dpid.getDpid();
+	}
 
-    public int getSrc_port()
-    {
-        return src_port;
-    }
+	public int getSrc_port()
+	{
+		return src_port;
+	}
 
-    public String getDst_dpid()
-    {
-        return dst_dpid.getDpid();
-    }
+	public String getDst_dpid()
+	{
+		return dst_dpid.getDpid();
+	}
 
-    public int getDst_port()
-    {
-        return dst_port;
-    }
-    
-   @Override
-   public String toString()
-   {
-       return dst_dpid.getDpid() + dst_port + src_dpid.getDpid() + src_port;
-   }
+	public int getDst_port()
+	{
+		return dst_port;
+	}
+
+	@Override
+	public String toString()
+	{
+		String out = dst_dpid.getDpid() + ":";
+		out += dst_port + "-->";
+		out +=  src_dpid.getDpid() + ":";
+		out +=  src_port;
+		return out;
+	}
+
+	@Override
+	public boolean equals(Object o)
+	{
+		if (!(o instanceof Link))
+		{
+			return false;
+		}
+		Link other = (Link) o;
+		return (other.dst_dpid == dst_dpid
+				&& other.dst_port == dst_port
+				&& other.src_dpid == src_dpid
+				&& other.src_port == src_port);
+	}
+
+	@Override
+	public int hashCode()
+	{
+		//not sure about this one...
+		return dst_dpid.hashCode() + src_dpid.hashCode() + dst_port + (src_port << 4);
+
+	}
 }
