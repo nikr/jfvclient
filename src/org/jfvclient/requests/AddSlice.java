@@ -12,19 +12,19 @@ import com.google.gson.annotations.SerializedName;
  *
  * <pre>
  * {
- *  "slice-name" : <name>,
- *  "controller-url" : <pseudo-url>,
- *  "admin-contact" : <email>,
- *  "password" : <password>,
+ *  "slice-name" : &lt;name&gt;,
+ *  "controller-url" : &lt;pseudo-url&gt;,
+ *  "admin-contact" : &lt;email&gt;,
+ *  "password" : &lt;password&gt;,
  *  "drop-policy" : "exact|rule",
  *           OPTIONAL DEFAULT "exact"
- *  "recv-lldp" : <boolean>,
+ *  "recv-lldp" : &lt;boolean&gt;,
  *           OPTIONAL DEFAULT false
- *  "flowmod-limit" : <number>,
+ *  "flowmod-limit" : &lt;number&gt;,
  *         OPTIONAL DEFAULT -1
- *  "rate-limit" : <number>,
+ *  "rate-limit" : &lt;number&gt;,
  *         OPTIONAL DEFAULT -1
- *  "admin-status" : <boolean>
+ *  "admin-status" : &lt;boolean&gt;
  *         OPTIONAL DEFAULT true
  * }
  * </pre>
