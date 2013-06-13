@@ -38,12 +38,14 @@ import org.jfvclient.deserialisers.DpidDeserialiser;
 import org.jfvclient.requests.AddSlice;
 import org.jfvclient.requests.ListSliceHealth;
 import org.jfvclient.requests.ListSliceInfo;
+import org.jfvclient.requests.ListSliceStats;
 import org.jfvclient.responses.DataPaths;
 import org.jfvclient.responses.DatapathInfo;
 import org.jfvclient.responses.FVHealth;
 import org.jfvclient.responses.SliceHealth;
 import org.jfvclient.responses.SliceInfo;
 import org.jfvclient.responses.SliceList;
+import org.jfvclient.responses.SliceStats;
 import org.jfvclient.serialisers.DpidSerialiser;
 
 import com.google.gson.Gson;
@@ -76,14 +78,15 @@ public class JFVClient
 		}
 		gson = getGson();
 
-
-//		Doesn't work.
-//		if (config.containsKey("truststore") && config.containsKey("truststorepw"))
-//		{
-//			System.setProperty("javax.net.ssl.trustStore", config.getProperty("truststore"));
-//			System.setProperty("javax.net.ssl.trustStorePassword", config.getProperty("truststorepw"));
-//		}
-
+		// Doesn't work.
+		// if (config.containsKey("truststore") &&
+		// config.containsKey("truststorepw"))
+		// {
+		// System.setProperty("javax.net.ssl.trustStore",
+		// config.getProperty("truststore"));
+		// System.setProperty("javax.net.ssl.trustStorePassword",
+		// config.getProperty("truststorepw"));
+		// }
 
 	}
 
@@ -127,7 +130,8 @@ public class JFVClient
 	protected String send(Gson g, Object request) throws IOException
 
 	{
-		//TODO need to check that the connection is still OK, and reconnect if necessary.
+		// TODO need to check that the connection is still OK, and reconnect if
+		// necessary.
 
 		OutputStream os = connection.getOutputStream();
 		BufferedWriter w = new BufferedWriter(new OutputStreamWriter(os));
@@ -216,8 +220,8 @@ public class JFVClient
 			props.put("port", 8080);
 			props.put("password", "");
 			props.put("username", "fvadmin");
-//			props.put("truststore", "~/.keystore");
-//			props.put("truststorepw", "changeme");
+			// props.put("truststore", "~/.keystore");
+			// props.put("truststorepw", "changeme");
 		}
 
 		return props;
@@ -306,8 +310,8 @@ public class JFVClient
 		return resp.getResult();
 	}
 
-
-	public FVHealth listFVHealth() throws JFVErrorResponseException, IOException
+	public FVHealth listFVHealth() throws JFVErrorResponseException,
+			IOException
 	{
 		FVRpcRequest lsr = new FVRpcRequest(
 				FVRpcRequest.NoParamType.list_fv_health);
@@ -323,15 +327,33 @@ public class JFVClient
 		return resp.getResult();
 	}
 
-	public SliceHealth listSliceHealth(String sliceName) throws JFVErrorResponseException, IOException
+	public SliceHealth listSliceHealth(String sliceName)
+			throws JFVErrorResponseException, IOException
 	{
-		FVRpcRequest<ListSliceHealth> lsr = new FVRpcRequest<ListSliceHealth>("list-slice-health"
-				,new ListSliceHealth(sliceName));
+		FVRpcRequest<ListSliceHealth> lsr = new FVRpcRequest<ListSliceHealth>(
+				new ListSliceHealth(sliceName));
 		String response = send(gson, lsr);
 		Type t = new TypeToken<FVRpcResponse<SliceHealth>>()
 		{
 		}.getType();
 		FVRpcResponse<SliceHealth> resp = gson.fromJson(response, t);
+		if (resp.isError())
+		{
+			throw new JFVErrorResponseException(resp.getError());
+		}
+		return resp.getResult();
+	}
+
+	public SliceStats listSliceStats(String sliceName)
+			throws JFVErrorResponseException, IOException
+	{
+		FVRpcRequest<ListSliceStats> lsr = new FVRpcRequest<ListSliceStats>(
+				new ListSliceStats(sliceName));
+		String response = send(gson, lsr);
+		Type t = new TypeToken<FVRpcResponse<SliceStats>>()
+		{
+		}.getType();
+		FVRpcResponse<SliceStats> resp = gson.fromJson(response, t);
 		if (resp.isError())
 		{
 			throw new JFVErrorResponseException(resp.getError());

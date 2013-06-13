@@ -1,0 +1,117 @@
+{
+  "drop": {
+    "Total": {
+      "PORT_STATUS": 47
+    },
+    "slicer_fvadmin_dpid=00:00:00:00:00:00:00:01": {
+      "PORT_STATUS": 3
+    },
+    "slicer_fvadmin_dpid=00:00:00:00:00:00:00:05": {
+      "PORT_STATUS": 3
+    },
+    "slicer_fvadmin_dpid=00:00:00:00:00:00:00:06": {
+      "PORT_STATUS": 4
+    },
+    "slicer_fvadmin_dpid=00:00:00:00:00:00:00:07": {
+      "PORT_STATUS": 4
+    }
+  },
+  "rx": {
+    "Total": {
+      "ECHO_REPLY": 4963,
+      "FEATURES_REQUEST": 13,
+      "HELLO": 13,
+      "PACKET_OUT": 34799,
+      "STATS_REQUEST.DESC": 13
+    },
+    "slicer_fvadmin_dpid=00:00:00:00:00:00:00:01": {
+      "ECHO_REPLY": 2,
+      "FEATURES_REQUEST": 1,
+      "HELLO": 1,
+      "PACKET_OUT": 10,
+      "STATS_REQUEST.DESC": 1
+    },
+    "slicer_fvadmin_dpid=00:00:00:00:00:00:00:05": {
+      "ECHO_REPLY": 36,
+      "FEATURES_REQUEST": 1,
+      "HELLO": 1,
+      "PACKET_OUT": 333,
+      "STATS_REQUEST.DESC": 1
+    },
+    "slicer_fvadmin_dpid=00:00:00:00:00:00:00:06": {
+      "ECHO_REPLY": 15,
+      "FEATURES_REQUEST": 1,
+      "HELLO": 1,
+      "PACKET_OUT": 94,
+      "STATS_REQUEST.DESC": 1
+    },
+    "slicer_fvadmin_dpid=00:00:00:00:00:00:00:07": {
+      "ECHO_REPLY": 36,
+      "FEATURES_REQUEST": 1,
+      "HELLO": 1,
+      "PACKET_OUT": 224,
+      "STATS_REQUEST.DESC": 1
+    }
+  },
+  "tx": {
+    "Total": {
+      "ECHO_REPLY": 4963,
+      "ECHO_REQUEST": 4963,
+      "FEATURES_REPLY": 13,
+      "FEATURES_REQUEST": 13,
+      "HELLO": 26,
+      "PACKET_IN": 19862,
+      "PACKET_OUT": 34799,
+      "PORT_STATUS": 33,
+      "STATS_REPLY.DESC": 13,
+      "STATS_REQUEST.DESC": 13
+    },
+    "slicer_fvadmin_dpid=00:00:00:00:00:00:00:01": {
+      "ECHO_REPLY": 2,
+      "ECHO_REQUEST": 2,
+      "FEATURES_REPLY": 1,
+      "FEATURES_REQUEST": 1,
+      "HELLO": 2,
+      "PACKET_OUT": 10,
+      "PORT_STATUS": 3,
+      "STATS_REPLY.DESC": 1,
+      "STATS_REQUEST.DESC": 1
+    },
+    "slicer_fvadmin_dpid=00:00:00:00:00:00:00:05": {
+      "ECHO_REPLY": 36,
+      "ECHO_REQUEST": 36,
+      "FEATURES_REPLY": 1,
+      "FEATURES_REQUEST": 1,
+      "HELLO": 2,
+      "PACKET_IN": 222,
+      "PACKET_OUT": 333,
+      "PORT_STATUS": 3,
+      "STATS_REPLY.DESC": 1,
+      "STATS_REQUEST.DESC": 1
+    },
+    "slicer_fvadmin_dpid=00:00:00:00:00:00:00:06": {
+      "ECHO_REPLY": 15,
+      "ECHO_REQUEST": 15,
+      "FEATURES_REPLY": 1,
+      "FEATURES_REQUEST": 1,
+      "HELLO": 2,
+      "PACKET_IN": 44,
+      "PACKET_OUT": 94,
+      "PORT_STATUS": 5,
+      "STATS_REPLY.DESC": 1,
+      "STATS_REQUEST.DESC": 1
+    },
+    "slicer_fvadmin_dpid=00:00:00:00:00:00:00:07": {
+      "ECHO_REPLY": 36,
+      "ECHO_REQUEST": 36,
+      "FEATURES_REPLY": 1,
+      "FEATURES_REQUEST": 1,
+      "HELLO": 2,
+      "PACKET_IN": 110,
+      "PACKET_OUT": 224,
+      "PORT_STATUS": 5,
+      "STATS_REPLY.DESC": 1,
+      "STATS_REQUEST.DESC": 1
+    }
+  }
+}

@@ -17,7 +17,9 @@ package org.jfvclient;
 
 import org.jfvclient.requests.AddSlice;
 import org.jfvclient.requests.ListDatapathInfo;
+import org.jfvclient.requests.ListSliceHealth;
 import org.jfvclient.requests.ListSliceInfo;
+import org.jfvclient.requests.ListSliceStats;
 
 import com.google.gson.JsonNull;
 
@@ -103,6 +105,14 @@ public class FVRpcRequest<V>
 		else if (params instanceof ListSliceInfo)
 		{
 			this.method = "list-slice-info";
+		}
+		else if (params instanceof ListSliceHealth)
+		{
+			this.method = "list-slice-health";
+		}
+		else if (params instanceof ListSliceStats)
+		{
+			this.method = "list-slice-stats";
 		}
 		else
 		{
