@@ -39,6 +39,7 @@ import org.jfvclient.requests.AddSlice;
 import org.jfvclient.requests.ListSliceInfo;
 import org.jfvclient.responses.DataPaths;
 import org.jfvclient.responses.DatapathInfo;
+import org.jfvclient.responses.FVHealth;
 import org.jfvclient.responses.SliceInfo;
 import org.jfvclient.responses.SliceList;
 import org.jfvclient.serialisers.DpidSerialiser;
@@ -224,7 +225,7 @@ public class JFVClient
 			JFVErrorResponseException
 	{
 		// Gson g = getGson();
-		FVRpcRequest<AddSlice> asr = new FVRpcRequest<AddSlice>("add-slice", s);
+		FVRpcRequest<AddSlice> asr = new FVRpcRequest<AddSlice>(s);
 		String response = send(gson, asr);
 		Type t = new TypeToken<FVRpcResponse<Boolean>>()
 		{
@@ -240,7 +241,7 @@ public class JFVClient
 	public SliceList listSlices() throws IOException, JFVErrorResponseException
 	{
 		FVRpcRequest lsr = new FVRpcRequest(
-				FVRpcRequest.NoParamType.list_slices, null);
+				FVRpcRequest.NoParamType.list_slices);
 		String response = send(gson, lsr);
 		Type t = new TypeToken<FVRpcResponse<SliceList>>()
 		{
@@ -257,7 +258,7 @@ public class JFVClient
 			JFVErrorResponseException
 	{
 		FVRpcRequest lsr = new FVRpcRequest(
-				FVRpcRequest.NoParamType.list_datapaths, null);
+				FVRpcRequest.NoParamType.list_datapaths);
 		String response = send(gson, lsr);
 		Type t = new TypeToken<FVRpcResponse<DataPaths>>()
 		{
@@ -273,7 +274,7 @@ public class JFVClient
 	public DatapathInfo listDataPathInfo(Dpid d) throws IOException,
 			JFVErrorResponseException
 	{
-		FVRpcRequest<Dpid> lsr = new FVRpcRequest<Dpid>("list-datapath-info", d);
+		FVRpcRequest<Dpid> lsr = new FVRpcRequest<Dpid>(d);
 		String response = send(gson, lsr);
 		Type t = new TypeToken<FVRpcResponse<DatapathInfo>>()
 		{
@@ -303,4 +304,20 @@ public class JFVClient
 		return resp.getResult();
 	}
 
+
+	public FVHealth listFVHealth() throws JFVErrorResponseException, IOException
+	{
+		FVRpcRequest lsr = new FVRpcRequest(
+				FVRpcRequest.NoParamType.list_fv_health);
+		String response = send(gson, lsr);
+		Type t = new TypeToken<FVRpcResponse<FVHealth>>()
+		{
+		}.getType();
+		FVRpcResponse<FVHealth> resp = gson.fromJson(response, t);
+		if (resp.isError())
+		{
+			throw new JFVErrorResponseException(resp.getError());
+		}
+		return resp.getResult();
+	}
 }
