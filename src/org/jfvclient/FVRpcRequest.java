@@ -126,7 +126,7 @@ public class FVRpcRequest<V>
 	 * @param t
 	 *            the method
 	 * @param id
-	 *            a request ID.
+	 *            a request ID. Must not be null.
 	 */
 	public FVRpcRequest(NoParamType t, String id)
 	{
@@ -157,6 +157,11 @@ public class FVRpcRequest<V>
 		this.id = id;
 		params = (V) JsonNull.INSTANCE;
 
+	}
+
+	public FVRpcRequest(NoParamType t)
+	{
+		this(t,t.name() + Math.round(Math.random()*1000));
 	}
 
 	/**
