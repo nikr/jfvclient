@@ -14,10 +14,11 @@ import org.junit.runners.Suite.SuiteClasses;
  * <li>The FlowVisor connection info is set in
  * <code>resources/visor.properties</code></li>
  * <li>The FlowVisor controls a Mininet network.</li>
- * <li> The Flowvisor topology is 'tree,2,2'. </li>
+ * <li>The Flowvisor topology is 'tree,2,2'.</li>
  * </ul>
  *
  * the tree topology looks as follows (switch port numbers in brackets)
+ *
  * <pre>
  *          -------
  *         |  S5   |
@@ -36,7 +37,9 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
 	{ ListDatapathInfoRRTest.class, ListDatapathRRTest.class,
-			ListLinksRRTest.class,  AddSliceRRTest.class, ListSliceInfoRRTest.class, ListFVHealthRRTest.class})
+			ListLinksRRTest.class, AddSliceRRTest.class,
+			ListSliceInfoRRTest.class, ListFVHealthRRTest.class,
+			ListSliceHealthRRTest.class})
 public class RequestResponseTests
 {
 

@@ -36,10 +36,12 @@ import javax.net.ssl.SSLSession;
 import org.jfvclient.data.Dpid;
 import org.jfvclient.deserialisers.DpidDeserialiser;
 import org.jfvclient.requests.AddSlice;
+import org.jfvclient.requests.ListSliceHealth;
 import org.jfvclient.requests.ListSliceInfo;
 import org.jfvclient.responses.DataPaths;
 import org.jfvclient.responses.DatapathInfo;
 import org.jfvclient.responses.FVHealth;
+import org.jfvclient.responses.SliceHealth;
 import org.jfvclient.responses.SliceInfo;
 import org.jfvclient.responses.SliceList;
 import org.jfvclient.serialisers.DpidSerialiser;
@@ -314,6 +316,22 @@ public class JFVClient
 		{
 		}.getType();
 		FVRpcResponse<FVHealth> resp = gson.fromJson(response, t);
+		if (resp.isError())
+		{
+			throw new JFVErrorResponseException(resp.getError());
+		}
+		return resp.getResult();
+	}
+
+	public SliceHealth listSliceHealth(String sliceName) throws JFVErrorResponseException, IOException
+	{
+		FVRpcRequest<ListSliceHealth> lsr = new FVRpcRequest<ListSliceHealth>("list-slice-health"
+				,new ListSliceHealth(sliceName));
+		String response = send(gson, lsr);
+		Type t = new TypeToken<FVRpcResponse<SliceHealth>>()
+		{
+		}.getType();
+		FVRpcResponse<SliceHealth> resp = gson.fromJson(response, t);
 		if (resp.isError())
 		{
 			throw new JFVErrorResponseException(resp.getError());
