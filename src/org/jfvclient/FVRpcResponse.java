@@ -15,7 +15,7 @@
  */
 package org.jfvclient;
 
-import org.jfvclient.responses.Error;
+import org.jfvclient.responses.ErrorResponse;
 
 /**
  * Represents a JSON-RPC response from the FlowVisor. Takes the form
@@ -48,7 +48,7 @@ public class FVRpcResponse<V>
 
     String id;
     V result;
-    Error error;
+    ErrorResponse error;
     final String jsonrpc = "2.0";
 
     /**
@@ -67,9 +67,9 @@ public class FVRpcResponse<V>
      * Returns the error object associated with this response.
      * 
      * @return The error object, or null if this is not an error response. 
-     * @see org.jfvclient.responses.Error
+     * @see org.jfvclient.responses.ErrorResponse
      */
-    public Error getError()
+    public ErrorResponse getError()
     {
         return error;
     }
