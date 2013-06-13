@@ -15,10 +15,9 @@
  */
 package org.jfvclient;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -36,8 +35,12 @@ import javax.net.ssl.SSLSession;
 
 import org.jfvclient.data.Dpid;
 import org.jfvclient.deserialisers.DpidDeserialiser;
-import org.jfvclient.requests.ListDatapathInfo;
+import org.jfvclient.requests.AddSlice;
+import org.jfvclient.requests.ListSliceInfo;
+import org.jfvclient.responses.DataPaths;
 import org.jfvclient.responses.DatapathInfo;
+import org.jfvclient.responses.SliceInfo;
+import org.jfvclient.responses.SliceList;
 import org.jfvclient.serialisers.DpidSerialiser;
 
 import com.google.gson.Gson;
@@ -46,155 +49,125 @@ import com.google.gson.reflect.TypeToken;
 
 /**
  *
+ *
  * @author Niklas Rehfeld
  */
 public class JFVClient
 {
 
-    public static void main(String[] args) throws MalformedURLException, IOException
-    {
-    	Gson g = getGson();
-        FVRpcRequest r = new FVRpcRequest(FVRpcRequest.NoParamType.list_version, "lv1");
-        send(g, r);
-        ListDatapathInfo l = new ListDatapathInfo();
-        l.setDpid(new Dpid(Dpid.toDpid(1)));
-        FVRpcRequest<ListDatapathInfo> ldp = new FVRpcRequest<ListDatapathInfo>("list-datapath-info", "ldpi1", l);
-        String resp = (String) send(g,ldp);
+	Properties config;
+	HttpsURLConnection connection;
+	Gson gson;
+
+	public JFVClient()
+	{
+		config = getProps();
+		try
+		{
+			connection = connect();
+		} catch (Exception e)
+		{
+			System.err.println("Cannot connect to FlowVisor: "
+					+ e.getLocalizedMessage());
+			throw new Error("Cannot connect to Flowvisor", e);
+		}
+		gson = getGson();
 
 
-
-        FVRpcResponse<DatapathInfo> res = null;
-        Type respLink = new TypeToken<FVRpcResponse<DatapathInfo>>()
-                {
-                }.getType();
-        res = g.fromJson(resp, respLink);
-        System.out.println(res.toString());
-
-        DatapathInfo dpi = res.getResult();
-        System.out.println("dpid : "  + dpi.getDpid());
-        System.out.println(dpi.getNumPorts());
-
-        r = new FVRpcRequest(FVRpcRequest.NoParamType.list_datapaths, "ldps12");
-        send(g, r);
-
-    }
+//		Doesn't work.
+//		if (config.containsKey("truststore") && config.containsKey("truststorepw"))
+//		{
+//			System.setProperty("javax.net.ssl.trustStore", config.getProperty("truststore"));
+//			System.setProperty("javax.net.ssl.trustStorePassword", config.getProperty("truststorepw"));
+//		}
 
 
+	}
 
-//    private static void test()
-//    {
-////      Gson g = new Gson();
-//      Gson g = getGson();
-//      FVRpcRequest r = new FVRpcRequest("list-version", "list-version-1", null);
-//      System.out.println(g.toJson(r));
-//
-//      r = new FVRpcRequest(FVRpcRequest.NoParamType.list_links,
-//              "listlinks07662");
-//      System.out.println(g.toJson(r));
-//
-////      HttpClient c = new DefaultHttpClient();
-//
-//      String result = "{\"id\":\"fdsa\", \"result\":\"chickens\",\"jsonrpc\":\"2.0\"}";
-//      FVRpcResponse resp = g.fromJson(result, FVRpcResponse.class);
-//      System.out.println(resp);
-//      result = "{\"id\":\"fdsa\", \"error\":{\"code\" : -32146, \"msg\" : \"chickens\"},\"jsonrpc\":\"2.0\"}";
-//      resp = g.fromJson(result, FVRpcResponse.class);
-//      System.out.println(resp);
-//      result = "{\"id\":\"fdsa\", \"result\":{\"src-dpid\" : \"fdsa\"},\"jsonrpc\":\"2.0\"}";
-//      FVRpcResponse<Link> rl;
-//      Type respLink = new TypeToken<FVRpcResponse<Link>>()
-//      {
-//      }.getType();
-//      rl = g.fromJson(result, respLink);
-//      System.out.println(rl);
-//
-//
-//      result = "{\"id\":\"fdsa\", \"result\":[{\"src-dpid\" : \"fdsa\"},{\"src-dpid\" : \"fdsaffddd\"}],\"jsonrpc\":\"2.0\"}";
-//      FVRpcResponse<List<Link>> rll;
-//      respLink = new TypeToken<FVRpcResponse<List<Link>>>()
-//      {
-//      }.getType();
-//      rll = g.fromJson(result, respLink);
-//      System.out.println(rll);
-//
-//      result = "{\"id\":\"fdsa\", \"result\":[{\"slice-name\" : \"fdsa\", \"admin-status\" : true}],\"jsonrpc\":\"2.0\"}";
-//      FVRpcResponse<List<SliceListEntry>> sll;
-//      respLink = new TypeToken<FVRpcResponse<List<SliceListEntry>>>()
-//      {
-//      }.getType();
-//      sll = g.fromJson(result, respLink);
-//      System.out.println(sll);
-//
-//      result = "{\"id\":\"fdsa\", \"result\":{\"current-flowmod-usage\" : {\"fdsa\" : 1234 ,\"slice2\" : 3456}},\"jsonrpc\":\"2.0\"}";
-//      FVRpcResponse<DatapathInfo> dpr;
-//      respLink = new TypeToken<FVRpcResponse<DatapathInfo>>()
-//      {
-//      }.getType();
-//      dpr = g.fromJson(result, respLink);
-//      System.out.println(dpr.getResult().getCurrentFlowmodUsage());
-//
-//    }
+	private HttpsURLConnection connect() throws MalformedURLException,
+			IOException
+	{
+		Authenticator.setDefault(new SimpleAuth());
 
+		String hostname = config.getProperty("hostname");
+		String port = config.getProperty("port");
 
-
-    protected static Object send(Gson g, Object request) throws MalformedURLException, IOException
-    {
-    	Properties props = getProps();
-
-    	Authenticator.setDefault(new SimpleAuth());
-
-    	String uname = props.getProperty("username");
-    	String pw = props.getProperty("password");
-
-        HttpsURLConnection con = (HttpsURLConnection) new URL(
-                "https://bordeaux:8001").openConnection();
-        con.setRequestMethod("POST");
-        con.setRequestProperty("User-Agent", "jfvclient");
-        con.setDoOutput(true);
-        con.setHostnameVerifier(new HostnameVerifier()
+		HttpsURLConnection con = (HttpsURLConnection) new URL("https://"
+				+ hostname + ":" + port).openConnection();
+		con.setRequestMethod("POST");
+		con.setRequestProperty("User-Agent", "jfvclient");
+		con.setRequestProperty("content-type", "application/json");
+		con.setDoOutput(true);
+		con.setDoInput(true);
+		// This is bad. it bypasses the Hostname Verifier, and makes things
+		// insecure.
+		// TODO remove this from the production code.
+		con.setHostnameVerifier(new HostnameVerifier()
 		{
 
 			@Override
-			public boolean verify(String arg0, SSLSession arg1)
+			public boolean verify(String hostname, SSLSession session)
 			{
+				if (!session.getPeerHost().equalsIgnoreCase(hostname))
+				{
+					System.err.println("WARNING: SSL session hostname ("
+							+ session.getPeerHost()
+							+ ") is different to actual host name (" + hostname
+							+ ")");
+				}
 				return true;
 			}
 		});
+		return con;
+	}
 
-        OutputStream os = con.getOutputStream();
-        OutputStreamWriter w = new OutputStreamWriter(new BufferedOutputStream(
-                os));
-        String req = g.toJson(request);
-        System.out.println(req);
-        w.write(req);
-        w.flush();
-        w.close();
+	protected String send(Gson g, Object request) throws IOException
 
-        if (con.getResponseCode() != 200)
-        {
-            System.out.println("Response is not OK -- " + con.getResponseCode() + "  " + con.getResponseMessage());
-        }
-        BufferedReader iw = new BufferedReader(new InputStreamReader(con.getInputStream()));
-        String response = "";
-        String in;
-        while ((in = iw.readLine()) != null)
-        {
-            response += in;
-        }
-        iw.close();
-        System.out.println("response: " + response);
+	{
+		//TODO need to check that the connection is still OK, and reconnect if necessary.
 
-        return response;
-//        return null;
-    }
+		OutputStream os = connection.getOutputStream();
+		BufferedWriter w = new BufferedWriter(new OutputStreamWriter(os));
+		String req = g.toJson(request);
 
-    public static class SimpleAuth extends Authenticator
-    {
-    	@Override
-    	 public PasswordAuthentication getPasswordAuthentication () {
-            //get the properties file and read password etc. from there. 
-    		Properties props = null;
-    		try
+		w.write(req);
+		w.flush();
+		w.close();
+
+		// TODO remove this
+		System.out.println("req: " + req);
+
+		if (connection.getResponseCode() != 200)
+		{
+			System.err.println("Response is not OK -- "
+					+ connection.getResponseCode() + "  "
+					+ connection.getResponseMessage());
+		}
+		BufferedReader iw = new BufferedReader(new InputStreamReader(
+				connection.getInputStream()));
+		String response = "";
+		String in;
+		while ((in = iw.readLine()) != null)
+		{
+			response += in;
+		}
+		iw.close();
+
+		// TODO remove this.
+		System.out.println("response: " + response);
+
+		return response;
+	}
+
+	public static class SimpleAuth extends Authenticator
+	{
+		private static String uname;
+		private static String pw;
+
+		static
+		{ // get the properties file and read password etc. from there.
+			Properties props = null;
+			try
 			{
 				props = getProps();
 
@@ -205,25 +178,129 @@ public class JFVClient
 				throw new Error(e.getLocalizedMessage());
 			}
 
-    		String uname = props.getProperty("username");
-    		String pw = props.getProperty("password");
-             return new PasswordAuthentication (uname, pw.toCharArray());
+			uname = props.getProperty("username");
+			pw = props.getProperty("password");
+		}
 
-         }
-    }
+		@Override
+		public PasswordAuthentication getPasswordAuthentication()
+		{
+			return new PasswordAuthentication(uname, pw.toCharArray());
 
-    protected static Gson getGson()
-    {
-        GsonBuilder gb = new GsonBuilder();
-        gb.registerTypeAdapter(Dpid.class, new DpidSerialiser());
-        gb.registerTypeAdapter(Dpid.class, new DpidDeserialiser());
-        return gb.create();
-    }
+		}
+	}
 
-    private static Properties getProps() throws FileNotFoundException, IOException
-    {
-    	Properties p = new Properties();
-    	p.load(new FileInputStream("resources/visor.properties"));
-    	return p;
-    }
+	protected static Gson getGson()
+	{
+		GsonBuilder gb = new GsonBuilder();
+		gb.registerTypeAdapter(Dpid.class, new DpidSerialiser());
+		gb.registerTypeAdapter(Dpid.class, new DpidDeserialiser());
+		return gb.create();
+	}
+
+	private static Properties getProps()
+	{
+		Properties props = new Properties();
+		try
+		{
+			props.load(new FileInputStream("resources/visor.properties"));
+		} catch (Exception e)
+		{
+			System.err.println("Properties file not loaded: "
+					+ e.getLocalizedMessage());
+			props = new Properties();
+			props.put("hostname", "localhost");
+			props.put("port", 8080);
+			props.put("password", "");
+			props.put("username", "fvadmin");
+//			props.put("truststore", "~/.keystore");
+//			props.put("truststorepw", "changeme");
+		}
+
+		return props;
+	}
+
+	public boolean addSlice(AddSlice s) throws IOException,
+			JFVErrorResponseException
+	{
+		// Gson g = getGson();
+		FVRpcRequest<AddSlice> asr = new FVRpcRequest<AddSlice>("add-slice", s);
+		String response = send(gson, asr);
+		Type t = new TypeToken<FVRpcResponse<Boolean>>()
+		{
+		}.getType();
+		FVRpcResponse<Boolean> resp = gson.fromJson(response, t);
+		if (resp.isError())
+		{
+			throw new JFVErrorResponseException(resp.getError());
+		}
+		return resp.getResult().booleanValue();
+	}
+
+	public SliceList listSlices() throws IOException, JFVErrorResponseException
+	{
+		FVRpcRequest lsr = new FVRpcRequest(
+				FVRpcRequest.NoParamType.list_slices, null);
+		String response = send(gson, lsr);
+		Type t = new TypeToken<FVRpcResponse<SliceList>>()
+		{
+		}.getType();
+		FVRpcResponse<SliceList> resp = gson.fromJson(response, t);
+		if (resp.isError())
+		{
+			throw new JFVErrorResponseException(resp.getError());
+		}
+		return resp.getResult();
+	}
+
+	public DataPaths listDatapaths() throws IOException,
+			JFVErrorResponseException
+	{
+		FVRpcRequest lsr = new FVRpcRequest(
+				FVRpcRequest.NoParamType.list_datapaths, null);
+		String response = send(gson, lsr);
+		Type t = new TypeToken<FVRpcResponse<DataPaths>>()
+		{
+		}.getType();
+		FVRpcResponse<DataPaths> resp = gson.fromJson(response, t);
+		if (resp.isError())
+		{
+			throw new JFVErrorResponseException(resp.getError());
+		}
+		return resp.getResult();
+	}
+
+	public DatapathInfo listDataPathInfo(Dpid d) throws IOException,
+			JFVErrorResponseException
+	{
+		FVRpcRequest<Dpid> lsr = new FVRpcRequest<Dpid>("list-datapath-info", d);
+		String response = send(gson, lsr);
+		Type t = new TypeToken<FVRpcResponse<DatapathInfo>>()
+		{
+		}.getType();
+		FVRpcResponse<DatapathInfo> resp = gson.fromJson(response, t);
+		if (resp.isError())
+		{
+			throw new JFVErrorResponseException(resp.getError());
+		}
+		return resp.getResult();
+	}
+
+	public SliceInfo listSliceInfo(String sliceName) throws IOException,
+			JFVErrorResponseException
+	{
+		FVRpcRequest<ListSliceInfo> lsr = new FVRpcRequest<ListSliceInfo>(
+				new ListSliceInfo(sliceName));
+		String response = send(gson, lsr);
+		Type t = new TypeToken<FVRpcResponse<SliceInfo>>()
+		{
+		}.getType();
+		FVRpcResponse<SliceInfo> resp = gson.fromJson(response, t);
+		if (resp.isError())
+		{
+			throw new JFVErrorResponseException(resp.getError());
+		}
+		return resp.getResult();
+	}
+
 }
