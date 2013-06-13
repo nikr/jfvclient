@@ -36,7 +36,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
 	{ ListDatapathInfoRRTest.class, ListDatapathRRTest.class,
-			ListLinksRRTest.class,  AddSliceRRTest.class, ListSliceInfoRRTest.class})
+			ListLinksRRTest.class,  AddSliceRRTest.class, ListSliceInfoRRTest.class, ListFVHealthRRTest.class})
 public class RequestResponseTests
 {
 
