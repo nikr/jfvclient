@@ -25,6 +25,8 @@ import com.google.gson.reflect.TypeToken;
 public class ListDatapathInfoRRTest
 {
 
+	private JFVClient c = new JFVClient();
+
 	@Test
 	public void testExisting() throws MalformedURLException, IOException
 	{
@@ -32,7 +34,7 @@ public class ListDatapathInfoRRTest
 		//list datapath info for device 0::0:06
 		ListDatapathInfo ldi = new ListDatapathInfo(new Dpid(Dpid.toDpid(6)));
 		FVRpcRequest<ListDatapathInfo> ldiRequest = new FVRpcRequest<ListDatapathInfo>("list-datapath-info", "ldpi1", ldi);
-		String resp = (String) JFVClient.send(g,ldiRequest);
+		String resp = c.send(g,ldiRequest);
 
 		FVRpcResponse<DatapathInfo> res = null;
         Type respType = new TypeToken<FVRpcResponse<DatapathInfo>>()
@@ -56,7 +58,7 @@ public class ListDatapathInfoRRTest
 		Gson g = TestUtils.getGson();
 		ListDatapathInfo ldi = new ListDatapathInfo(new Dpid(Dpid.toDpid(23)));
 		FVRpcRequest<ListDatapathInfo> ldiRequest = new FVRpcRequest<ListDatapathInfo>("list-datapath-info", "ldpi23", ldi);
-		String resp = (String) JFVClient.send(g,ldiRequest);
+		String resp = c.send(g,ldiRequest);
 
 		FVRpcResponse<DatapathInfo> res = null;
         Type respType = new TypeToken<FVRpcResponse<DatapathInfo>>()
@@ -65,7 +67,7 @@ public class ListDatapathInfoRRTest
         res = g.fromJson(resp, respType);
         assertTrue("Expected an error response, got " + res, res.isError());
         //expect a "invalid parameters" error (-32602) .
-        assertEquals("Expected Error code -32602, got " + res.getError().getCode(), res.getError().getCode(), -32602 );
+        assertEquals("Expected ErrorResponse code -32602, got " + res.getError().getCode(), res.getError().getCode(), -32602 );
 //        if (res.isError())
 //        {
 //        	fail("result should not be an error.");

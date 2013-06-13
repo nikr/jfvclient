@@ -20,7 +20,10 @@ import com.google.gson.reflect.TypeToken;
 public class ListLinksRRTest
 {
 
+	JFVClient c = new JFVClient();
+
 	/**
+	 *
 	 * Result should be
 	 * <pre>
 	 * [
@@ -30,17 +33,18 @@ public class ListLinksRRTest
 	 * {"srcPort":"3","dstPort":"2","dstDPID":"00:00:00:00:00:00:00:05","srcDPID":"00:00:00:00:00:00:00:07"}
 	 * ]
 	 * </pre>
-	 * 
+	 *
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
 	@Test
 	public void test() throws MalformedURLException, IOException
 	{
+
 		Gson g = TestUtils.getGson();
 		FVRpcRequest llRequest = new FVRpcRequest(
 				FVRpcRequest.NoParamType.list_links, "ll1");
-		String resp = (String) JFVClient.send(g, llRequest);
+		String resp = c.send(g, llRequest);
 
 		FVRpcResponse<LinksList> res = null;
 		Type respType = new TypeToken<FVRpcResponse<LinksList>>()
@@ -51,7 +55,7 @@ public class ListLinksRRTest
 		assertTrue("Result should not be an error ", !res.isError());
 		LinksList d = res.getResult();
 
-		assertEquals(d.size(), 4);
+		assertEquals(4, d.size());
 
 		// need to think of some way of testing the results properly. need some
 		// way of making new Link objects to compare to.
