@@ -46,13 +46,13 @@ public class AddSlice
 	@SerializedName("drop-policy")
 	private String dropPolicy;
 	@SerializedName("recv-lldp")
-	private boolean recvLLDP;
+	private Boolean recvLLDP;
 	@SerializedName("flowmod-limit")
-	private int flowmodLimit;
+	private Integer flowmodLimit;
 	@SerializedName("rate-limit")
-	private int rateLimit;
+	private Integer rateLimit;
 	@SerializedName("admin-status")
-	private boolean adminStatus;
+	private Boolean adminStatus;
 
 	/**
 	 * This constructor fills in all of the mandatory elements of an
