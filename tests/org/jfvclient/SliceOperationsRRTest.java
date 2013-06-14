@@ -10,6 +10,7 @@ import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 
 import org.jfvclient.requests.AddSlice;
+import org.jfvclient.requests.RemoveSlice;
 import org.jfvclient.requests.UpdateSlice;
 import org.jfvclient.responses.Slice;
 import org.jfvclient.responses.SliceList;
@@ -33,7 +34,7 @@ public class SliceOperationsRRTest
 {
 	static Type t;
 
-	private static String slicename = "testslice123";
+	private String slicename = "testslice123";
 	private JFVClient c = new JFVClient();
 
 	@BeforeClass
@@ -53,7 +54,7 @@ public class SliceOperationsRRTest
 		{
 			if (s.getSlice_name().startsWith("testslice123"))
 			{
-				//TODO remove slice
+				c.removeSlice(s.getSlice_name());
 			}
 		}
 	}
@@ -107,6 +108,22 @@ public class SliceOperationsRRTest
 
 	}
 
+	@Test
+	public void testRemoveValidSlice() throws IOException
+	{
+		if (!checkExists(slicename))
+		{
+			addSlice(slicename);
+		}
+		assertTrue("slice still doesn't exist after adding it. I quit.",
+				checkExists(slicename));
+
+		FVRpcResponse<Boolean> res = removeSlice(slicename);
+		assertFalse("Should not be an error response.", res.isError());
+		assertTrue("Update returned false, expected true", res.getResult());
+
+	}
+
 	private boolean checkExists(String slicename)
 	{
 		try
@@ -142,6 +159,18 @@ public class SliceOperationsRRTest
 		Gson g = TestUtils.getGson();
 		FVRpcRequest<UpdateSlice> asr = new FVRpcRequest<UpdateSlice>(
 				u);
+		String res = c.send(g, asr);
+
+		return g.fromJson(res, t);
+
+	}
+
+	private FVRpcResponse<Boolean> removeSlice(String name) throws IOException
+	{
+		RemoveSlice rs = new RemoveSlice(name);
+		Gson g = TestUtils.getGson();
+		FVRpcRequest<RemoveSlice> asr = new FVRpcRequest<RemoveSlice>(
+				rs);
 		String res = c.send(g, asr);
 
 		return g.fromJson(res, t);

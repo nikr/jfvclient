@@ -39,6 +39,7 @@ import org.jfvclient.requests.AddSlice;
 import org.jfvclient.requests.ListSliceHealth;
 import org.jfvclient.requests.ListSliceInfo;
 import org.jfvclient.requests.ListSliceStats;
+import org.jfvclient.requests.RemoveSlice;
 import org.jfvclient.requests.UpdateSlice;
 import org.jfvclient.responses.DataPaths;
 import org.jfvclient.responses.DatapathInfo;
@@ -392,4 +393,21 @@ public class JFVClient
 		}
 		return resp.getResult().booleanValue();
 	}
+
+	public boolean removeSlice(String sliceName) throws IOException, JFVErrorResponseException
+	{
+		FVRpcRequest<RemoveSlice> rsr = new FVRpcRequest<RemoveSlice>(new RemoveSlice(sliceName));
+		String response = send(gson, rsr);
+		Type t = new TypeToken<FVRpcResponse<Boolean>>()
+		{
+		}.getType();
+		FVRpcResponse<Boolean> resp = gson.fromJson(response, t);
+		if (resp.isError())
+		{
+			throw new JFVErrorResponseException(resp.getError());
+		}
+		return resp.getResult().booleanValue();
+	}
+
+
 }
