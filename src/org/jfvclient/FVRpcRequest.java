@@ -15,6 +15,8 @@
  */
 package org.jfvclient;
 
+import org.jfvclient.data.Flowspace;
+import org.jfvclient.requests.AddFlowspace;
 import org.jfvclient.requests.AddSlice;
 import org.jfvclient.requests.ListDatapathInfo;
 import org.jfvclient.requests.ListSliceHealth;
@@ -123,6 +125,10 @@ public class FVRpcRequest<V>
 		else if (params instanceof RemoveSlice)
 		{
 			this.method =  "remove-slice";
+		}
+		else if (params instanceof AddFlowspace)
+		{
+			this.method = "add-flowspace";
 		}
 		else
 		{

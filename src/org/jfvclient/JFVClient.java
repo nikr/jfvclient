@@ -34,7 +34,9 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
 
 import org.jfvclient.data.Dpid;
+import org.jfvclient.data.Flowspace;
 import org.jfvclient.deserialisers.DpidDeserialiser;
+import org.jfvclient.requests.AddFlowspace;
 import org.jfvclient.requests.AddSlice;
 import org.jfvclient.requests.ListSliceHealth;
 import org.jfvclient.requests.ListSliceInfo;
@@ -409,5 +411,34 @@ public class JFVClient
 		return resp.getResult().booleanValue();
 	}
 
+	public boolean addFlowspace(AddFlowspace fs) throws IOException, JFVErrorResponseException
+	{
+
+		FVRpcRequest<AddFlowspace> afr = new FVRpcRequest<AddFlowspace>(fs);
+		String response = send(gson, afr);
+		Type t = new TypeToken<FVRpcResponse<Boolean>>()
+		{
+		}.getType();
+		FVRpcResponse<Boolean> resp = gson.fromJson(response, t);
+		if (resp.isError())
+		{
+			throw new JFVErrorResponseException(resp.getError());
+		}
+		return resp.getResult().booleanValue();
+	}
+
+	/**
+	 * convenience method for adding a single flowspace.
+	 * @param f
+	 * @return
+	 * @throws IOException
+	 * @throws JFVErrorResponseException
+	 */
+	public boolean addFlowspace(Flowspace f) throws IOException, JFVErrorResponseException
+	{
+		AddFlowspace a = new AddFlowspace();
+		a.add(f);
+		return addFlowspace(a);
+	}
 
 }
