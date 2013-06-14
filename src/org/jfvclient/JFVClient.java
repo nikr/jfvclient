@@ -39,6 +39,7 @@ import org.jfvclient.requests.AddSlice;
 import org.jfvclient.requests.ListSliceHealth;
 import org.jfvclient.requests.ListSliceInfo;
 import org.jfvclient.requests.ListSliceStats;
+import org.jfvclient.requests.UpdateSlice;
 import org.jfvclient.responses.DataPaths;
 import org.jfvclient.responses.DatapathInfo;
 import org.jfvclient.responses.FVHealth;
@@ -61,21 +62,26 @@ public class JFVClient
 {
 
 	Properties config;
-	HttpsURLConnection connection;
+	// HttpsURLConnection connection;
 	Gson gson;
+
+	private String hostName;
+	private String hostPort;
 
 	public JFVClient()
 	{
 		config = getProps();
-		try
-		{
-			connection = connect();
-		} catch (Exception e)
-		{
-			System.err.println("Cannot connect to FlowVisor: "
-					+ e.getLocalizedMessage());
-			throw new Error("Cannot connect to Flowvisor", e);
-		}
+		hostName = config.getProperty("hostname");
+		hostPort = config.getProperty("port");
+//		try
+//		{
+//			connection = connect();
+//		} catch (Exception e)
+//		{
+//			System.err.println("Cannot connect to FlowVisor: "
+//					+ e.getLocalizedMessage());
+//			throw new Error("Cannot connect to Flowvisor", e);
+//		}
 		gson = getGson();
 
 		// Doesn't work.
@@ -90,19 +96,31 @@ public class JFVClient
 
 	}
 
+	/**
+	 * Creates a {@link HttpsURLConnection} that can be used to do a request. A
+	 * new {@link HttpsURLConnection} needs to be created for each request, as
+	 * once the connection has been read from, it cannot be written to again.
+	 *
+	 * So this really needs to be called at the beginning of
+	 * {@link #send(Gson, Object)} each time.
+	 *
+	 * @return A properly initialised HttpsURLConnection.
+	 * @throws MalformedURLException
+	 * @throws IOException
+	 */
 	private HttpsURLConnection connect() throws MalformedURLException,
 			IOException
 	{
 		Authenticator.setDefault(new SimpleAuth());
 
-		String hostname = config.getProperty("hostname");
-		String port = config.getProperty("port");
+//		String hostname = config.getProperty("hostname");
+//		String port = config.getProperty("port");
 
 		HttpsURLConnection con = (HttpsURLConnection) new URL("https://"
-				+ hostname + ":" + port).openConnection();
+				+ hostName + ":" + hostPort).openConnection();
 		con.setRequestMethod("POST");
 		con.setRequestProperty("User-Agent", "jfvclient");
-		con.setRequestProperty("content-type", "application/json");
+		con.setRequestProperty("Content-Type", "application/json");
 		con.setDoOutput(true);
 		con.setDoInput(true);
 		// This is bad. it bypasses the Hostname Verifier, and makes things
@@ -130,9 +148,7 @@ public class JFVClient
 	protected String send(Gson g, Object request) throws IOException
 
 	{
-		// TODO need to check that the connection is still OK, and reconnect if
-		// necessary.
-
+		HttpsURLConnection connection = connect();
 		OutputStream os = connection.getOutputStream();
 		BufferedWriter w = new BufferedWriter(new OutputStreamWriter(os));
 		String req = g.toJson(request);
