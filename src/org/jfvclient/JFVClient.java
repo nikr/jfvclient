@@ -73,15 +73,15 @@ public class JFVClient
 		config = getProps();
 		hostName = config.getProperty("hostname");
 		hostPort = config.getProperty("port");
-//		try
-//		{
-//			connection = connect();
-//		} catch (Exception e)
-//		{
-//			System.err.println("Cannot connect to FlowVisor: "
-//					+ e.getLocalizedMessage());
-//			throw new Error("Cannot connect to Flowvisor", e);
-//		}
+		// try
+		// {
+		// connection = connect();
+		// } catch (Exception e)
+		// {
+		// System.err.println("Cannot connect to FlowVisor: "
+		// + e.getLocalizedMessage());
+		// throw new Error("Cannot connect to Flowvisor", e);
+		// }
 		gson = getGson();
 
 		// Doesn't work.
@@ -113,8 +113,8 @@ public class JFVClient
 	{
 		Authenticator.setDefault(new SimpleAuth());
 
-//		String hostname = config.getProperty("hostname");
-//		String port = config.getProperty("port");
+		// String hostname = config.getProperty("hostname");
+		// String port = config.getProperty("port");
 
 		HttpsURLConnection con = (HttpsURLConnection) new URL("https://"
 				+ hostName + ":" + hostPort).openConnection();
@@ -375,5 +375,21 @@ public class JFVClient
 			throw new JFVErrorResponseException(resp.getError());
 		}
 		return resp.getResult();
+	}
+
+	public boolean updateSlice(UpdateSlice u) throws JFVErrorResponseException,
+			IOException
+	{
+		FVRpcRequest<UpdateSlice> lsr = new FVRpcRequest<UpdateSlice>(u);
+		String response = send(gson, lsr);
+		Type t = new TypeToken<FVRpcResponse<Boolean>>()
+		{
+		}.getType();
+		FVRpcResponse<Boolean> resp = gson.fromJson(response, t);
+		if (resp.isError())
+		{
+			throw new JFVErrorResponseException(resp.getError());
+		}
+		return resp.getResult().booleanValue();
 	}
 }

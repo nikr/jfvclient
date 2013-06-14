@@ -18,48 +18,53 @@ package org.jfvclient.responses;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * An entry in the list of responses returned by the
- * <code>list-slices</code> command.
+ * An entry in the list of responses returned by the <code>list-slices</code>
+ * command.
  *
  * @author Niklas Rehfeld
  */
 public class Slice
 {
-    @SerializedName("slice-name")
-    private String slice_name;
-    @SerializedName("admin-status")
-    private boolean admin_status;
+	@SerializedName("slice-name")
+	private String slice_name;
+	@SerializedName("admin-status")
+	private boolean admin_status;
 
-     public String getSlice_name()
-    {
-        return slice_name;
-    }
+	public Slice(String name)
+	{
+		this.slice_name = name;
+	}
 
-    public boolean isAdmin_status()
-    {
-        return admin_status;
-    }
+	public String getSlice_name()
+	{
+		return slice_name;
+	}
 
-    @Override
-    public String toString()
-    {
-        return "slice-name: " + slice_name + ", admin-status: " + admin_status;
-    }
+	public boolean isAdmin_status()
+	{
+		return admin_status;
+	}
 
-    @Override
-    public boolean equals(Object o)
-    {
-    	if (o instanceof Slice)
-    	{
-    		return slice_name.equals(((Slice) o).getSlice_name());
-    	}
-    	return false;
-    }
+	@Override
+	public String toString()
+	{
+		return "slice-name: " + slice_name + ", admin-status: " + admin_status;
+	}
 
-    @Override
-    public int hashCode()
-    {
-    	return slice_name.hashCode();
-    }
+	@Override
+	public boolean equals(Object o)
+	{
+		if (o instanceof Slice)
+		{
+			return slice_name.equals(((Slice) o).getSlice_name());
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return slice_name.hashCode();
+	}
 
 }

@@ -10,7 +10,9 @@ import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 
 import org.jfvclient.requests.AddSlice;
+import org.jfvclient.requests.UpdateSlice;
 import org.jfvclient.responses.Slice;
+import org.jfvclient.responses.SliceList;
 import org.jfvclient.testing.TestUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -40,6 +42,20 @@ public class SliceOperationsRRTest
 		t = new TypeToken<FVRpcResponse<Boolean>>()
 		{
 		}.getType();
+	}
+
+	@AfterClass
+	public static void cleanup() throws IOException, JFVErrorResponseException
+	{
+		JFVClient c = new JFVClient();
+		SliceList l = c.listSlices();
+		for (Slice s : l)
+		{
+			if (s.getSlice_name().startsWith("testslice123"))
+			{
+				//TODO remove slice
+			}
+		}
 	}
 
 	@Test
@@ -75,6 +91,21 @@ public class SliceOperationsRRTest
 
 	}
 
+	@Test
+	public void testUpdateValid() throws IOException
+	{
+		if (!checkExists(slicename))
+		{
+			addSlice(slicename);
+		}
+		assertTrue("slice still doesn't exist after adding it. I quit.",
+				checkExists(slicename));
+
+		FVRpcResponse<Boolean> res = updateSlice(slicename);
+		assertFalse("Should not be an error response.", res.isError());
+		assertTrue("Update returned false, expected true", res.getResult());
+
+	}
 
 	private boolean checkExists(String slicename)
 	{
@@ -90,10 +121,27 @@ public class SliceOperationsRRTest
 
 	private FVRpcResponse<Boolean> addSlice(String name) throws IOException
 	{
-		AddSlice a = new AddSlice(name, "tcp:localhost:6633", "nik@localhost",
+		// add a new slice with a random port, so that the controller url is
+		// different each time, as FV will not add multiple slices for a single
+		// controller.
+		AddSlice a = new AddSlice(name, "tcp:localhost:"
+				+ Math.round(Math.random() * 10000), "test@localhost",
 				"testpassword");
 		Gson g = TestUtils.getGson();
-		FVRpcRequest<AddSlice> asr = new FVRpcRequest<AddSlice>("add-slice", a);
+		FVRpcRequest<AddSlice> asr = new FVRpcRequest<AddSlice>(a);
+		String res = c.send(g, asr);
+
+		return g.fromJson(res, t);
+
+	}
+
+	private FVRpcResponse<Boolean> updateSlice(String name) throws IOException
+	{
+		UpdateSlice u = new UpdateSlice(name, "test@localhost");
+		u.setAdminStatus(false);
+		Gson g = TestUtils.getGson();
+		FVRpcRequest<UpdateSlice> asr = new FVRpcRequest<UpdateSlice>(
+				u);
 		String res = c.send(g, asr);
 
 		return g.fromJson(res, t);
