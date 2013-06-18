@@ -6,6 +6,9 @@ package org.jfvclient.responses;
 
 import com.google.gson.Gson;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.jfvclient.data.Dpid;
 import org.jfvclient.testing.TestUtils;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -18,15 +21,20 @@ public class LinkTest
 {
     
     private Link instance;
+    
     public LinkTest() 
     {
         Gson g = TestUtils.getGson();
-        
+        String input;
         try
         {
-        instance =  g.fromJson(TestUtils.readTestInput(Link.class), Link.class);
+            input = TestUtils.readTestInput(Link.class);
+            System.out.println("input: " + input);
+            instance =  g.fromJson(input, Link.class);
         } catch (IOException ex)
         {
+            Logger.getLogger(LinkTest.class.getName()).log(Level.SEVERE, null,
+                    ex);
             fail("Couldn't load test file.");
         }
     }
@@ -39,8 +47,10 @@ public class LinkTest
     {
         System.out.println("getSrc_dpid");
         String expResult = "11:22:33:44:55:66:77:88";
-        String result = instance.getSrc_dpid();
-        assertEquals(expResult, result);
+        Dpid d = new Dpid(expResult);
+        System.out.println(instance);
+        Dpid result = instance.getSrc_dpid();
+        assertEquals(d, result);
     }
 
     /**
@@ -62,8 +72,8 @@ public class LinkTest
     public void testGetDst_dpid()
     {
         System.out.println("getDst_dpid");
-        String expResult = "22:33:44:55:66:77:88:99";
-        String result = instance.getDst_dpid();
+        Dpid expResult = new Dpid("22:33:44:55:66:77:88:99");
+        Dpid result = instance.getDst_dpid();
         assertEquals(expResult, result);
     }
 
