@@ -55,6 +55,7 @@ import org.jfvclient.serialisers.DpidSerialiser;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import org.jfvclient.requests.RemoveFlowspace;
 
 /**
  *
@@ -441,4 +442,19 @@ public class JFVClient
 		return addFlowspace(a);
 	}
 
+        public boolean removeFlowspace(String flowspaceName) throws JFVErrorResponseException, IOException
+        {
+            RemoveFlowspace fs = new RemoveFlowspace(flowspaceName);
+            FVRpcRequest<RemoveFlowspace> afr = new FVRpcRequest<RemoveFlowspace>(fs);
+		String response = send(gson, afr);
+		Type t = new TypeToken<FVRpcResponse<Boolean>>()
+		{
+		}.getType();
+		FVRpcResponse<Boolean> resp = gson.fromJson(response, t);
+		if (resp.isError())
+		{
+			throw new JFVErrorResponseException(resp.getError());
+		}
+		return resp.getResult().booleanValue();
+        }
 }
