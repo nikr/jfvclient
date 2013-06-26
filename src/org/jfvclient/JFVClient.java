@@ -78,26 +78,7 @@ public class JFVClient
 		config = getProps();
 		hostName = config.getProperty("hostname");
 		hostPort = config.getProperty("port");
-		// try
-		// {
-		// connection = connect();
-		// } catch (Exception e)
-		// {
-		// System.err.println("Cannot connect to FlowVisor: "
-		// + e.getLocalizedMessage());
-		// throw new Error("Cannot connect to Flowvisor", e);
-		// }
 		gson = getGson();
-
-		// Doesn't work.
-		// if (config.containsKey("truststore") &&
-		// config.containsKey("truststorepw"))
-		// {
-		// System.setProperty("javax.net.ssl.trustStore",
-		// config.getProperty("truststore"));
-		// System.setProperty("javax.net.ssl.trustStorePassword",
-		// config.getProperty("truststorepw"));
-		// }
 
 	}
 
@@ -116,7 +97,7 @@ public class JFVClient
 	private HttpsURLConnection connect() throws MalformedURLException,
 			IOException
 	{
-		Authenticator.setDefault(new SimpleAuth());
+		Authenticator.setDefault(new PropertiesFileAuth());
 
 		// String hostname = config.getProperty("hostname");
 		// String port = config.getProperty("port");
@@ -130,7 +111,7 @@ public class JFVClient
 		con.setDoInput(true);
 		// This is bad. it bypasses the Hostname Verifier, and makes things
 		// insecure.
-		// TODO remove this from the production code.
+		// FIXME remove this from the production code.
 		con.setHostnameVerifier(new HostnameVerifier()
 		{
 
@@ -163,7 +144,7 @@ public class JFVClient
 		w.close();
 
 		// TODO remove this
-		System.out.println("req: " + req);
+		System.out.println("request: " + req);
 
 		if (connection.getResponseCode() != 200)
 		{
@@ -187,34 +168,22 @@ public class JFVClient
 		return response;
 	}
 
-	public static class SimpleAuth extends Authenticator
+
+	protected class PropertiesFileAuth extends Authenticator
 	{
-		private static String uname;
-		private static String pw;
+		private String uname;
+		private String pw;
 
-		static
-		{ // get the properties file and read password etc. from there.
-			Properties props = null;
-			try
-			{
-				props = getProps();
-
-			} catch (Exception e)
-			{
-
-				e.printStackTrace();
-				throw new Error(e.getLocalizedMessage());
-			}
-
-			uname = props.getProperty("username");
-			pw = props.getProperty("password");
+		public PropertiesFileAuth()
+		{
+			uname = config.getProperty("username");
+			pw = config.getProperty("password");
 		}
 
 		@Override
 		public PasswordAuthentication getPasswordAuthentication()
 		{
 			return new PasswordAuthentication(uname, pw.toCharArray());
-
 		}
 	}
 
@@ -248,6 +217,14 @@ public class JFVClient
 		return props;
 	}
 
+	/**
+	 * Add a slice to the flowvisor.
+	 *
+	 * @param s
+	 * @return
+	 * @throws IOException
+	 * @throws JFVErrorResponseException
+	 */
 	public boolean addSlice(AddSlice s) throws IOException,
 			JFVErrorResponseException
 	{
