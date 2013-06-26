@@ -30,7 +30,7 @@ import org.junit.runners.Suite.SuiteClasses;
  *     -------    -------
  *   (1)/  \(2) (1)/   \(2)
  *    H1   H2     H3   H4
- *
+ *</pre>
  * @author Niklas Rehfeld
  *
  */
@@ -39,7 +39,8 @@ import org.junit.runners.Suite.SuiteClasses;
 	{ ListDatapathInfoRRTest.class, ListDatapathRRTest.class,
 			ListLinksRRTest.class, SliceOperationsRRTest.class,
 			ListSliceInfoRRTest.class, ListFVHealthRRTest.class,
-			ListSliceHealthRRTest.class, AddFlowspaceRRTest.class, ListVersionRRTest.class})
+			ListSliceHealthRRTest.class, AddFlowspaceRRTest.class,
+			ListVersionRRTest.class, ListSlicesRRTest.class })
 public class RequestResponseTests
 {
 
