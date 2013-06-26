@@ -50,6 +50,7 @@ import org.jfvclient.responses.SliceHealth;
 import org.jfvclient.responses.SliceInfo;
 import org.jfvclient.responses.SliceList;
 import org.jfvclient.responses.SliceStats;
+import org.jfvclient.responses.Version;
 import org.jfvclient.serialisers.DpidSerialiser;
 
 import com.google.gson.Gson;
@@ -397,9 +398,11 @@ public class JFVClient
 		return resp.getResult().booleanValue();
 	}
 
-	public boolean removeSlice(String sliceName) throws IOException, JFVErrorResponseException
+	public boolean removeSlice(String sliceName) throws IOException,
+			JFVErrorResponseException
 	{
-		FVRpcRequest<RemoveSlice> rsr = new FVRpcRequest<RemoveSlice>(new RemoveSlice(sliceName));
+		FVRpcRequest<RemoveSlice> rsr = new FVRpcRequest<RemoveSlice>(
+				new RemoveSlice(sliceName));
 		String response = send(gson, rsr);
 		Type t = new TypeToken<FVRpcResponse<Boolean>>()
 		{
@@ -412,7 +415,8 @@ public class JFVClient
 		return resp.getResult().booleanValue();
 	}
 
-	public boolean addFlowspace(AddFlowspace fs) throws IOException, JFVErrorResponseException
+	public boolean addFlowspace(AddFlowspace fs) throws IOException,
+			JFVErrorResponseException
 	{
 
 		FVRpcRequest<AddFlowspace> afr = new FVRpcRequest<AddFlowspace>(fs);
@@ -430,22 +434,26 @@ public class JFVClient
 
 	/**
 	 * convenience method for adding a single flowspace.
+	 *
 	 * @param f
 	 * @return
 	 * @throws IOException
 	 * @throws JFVErrorResponseException
 	 */
-	public boolean addFlowspace(Flowspace f) throws IOException, JFVErrorResponseException
+	public boolean addFlowspace(Flowspace f) throws IOException,
+			JFVErrorResponseException
 	{
 		AddFlowspace a = new AddFlowspace();
 		a.add(f);
 		return addFlowspace(a);
 	}
 
-        public boolean removeFlowspace(String flowspaceName) throws JFVErrorResponseException, IOException
-        {
-            RemoveFlowspace fs = new RemoveFlowspace(flowspaceName);
-            FVRpcRequest<RemoveFlowspace> afr = new FVRpcRequest<RemoveFlowspace>(fs);
+	public boolean removeFlowspace(String flowspaceName)
+			throws JFVErrorResponseException, IOException
+	{
+		RemoveFlowspace fs = new RemoveFlowspace(flowspaceName);
+		FVRpcRequest<RemoveFlowspace> afr = new FVRpcRequest<RemoveFlowspace>(
+				fs);
 		String response = send(gson, afr);
 		Type t = new TypeToken<FVRpcResponse<Boolean>>()
 		{
@@ -456,5 +464,21 @@ public class JFVClient
 			throw new JFVErrorResponseException(resp.getError());
 		}
 		return resp.getResult().booleanValue();
-        }
+	}
+
+	public Version getVersion() throws JFVErrorResponseException, IOException
+	{
+		FVRpcRequest lsr = new FVRpcRequest(
+				FVRpcRequest.NoParamType.list_version);
+		String response = send(gson, lsr);
+		Type t = new TypeToken<FVRpcResponse<Version>>()
+		{
+		}.getType();
+		FVRpcResponse<Version> resp = gson.fromJson(response, t);
+		if (resp.isError())
+		{
+			throw new JFVErrorResponseException(resp.getError());
+		}
+		return resp.getResult();
+	}
 }
