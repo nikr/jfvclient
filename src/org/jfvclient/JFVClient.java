@@ -27,6 +27,7 @@ import java.net.Authenticator;
 import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
+import java.util.List;
 import java.util.Properties;
 
 import javax.net.ssl.HostnameVerifier;
@@ -38,6 +39,7 @@ import org.jfvclient.data.Flowspace;
 import org.jfvclient.deserialisers.DpidDeserialiser;
 import org.jfvclient.requests.AddFlowspace;
 import org.jfvclient.requests.AddSlice;
+import org.jfvclient.requests.ListFlowspace;
 import org.jfvclient.requests.ListSliceHealth;
 import org.jfvclient.requests.ListSliceInfo;
 import org.jfvclient.requests.ListSliceStats;
@@ -167,7 +169,6 @@ public class JFVClient
 
 		return response;
 	}
-
 
 	protected class PropertiesFileAuth extends Authenticator
 	{
@@ -452,6 +453,66 @@ public class JFVClient
 		{
 		}.getType();
 		FVRpcResponse<Version> resp = gson.fromJson(response, t);
+		if (resp.isError())
+		{
+			throw new JFVErrorResponseException(resp.getError());
+		}
+		return resp.getResult();
+	}
+
+	/**
+	 * Lists the flowspaces associated with a slice.
+	 *
+	 * @param sliceName
+	 *            The name of the slice.
+	 * @param includeDisabled
+	 *            defaults to true if sliceName is not null.
+	 * @return A list of the flowspaces associated with the slice.
+	 * @throws IOException
+	 *             If something bad happens on the network.
+	 * @throws JFVErrorResponseException
+	 *             If the response is an error.
+	 */
+	public List<Flowspace> listFlowspaces(String sliceName,
+			boolean includeDisabled) throws IOException,
+			JFVErrorResponseException
+	{
+		FVRpcRequest<ListFlowspace> lfs = new FVRpcRequest<ListFlowspace>(
+				new ListFlowspace(sliceName, includeDisabled));
+		String response = send(gson, lfs);
+		Type responseType = new TypeToken<List<Flowspace>>()
+		{
+		}.getType();
+		FVRpcResponse<List<Flowspace>> resp = gson.fromJson(response,
+				responseType);
+		if (resp.isError())
+		{
+			throw new JFVErrorResponseException(resp.getError());
+		}
+		return resp.getResult();
+	}
+
+	/**
+	 * Lists the flowspaces for all slices.
+	 *
+	 * @param includeDisabled
+	 *            whether or not to include disabled slices. Defaults to
+	 *            <b>false</b>
+	 * @return A list of all flowspaces.
+	 * @throws IOException
+	 * @throws JFVErrorResponseException
+	 */
+	public List<Flowspace> listAllFlowspaces(boolean includeDisabled)
+			throws IOException, JFVErrorResponseException
+	{
+		FVRpcRequest<ListFlowspace> lfs = new FVRpcRequest<ListFlowspace>(
+				new ListFlowspace(includeDisabled));
+		String response = send(gson, lfs);
+		Type responseType = new TypeToken<List<Flowspace>>()
+		{
+		}.getType();
+		FVRpcResponse<List<Flowspace>> resp = gson.fromJson(response,
+				responseType);
 		if (resp.isError())
 		{
 			throw new JFVErrorResponseException(resp.getError());

@@ -15,10 +15,10 @@
  */
 package org.jfvclient;
 
-import org.jfvclient.data.Flowspace;
 import org.jfvclient.requests.AddFlowspace;
 import org.jfvclient.requests.AddSlice;
 import org.jfvclient.requests.ListDatapathInfo;
+import org.jfvclient.requests.ListFlowspace;
 import org.jfvclient.requests.ListSliceHealth;
 import org.jfvclient.requests.ListSliceInfo;
 import org.jfvclient.requests.ListSliceStats;
@@ -129,6 +129,10 @@ public class FVRpcRequest<V>
 		else if (params instanceof AddFlowspace)
 		{
 			this.method = "add-flowspace";
+		}
+		else if (params instanceof ListFlowspace)
+		{
+			this.method = "list-flowspace";
 		}
 		else
 		{

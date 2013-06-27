@@ -1,0 +1,22 @@
+[
+{
+	"id":4,
+	"priority":10,
+	"name":"flowspace_foo",
+	"force-enqueue":-1,
+	"slice-action":[{"slice-name":"fvadmin","permission":6}	],
+	"dpid":"00:00:00:00:00:00:00:05",
+	"match":{"wildcards":4194303},
+	"queues":[]
+},
+{
+	"id":1,
+	"priority":10,
+	"name":"flow1",
+	"force-enqueue":-1,
+	"slice-action":[{"slice-name":"Slice1","permission":7}],
+	"dpid":"all_dpids",
+	"match":{"wildcards":4194303},
+	"queues":[]
+}
+]
