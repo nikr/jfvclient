@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import org.jfvclient.requests.ListFlowspace;
+
 /**
  * The following documentation is stolen from the
  * org.flowvisor.openflow.protocol.FVMatch class from <a
@@ -95,6 +97,12 @@ import java.util.Map;
  * <li>tp_dst=port Matches transport-layer destination port port.
  * </ul>
  *
+ * <p/>
+ * in addition to these keys, it will also accept a <code>wildcards</code> key,
+ * which takes an integer as an argument. This should however not be used when
+ * manually creating a match structure, but is returned by {@link ListFlowspace}
+ * .
+ *
  * TODO add the rest of the keys.
  *
  * @author Niklas Rehfeld
@@ -119,6 +127,7 @@ public class MatchStruct extends HashMap<String, Object>
 		MATCH_KEYS.add("ip_dst"); // ip
 		MATCH_KEYS.add("tp_src"); // port
 		MATCH_KEYS.add("tp_dst"); // port
+		MATCH_KEYS.add("wildcards"); // wildcards.
 	}
 
 	public MatchStruct()
@@ -133,6 +142,11 @@ public class MatchStruct extends HashMap<String, Object>
 		{
 			throw new IllegalArgumentException("Key " + key + "not allowed.");
 		}
+		if ((key.equalsIgnoreCase("in_port") || key
+				.equalsIgnoreCase("wildcards")) && !(value instanceof Number))
+			throw new IllegalArgumentException(
+					"Value must be a number, this is a "
+							+ value.getClass().getCanonicalName());
 		return super.put(key, value);
 
 	}
