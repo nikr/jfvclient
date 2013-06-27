@@ -12,6 +12,7 @@ import java.net.MalformedURLException;
 import org.jfvclient.requests.AddSlice;
 import org.jfvclient.requests.RemoveSlice;
 import org.jfvclient.requests.UpdateSlice;
+import org.jfvclient.requests.UpdateSlicePassword;
 import org.jfvclient.responses.Slice;
 import org.jfvclient.responses.SliceList;
 import org.jfvclient.testing.TestUtils;
@@ -32,7 +33,9 @@ import com.google.gson.reflect.TypeToken;
  */
 public class SliceOperationsRRTest
 {
-	static Type t;
+	private static final String PASSWORDTESTSLICE = "passwordtestslice";
+
+	static Type booleanResponseType;
 
 	private String slicename = "testslice123";
 	private JFVClient c = new JFVClient();
@@ -40,7 +43,7 @@ public class SliceOperationsRRTest
 	@BeforeClass
 	public static void setup()
 	{
-		t = new TypeToken<FVRpcResponse<Boolean>>()
+		booleanResponseType = new TypeToken<FVRpcResponse<Boolean>>()
 		{
 		}.getType();
 	}
@@ -57,6 +60,7 @@ public class SliceOperationsRRTest
 				c.removeSlice(s.getSlice_name());
 			}
 		}
+		c.removeSlice(PASSWORDTESTSLICE);
 	}
 
 	@Test
@@ -124,6 +128,16 @@ public class SliceOperationsRRTest
 
 	}
 
+	@Test
+	public void testUpdateSlicePassword() throws IOException
+	{
+		addSlice(PASSWORDTESTSLICE);
+		FVRpcResponse<Boolean> response = updateSlicePassword(PASSWORDTESTSLICE, "newpassword");
+		assertFalse("Should not be an error response.", response.isError());
+		assertTrue("Password change did not return true.", response.getResult());
+
+	}
+
 	private boolean checkExists(String slicename)
 	{
 		try
@@ -148,7 +162,7 @@ public class SliceOperationsRRTest
 		FVRpcRequest<AddSlice> asr = new FVRpcRequest<AddSlice>(a);
 		String res = c.send(g, asr);
 
-		return g.fromJson(res, t);
+		return g.fromJson(res, booleanResponseType);
 
 	}
 
@@ -157,11 +171,10 @@ public class SliceOperationsRRTest
 		UpdateSlice u = new UpdateSlice(name, "test@localhost");
 		u.setAdminStatus(false);
 		Gson g = TestUtils.getGson();
-		FVRpcRequest<UpdateSlice> asr = new FVRpcRequest<UpdateSlice>(
-				u);
+		FVRpcRequest<UpdateSlice> asr = new FVRpcRequest<UpdateSlice>(u);
 		String res = c.send(g, asr);
 
-		return g.fromJson(res, t);
+		return g.fromJson(res, booleanResponseType);
 
 	}
 
@@ -169,11 +182,21 @@ public class SliceOperationsRRTest
 	{
 		RemoveSlice rs = new RemoveSlice(name);
 		Gson g = TestUtils.getGson();
-		FVRpcRequest<RemoveSlice> asr = new FVRpcRequest<RemoveSlice>(
-				rs);
+		FVRpcRequest<RemoveSlice> asr = new FVRpcRequest<RemoveSlice>(rs);
 		String res = c.send(g, asr);
 
-		return g.fromJson(res, t);
+		return g.fromJson(res, booleanResponseType);
+
+	}
+
+	private FVRpcResponse<Boolean> updateSlicePassword(String sliceName,
+			String password) throws IOException
+	{
+		Gson g = TestUtils.getGson();
+		FVRpcRequest<UpdateSlicePassword> usp = new FVRpcRequest<UpdateSlicePassword>(
+				new UpdateSlicePassword(sliceName, password));
+		String response = c.send(g, usp);
+		return g.fromJson(response, booleanResponseType);
 
 	}
 

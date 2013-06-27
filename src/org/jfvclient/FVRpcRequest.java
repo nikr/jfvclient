@@ -24,6 +24,7 @@ import org.jfvclient.requests.ListSliceInfo;
 import org.jfvclient.requests.ListSliceStats;
 import org.jfvclient.requests.RemoveSlice;
 import org.jfvclient.requests.UpdateSlice;
+import org.jfvclient.requests.UpdateSlicePassword;
 
 import com.google.gson.JsonNull;
 
@@ -133,6 +134,10 @@ public class FVRpcRequest<V>
 		else if (params instanceof ListFlowspace)
 		{
 			this.method = "list-flowspace";
+		}
+		else if (params instanceof UpdateSlicePassword)
+		{
+			this.method = "update-slice-password";
 		}
 		else
 		{

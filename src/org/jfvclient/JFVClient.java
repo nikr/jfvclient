@@ -45,6 +45,7 @@ import org.jfvclient.requests.ListSliceInfo;
 import org.jfvclient.requests.ListSliceStats;
 import org.jfvclient.requests.RemoveSlice;
 import org.jfvclient.requests.UpdateSlice;
+import org.jfvclient.requests.UpdateSlicePassword;
 import org.jfvclient.responses.DataPaths;
 import org.jfvclient.responses.DatapathInfo;
 import org.jfvclient.responses.FVHealth;
@@ -74,6 +75,10 @@ public class JFVClient
 
 	private String hostName;
 	private String hostPort;
+
+	private static Type booleanResponseType = new TypeToken<FVRpcResponse<Boolean>>()
+	{
+	}.getType();
 
 	public JFVClient()
 	{
@@ -232,10 +237,7 @@ public class JFVClient
 		// Gson g = getGson();
 		FVRpcRequest<AddSlice> asr = new FVRpcRequest<AddSlice>(s);
 		String response = send(gson, asr);
-		Type t = new TypeToken<FVRpcResponse<Boolean>>()
-		{
-		}.getType();
-		FVRpcResponse<Boolean> resp = gson.fromJson(response, t);
+		FVRpcResponse<Boolean> resp = gson.fromJson(response, booleanResponseType);
 		if (resp.isError())
 		{
 			throw new JFVErrorResponseException(resp.getError());
@@ -365,10 +367,7 @@ public class JFVClient
 	{
 		FVRpcRequest<UpdateSlice> lsr = new FVRpcRequest<UpdateSlice>(u);
 		String response = send(gson, lsr);
-		Type t = new TypeToken<FVRpcResponse<Boolean>>()
-		{
-		}.getType();
-		FVRpcResponse<Boolean> resp = gson.fromJson(response, t);
+		FVRpcResponse<Boolean> resp = gson.fromJson(response, booleanResponseType);
 		if (resp.isError())
 		{
 			throw new JFVErrorResponseException(resp.getError());
@@ -382,10 +381,7 @@ public class JFVClient
 		FVRpcRequest<RemoveSlice> rsr = new FVRpcRequest<RemoveSlice>(
 				new RemoveSlice(sliceName));
 		String response = send(gson, rsr);
-		Type t = new TypeToken<FVRpcResponse<Boolean>>()
-		{
-		}.getType();
-		FVRpcResponse<Boolean> resp = gson.fromJson(response, t);
+		FVRpcResponse<Boolean> resp = gson.fromJson(response, booleanResponseType);
 		if (resp.isError())
 		{
 			throw new JFVErrorResponseException(resp.getError());
@@ -399,10 +395,7 @@ public class JFVClient
 
 		FVRpcRequest<AddFlowspace> afr = new FVRpcRequest<AddFlowspace>(fs);
 		String response = send(gson, afr);
-		Type t = new TypeToken<FVRpcResponse<Boolean>>()
-		{
-		}.getType();
-		FVRpcResponse<Boolean> resp = gson.fromJson(response, t);
+		FVRpcResponse<Boolean> resp = gson.fromJson(response, booleanResponseType);
 		if (resp.isError())
 		{
 			throw new JFVErrorResponseException(resp.getError());
@@ -433,10 +426,8 @@ public class JFVClient
 		FVRpcRequest<RemoveFlowspace> afr = new FVRpcRequest<RemoveFlowspace>(
 				fs);
 		String response = send(gson, afr);
-		Type t = new TypeToken<FVRpcResponse<Boolean>>()
-		{
-		}.getType();
-		FVRpcResponse<Boolean> resp = gson.fromJson(response, t);
+		FVRpcResponse<Boolean> resp = gson.fromJson(response,
+				booleanResponseType);
 		if (resp.isError())
 		{
 			throw new JFVErrorResponseException(resp.getError());
@@ -518,5 +509,21 @@ public class JFVClient
 			throw new JFVErrorResponseException(resp.getError());
 		}
 		return resp.getResult();
+	}
+
+	public boolean updateSlicePassword(String sliceName, String password)
+			throws IOException, JFVErrorResponseException
+	{
+		FVRpcRequest<UpdateSlicePassword> usp = new FVRpcRequest<UpdateSlicePassword>(
+				new UpdateSlicePassword(sliceName, password));
+		String response = send(gson, usp);
+		FVRpcResponse<Boolean> resp = gson.fromJson(response,
+				booleanResponseType);
+		if (resp.isError())
+		{
+			throw new JFVErrorResponseException(resp.getError());
+		}
+		return resp.getResult();
+
 	}
 }
