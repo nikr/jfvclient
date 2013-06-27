@@ -64,7 +64,7 @@ public class Dpid
         {
             return true;
         }
-        if (dpid.equals("any") || dpid.equals("all") || dpid.equals("ALL_DPIDS"))
+        if (dpid.equalsIgnoreCase("any") || dpid.equalsIgnoreCase("all") || dpid.equalsIgnoreCase("ALL_DPIDS"))
         {
             return true;
         }
