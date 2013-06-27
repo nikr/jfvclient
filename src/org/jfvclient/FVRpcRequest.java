@@ -15,6 +15,9 @@
  */
 package org.jfvclient;
 
+import java.util.List;
+
+import org.jfvclient.data.Flowspace;
 import org.jfvclient.requests.AddFlowspace;
 import org.jfvclient.requests.AddSlice;
 import org.jfvclient.requests.ListDatapathInfo;
@@ -23,6 +26,7 @@ import org.jfvclient.requests.ListSliceHealth;
 import org.jfvclient.requests.ListSliceInfo;
 import org.jfvclient.requests.ListSliceStats;
 import org.jfvclient.requests.RemoveSlice;
+import org.jfvclient.requests.UpdateFlowspace;
 import org.jfvclient.requests.UpdateSlice;
 import org.jfvclient.requests.UpdateSlicePassword;
 
@@ -138,6 +142,10 @@ public class FVRpcRequest<V>
 		else if (params instanceof UpdateSlicePassword)
 		{
 			this.method = "update-slice-password";
+		}
+		else if (params instanceof UpdateFlowspace)
+		{
+			this.method = "update-flowspace";
 		}
 		else
 		{

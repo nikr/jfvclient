@@ -10,11 +10,12 @@ import org.jfvclient.requests.ListFlowspace;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * This class is used in two circumstances. It is used as an argument for the
- * <code>add-flowspace</code> request, and it is used in the response to a
- * <code>list-flowspace</code> request. <br/>
- * The relevant JSON for the two requests is as follows:
- *
+ * Represents a Description of a flowspace. This class is used in several
+ * circumstances. It is used as an argument for the <code>add-flowspace</code>
+ * and <code>update-flowspace</code> requests, and it is used in the response to
+ * a <code>list-flowspace</code> request. <br/>
+ * The relevant JSON for the requests is as follows :
+ * <p />
  * <code>add-flowspace</code> request.
  *
  * <pre>
@@ -39,8 +40,40 @@ import com.google.gson.annotations.SerializedName;
  * ]
  * </pre>
  *
+ *
  * returns a number, which is the request number used in
  * <code>list-fs-status</code> requests.
+ *
+ * <p/>
+ *
+ * update-flowspace request (the same, but most fields are optional) :
+ *
+ * <pre>
+ * [
+ *  {
+ *    "name" : &lt;string&gt;
+ *    "dpid" : &lt;dpid&gt;,
+ *            OPTIONAL
+ *    "priority" : &lt;number&gt;,
+ *            OPTIONAL
+ *    "match" : &lt;match-struct&gt;,
+ *            OPTIONAL
+ *    "queues" : [ &lt;queue_id&gt; ],
+ *             OPTIONAL
+ *    "force-enqueue" : &lt;queue_id&gt;,
+ *             OPTIONAL
+ *    "slice-action" :
+ *    [
+ *     {
+ *       "slice-name" : &lt;name&gt; ",
+ *       "permission" : &lt;perm-value&gt;
+ *     } OPTIONAL
+ *    ]
+ *  }
+ * ]
+ * </pre>
+ *
+ * also returns a number.
  *
  * <p/>
  *
@@ -88,12 +121,20 @@ public class Flowspace
 	private Integer id; // only for list-flowspace responses.
 
 	/**
+	 * This constructor sets all of the fields mandatory for an
+	 * <code>add-flowspace</code> request.
+	 *
 	 *
 	 * @param name
+	 *            flowspace name
 	 * @param dpid
+	 *            the DPID that this flowspace will apply to.
 	 * @param prio
+	 *            the priority (bigger is higher)
 	 * @param matches
+	 *            a match structure.
 	 * @param actions
+	 *            A list of slice actions.
 	 */
 	public Flowspace(String name, Dpid dpid, Integer prio, MatchStruct matches,
 			List<SliceAction> actions)
@@ -103,6 +144,21 @@ public class Flowspace
 		this.priority = prio;
 		this.match = matches;
 		this.sliceActions = actions;
+	}
+
+	/**
+	 * This constructor sets all of the fields that are mandatory in an
+	 * <code>update-flowspace</code> request.
+	 *
+	 * @param name
+	 *            the name of the flowspace
+	 * @param dpid
+	 *            the dpid that this flowspace applies to.
+	 */
+	public Flowspace(String name, Dpid dpid)
+	{
+		this.name = name;
+		this.dpid = dpid;
 	}
 
 	/**
@@ -246,4 +302,16 @@ public class Flowspace
 		return id;
 	}
 
+	/**
+	 * @return returns true iff the names and DPIDs are the same.
+	 */
+	@Override
+	public boolean equals(Object o)
+	{
+		if (!(o instanceof Flowspace))
+			return false;
+
+		Flowspace other = (Flowspace) o;
+		return (name.equals(other.getName()) && dpid.equals(other.getDpid()));
+	}
 }

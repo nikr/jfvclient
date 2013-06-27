@@ -44,6 +44,7 @@ import org.jfvclient.requests.ListSliceHealth;
 import org.jfvclient.requests.ListSliceInfo;
 import org.jfvclient.requests.ListSliceStats;
 import org.jfvclient.requests.RemoveSlice;
+import org.jfvclient.requests.UpdateFlowspace;
 import org.jfvclient.requests.UpdateSlice;
 import org.jfvclient.requests.UpdateSlicePassword;
 import org.jfvclient.responses.DataPaths;
@@ -158,6 +159,11 @@ public class JFVClient
 			System.err.println("Response is not OK -- "
 					+ connection.getResponseCode() + "  "
 					+ connection.getResponseMessage());
+			BufferedReader iw = new BufferedReader(new InputStreamReader(
+					connection.getInputStream()));
+			String in = "";
+			while ((in = iw.readLine()) != null)
+				System.err.println(in);
 		}
 		BufferedReader iw = new BufferedReader(new InputStreamReader(
 				connection.getInputStream()));
@@ -237,7 +243,8 @@ public class JFVClient
 		// Gson g = getGson();
 		FVRpcRequest<AddSlice> asr = new FVRpcRequest<AddSlice>(s);
 		String response = send(gson, asr);
-		FVRpcResponse<Boolean> resp = gson.fromJson(response, booleanResponseType);
+		FVRpcResponse<Boolean> resp = gson.fromJson(response,
+				booleanResponseType);
 		if (resp.isError())
 		{
 			throw new JFVErrorResponseException(resp.getError());
@@ -367,7 +374,8 @@ public class JFVClient
 	{
 		FVRpcRequest<UpdateSlice> lsr = new FVRpcRequest<UpdateSlice>(u);
 		String response = send(gson, lsr);
-		FVRpcResponse<Boolean> resp = gson.fromJson(response, booleanResponseType);
+		FVRpcResponse<Boolean> resp = gson.fromJson(response,
+				booleanResponseType);
 		if (resp.isError())
 		{
 			throw new JFVErrorResponseException(resp.getError());
@@ -381,7 +389,8 @@ public class JFVClient
 		FVRpcRequest<RemoveSlice> rsr = new FVRpcRequest<RemoveSlice>(
 				new RemoveSlice(sliceName));
 		String response = send(gson, rsr);
-		FVRpcResponse<Boolean> resp = gson.fromJson(response, booleanResponseType);
+		FVRpcResponse<Boolean> resp = gson.fromJson(response,
+				booleanResponseType);
 		if (resp.isError())
 		{
 			throw new JFVErrorResponseException(resp.getError());
@@ -395,7 +404,8 @@ public class JFVClient
 
 		FVRpcRequest<AddFlowspace> afr = new FVRpcRequest<AddFlowspace>(fs);
 		String response = send(gson, afr);
-		FVRpcResponse<Boolean> resp = gson.fromJson(response, booleanResponseType);
+		FVRpcResponse<Boolean> resp = gson.fromJson(response,
+				booleanResponseType);
 		if (resp.isError())
 		{
 			throw new JFVErrorResponseException(resp.getError());
@@ -471,7 +481,7 @@ public class JFVClient
 		FVRpcRequest<ListFlowspace> lfs = new FVRpcRequest<ListFlowspace>(
 				new ListFlowspace(sliceName, includeDisabled));
 		String response = send(gson, lfs);
-		Type responseType = new TypeToken<List<Flowspace>>()
+		Type responseType = new TypeToken<FVRpcResponse<List<Flowspace>>>()
 		{
 		}.getType();
 		FVRpcResponse<List<Flowspace>> resp = gson.fromJson(response,
@@ -499,7 +509,7 @@ public class JFVClient
 		FVRpcRequest<ListFlowspace> lfs = new FVRpcRequest<ListFlowspace>(
 				new ListFlowspace(includeDisabled));
 		String response = send(gson, lfs);
-		Type responseType = new TypeToken<List<Flowspace>>()
+		Type responseType = new TypeToken<FVRpcResponse<List<Flowspace>>>()
 		{
 		}.getType();
 		FVRpcResponse<List<Flowspace>> resp = gson.fromJson(response,
@@ -525,5 +535,29 @@ public class JFVClient
 		}
 		return resp.getResult();
 
+	}
+
+	public boolean updateFlowspace(UpdateFlowspace flowspaces)
+			throws IOException, JFVErrorResponseException
+	{
+
+		FVRpcRequest<UpdateFlowspace> ufs = new FVRpcRequest<UpdateFlowspace>(
+				flowspaces);
+		String response = send(gson, ufs);
+		FVRpcResponse<Boolean> resp = gson.fromJson(response,
+				booleanResponseType);
+		if (resp.isError())
+		{
+			throw new JFVErrorResponseException(resp.getError());
+		}
+		return resp.getResult();
+	}
+
+	public boolean updateFlowspace(Flowspace flowspace) throws IOException,
+			JFVErrorResponseException
+	{
+		UpdateFlowspace l = new UpdateFlowspace();
+		l.add(flowspace);
+		return updateFlowspace(l);
 	}
 }

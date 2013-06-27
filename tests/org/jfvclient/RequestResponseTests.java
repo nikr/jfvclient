@@ -39,7 +39,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	{ ListDatapathInfoRRTest.class, ListDatapathRRTest.class,
 			ListLinksRRTest.class, SliceOperationsRRTest.class,
 			ListSliceInfoRRTest.class, ListFVHealthRRTest.class,
-			ListSliceHealthRRTest.class, AddFlowspaceRRTest.class,
+			ListSliceHealthRRTest.class, FlowspaceRRTests.class,
 			ListVersionRRTest.class, ListSlicesRRTest.class,
 			ListFlowspaceRRTest.class})
 public class RequestResponseTests
