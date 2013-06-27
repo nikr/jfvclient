@@ -398,19 +398,19 @@ public class JFVClient
 		return resp.getResult().booleanValue();
 	}
 
-	public boolean addFlowspace(AddFlowspace fs) throws IOException,
+	public int addFlowspace(AddFlowspace fs) throws IOException,
 			JFVErrorResponseException
 	{
 
 		FVRpcRequest<AddFlowspace> afr = new FVRpcRequest<AddFlowspace>(fs);
 		String response = send(gson, afr);
-		FVRpcResponse<Boolean> resp = gson.fromJson(response,
-				booleanResponseType);
+		FVRpcResponse<Integer> resp = gson.fromJson(response,
+				new TypeToken<FVRpcResponse<Integer>>(){}.getType());
 		if (resp.isError())
 		{
 			throw new JFVErrorResponseException(resp.getError());
 		}
-		return resp.getResult().booleanValue();
+		return resp.getResult().intValue();
 	}
 
 	/**
@@ -421,7 +421,7 @@ public class JFVClient
 	 * @throws IOException
 	 * @throws JFVErrorResponseException
 	 */
-	public boolean addFlowspace(Flowspace f) throws IOException,
+	public int addFlowspace(Flowspace f) throws IOException,
 			JFVErrorResponseException
 	{
 		AddFlowspace a = new AddFlowspace();
@@ -429,20 +429,28 @@ public class JFVClient
 		return addFlowspace(a);
 	}
 
-	public boolean removeFlowspace(String flowspaceName)
+	/**
+	 * Remove a single flowspace.
+	 *
+	 * @param flowspaceName the name of the flowspace
+	 * @return
+	 * @throws JFVErrorResponseException
+	 * @throws IOException
+	 */
+	public int removeFlowspace(String flowspaceName)
 			throws JFVErrorResponseException, IOException
 	{
 		RemoveFlowspace fs = new RemoveFlowspace(flowspaceName);
 		FVRpcRequest<RemoveFlowspace> afr = new FVRpcRequest<RemoveFlowspace>(
 				fs);
 		String response = send(gson, afr);
-		FVRpcResponse<Boolean> resp = gson.fromJson(response,
-				booleanResponseType);
+		FVRpcResponse<Integer> resp = gson.fromJson(response,
+				new TypeToken<FVRpcResponse<Integer>>(){}.getType());
 		if (resp.isError())
 		{
 			throw new JFVErrorResponseException(resp.getError());
 		}
-		return resp.getResult().booleanValue();
+		return resp.getResult().intValue();
 	}
 
 	public Version getVersion() throws JFVErrorResponseException, IOException
@@ -537,23 +545,23 @@ public class JFVClient
 
 	}
 
-	public boolean updateFlowspace(UpdateFlowspace flowspaces)
+	public int updateFlowspace(UpdateFlowspace flowspaces)
 			throws IOException, JFVErrorResponseException
 	{
 
 		FVRpcRequest<UpdateFlowspace> ufs = new FVRpcRequest<UpdateFlowspace>(
 				flowspaces);
 		String response = send(gson, ufs);
-		FVRpcResponse<Boolean> resp = gson.fromJson(response,
-				booleanResponseType);
+		FVRpcResponse<Integer> resp = gson.fromJson(response,
+				new TypeToken<FVRpcResponse<Integer>>(){}.getType());
 		if (resp.isError())
 		{
 			throw new JFVErrorResponseException(resp.getError());
 		}
-		return resp.getResult();
+		return resp.getResult().intValue();
 	}
 
-	public boolean updateFlowspace(Flowspace flowspace) throws IOException,
+	public int updateFlowspace(Flowspace flowspace) throws IOException,
 			JFVErrorResponseException
 	{
 		UpdateFlowspace l = new UpdateFlowspace();

@@ -25,6 +25,7 @@ import org.jfvclient.requests.ListFlowspace;
 import org.jfvclient.requests.ListSliceHealth;
 import org.jfvclient.requests.ListSliceInfo;
 import org.jfvclient.requests.ListSliceStats;
+import org.jfvclient.requests.RemoveFlowspace;
 import org.jfvclient.requests.RemoveSlice;
 import org.jfvclient.requests.UpdateFlowspace;
 import org.jfvclient.requests.UpdateSlice;
@@ -146,6 +147,10 @@ public class FVRpcRequest<V>
 		else if (params instanceof UpdateFlowspace)
 		{
 			this.method = "update-flowspace";
+		}
+		else if (params instanceof RemoveFlowspace)
+		{
+			this.method = "remove-flowspace";
 		}
 		else
 		{
