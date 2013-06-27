@@ -16,38 +16,33 @@
 
 package org.jfvclient.requests;
 
+import java.util.ArrayList;
+
 /**
  *
- * <code>remove-flowspace</code> request. 
- * 
+ * A <code>remove-flowspace</code> request.
+ *
  * <pre>
  [
  &lt;flowspace-name&gt;
  ]
  * </pre>
- * 
+ *
  * responds with a boolean.
- * 
+ *
  * @author Niklas Rehfeld
  */
-public class RemoveFlowspace {
+public class RemoveFlowspace extends ArrayList<String>{
 
-    private String name;
-    
+
+	/**
+	 * Creates a list of size 1, containing the given name.
+	 * @param name the name of the flowspace to remove.
+	 */
     public RemoveFlowspace(String name)
     {
-        this.name = name;
+    	super(1);
+    	add(name);
     }
 
-    public String getName()
-    {
-        return name;
-    }
-
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-    
-    
 }
