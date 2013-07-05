@@ -14,8 +14,8 @@
   <property name="jar.file" location="${dist}/jfvclient.jar"/>
   <property name="test.jar.file" location="${dist}/tests.jar"/>
 
-  <property name="trustStoreArg" value="-Djavax.net.ssl.trustStore=~/.keystore "/>
-  <property name="trustStorePassArg" value="-Djavax.net.ssl.trustStorePassword=blabla"/>
+  <property name="trustStore" value="${user.home}/.keystore"/>
+  <property name="trustStorePass" value="blabla"/>
 
 
   <target name="init">
@@ -52,15 +52,16 @@
       <fileset dir="." includes="TEST-*" />
     </delete>
     <junit printsummary="yes" haltonfailure="no" haltonerror="no" fork="yes">
-      <jvmarg value="${trustStoreArg}"/>
-      <jvmarg value="${trustStorePassArg}"/>
+      <jvmarg value="-Djavax.net.ssl.trustStore=${trustStore}"/>
+
+      <jvmarg value="-Djavax.net.ssl.trustStorePass=${trustStorePass}"/>
       <classpath>
 	<pathelement location="${test.jar.file}"/> 
 	<pathelement location="${jar.file}"/>
 	<pathelement location="${lib}/junit.jar"/>
 	<pathelement location="${lib}/gson-2.1.jar"/>
       </classpath> 
-      <formatter type="brief" usefile="no"/> 
+<!--      <formatter type="brief" usefile="no"/> -->
       <batchtest>
 	<fileset dir="${test.src}">
 	  <include name="**/*.java"/>
