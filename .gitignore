@@ -4,8 +4,8 @@
 *.jar
 *.war
 *.ear
-/nbproject/private/
+#/nbproject/private/
 /build/
 /doc/
-#/nbproject/
+/nbproject/
 /dist/
