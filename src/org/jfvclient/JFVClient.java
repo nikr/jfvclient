@@ -152,7 +152,7 @@ public class JFVClient
 		w.close();
 
 		// TODO remove this
-		System.out.println("request: " + req);
+		//		System.out.println("request: " + req);
 
 		if (connection.getResponseCode() != 200)
 		{
@@ -176,7 +176,7 @@ public class JFVClient
 		iw.close();
 
 		// TODO remove this.
-		System.out.println("response: " + response);
+		//System.out.println("response: " + response);
 
 		return response;
 	}
