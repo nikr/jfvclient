@@ -29,7 +29,7 @@ public class LinkTest
         try
         {
             input = TestUtils.readTestInput(Link.class);
-            System.out.println("input: " + input);
+	    //            System.out.println("input: " + input);
             instance =  g.fromJson(input, Link.class);
         } catch (IOException ex)
         {
@@ -48,7 +48,7 @@ public class LinkTest
         System.out.println("getSrc_dpid");
         String expResult = "11:22:33:44:55:66:77:88";
         Dpid d = new Dpid(expResult);
-        System.out.println(instance);
+	//        System.out.println(instance);
         Dpid result = instance.getSrc_dpid();
         assertEquals(d, result);
     }
