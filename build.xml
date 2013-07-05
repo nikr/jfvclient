@@ -51,7 +51,7 @@
     <delete verbose="yes">
       <fileset dir="." includes="TEST-*" />
     </delete>
-    <junit printsummary="withOutAndErr" haltonfailure="no" haltonerror="no">
+    <junit printsummary="yes" haltonfailure="no" haltonerror="no" fork="yes">
       <jvmarg value="${trustStoreArg}"/>
       <jvmarg value="${trustStorePassArg}"/>
       <classpath>
