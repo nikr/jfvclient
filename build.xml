@@ -14,6 +14,10 @@
   <property name="jar.file" location="${dist}/jfvclient.jar"/>
   <property name="test.jar.file" location="${dist}/tests.jar"/>
 
+  <property name="trustStoreArg" value="-Djavax.net.ssl.trustStore=~/.keystore "/>
+  <property name="trustStorePassArg" value="-Djavax.net.ssl.trustStorePassword=blabla"/>
+
+
   <target name="init">
     <!-- Create the time stamp -->
     <tstamp/>
@@ -48,6 +52,8 @@
       <fileset dir="." includes="TEST-*" />
     </delete>
     <junit printsummary="withOutAndErr" haltonfailure="no" haltonerror="no">
+      <jvmarg value="${trustStoreArg}"/>
+      <jvmarg value="${trustStorePassArg}"/>
       <classpath>
 	<pathelement location="${test.jar.file}"/> 
 	<pathelement location="${jar.file}"/>
@@ -70,6 +76,7 @@
     <!-- Delete the ${build} and ${dist} directory trees -->
     <delete dir="${build}"/>
     <delete dir="${dist}"/>
+    <!-- delete the various test results. -->
     <delete verbose="yes">
       <fileset dir="." includes="TEST-*" />
     </delete>
