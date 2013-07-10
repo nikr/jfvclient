@@ -37,8 +37,8 @@ public class ListDatapathRRTest
 	public void testValidRequest() throws MalformedURLException, IOException
 	{
 		Gson g = TestUtils.getGson();
-		FVRpcRequest ldiRequest = new FVRpcRequest(
-				FVRpcRequest.NoParamType.list_datapaths);
+		EmptyFVRpcRequest ldiRequest = new EmptyFVRpcRequest(
+				EmptyFVRpcRequest.NoParamType.list_datapaths);
 		String resp = c.send(g, ldiRequest);
 
 		FVRpcResponse<DataPaths> res = null;

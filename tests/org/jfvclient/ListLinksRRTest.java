@@ -43,8 +43,8 @@ public class ListLinksRRTest
 	{
 
 		Gson g = TestUtils.getGson();
-		FVRpcRequest llRequest = new FVRpcRequest(
-				FVRpcRequest.NoParamType.list_links, "ll1");
+		EmptyFVRpcRequest llRequest = new EmptyFVRpcRequest(
+				EmptyFVRpcRequest.NoParamType.list_links, "ll1");
 		String resp = c.send(g, llRequest);
 
 		FVRpcResponse<LinksList> res = null;

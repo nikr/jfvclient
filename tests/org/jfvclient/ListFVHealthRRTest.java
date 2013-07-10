@@ -44,8 +44,8 @@ public class ListFVHealthRRTest
 		JFVClient c = new JFVClient();
 
 		Gson gson = JFVClient.getGson();
-		FVRpcRequest lsr = new FVRpcRequest(
-				FVRpcRequest.NoParamType.list_fv_health);
+		EmptyFVRpcRequest lsr = new EmptyFVRpcRequest(
+				EmptyFVRpcRequest.NoParamType.list_fv_health);
 		String response = c.send(gson, lsr);
 		Type t = new TypeToken<FVRpcResponse<FVHealth>>()
 		{

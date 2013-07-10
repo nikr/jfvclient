@@ -102,6 +102,7 @@ public class FlowspaceRRTests
 	public void testUpdateExistingFlowspace() throws IOException,
 			JFVErrorResponseException
 	{
+		System.out.println("Update existing Flowspace");
 		// create a new one if it's not there.
 		checkAndCreateTestFlowspace();
 		Flowspace fs = new Flowspace("flowspace_foo", new Dpid(5L));
@@ -115,7 +116,14 @@ public class FlowspaceRRTests
 		UpdateFlowspace u = new UpdateFlowspace();
 		u.add(fs);
 		FVRpcResponse<Integer> resp = updateFlowspace(u);
-		assertFalse("should not be an error response", resp.isError());
+		if (resp.isError())
+		{
+			System.err.println("error message: ");
+			System.err.println(resp.getError().getReason());
+			System.err.println(resp.getError().getMsg());
+		}
+		assertFalse("should not be an error response ", resp.isError());
+
 
 	}
 

@@ -72,6 +72,26 @@ public class FVRpcRequest<V>
 
 	}
 
+	protected FVRpcRequest()
+	{
+
+	}
+
+	protected void setMethod(String method)
+	{
+		this.method = method;
+	}
+
+	protected void setId(String id)
+	{
+		this.id =  id;
+	}
+
+	protected void setParams(V params)
+	{
+		this.params = params;
+	}
+
 	/**
 	 *
 	 * @return The request ID
@@ -176,93 +196,5 @@ public class FVRpcRequest<V>
 		}
 	}
 
-	/**
-	 * Constructor used for 'empty' requests. These are
-	 * <ul>
-	 * <li />list-version
-	 * <li />list-links
-	 * <li />list-slices
-	 * <li />list-datapaths
-	 * <li />list-fv-health
-	 * <li />save-config
-	 * </ul>
-	 *
-	 * @see NoParamType
-	 * @param t
-	 *            the method
-	 * @param id
-	 *            a request ID. Must not be null.
-	 */
-	public FVRpcRequest(NoParamType t, String id)
-	{
 
-		switch (t)
-		{
-		case list_slices:
-			method = "list-slices";
-			break;
-		case list_version:
-			method = "list-version";
-			break;
-		case list_datapaths:
-			method = "list-datapaths";
-			break;
-		case list_links:
-			method = "list-links";
-			break;
-		case list_fv_health:
-			method = "list-fv-health";
-			break;
-		case save_config:
-			method = "save-config";
-			break;
-		default:
-			throw new AssertionError(t.name());
-		}
-		this.id = id;
-		params = (V) JsonNull.INSTANCE;
-
-	}
-
-	/**
-	 * Creates a new request with no parameters and a generated request ID.
-	 * @param t
-	 */
-	public FVRpcRequest(NoParamType t)
-	{
-		this(t, t.name() + Math.round(Math.random() * 1000));
-	}
-
-	/**
-	 * Requests that require no parameters. Rather than implementing all of
-	 * these as empty classes, it is easier to just enumerate them and have them
-	 * as a special class of requests.
-	 */
-	public static enum NoParamType {
-
-		/**
-		 * list-slices request
-		 */
-		list_slices,
-		/**
-		 * list-version request
-		 */
-		list_version,
-		/**
-		 * list-datapaths request
-		 */
-		list_datapaths,
-		/**
-		 * list-links request
-		 */
-		list_links,
-		/**
-		 * list-fv-health request
-		 */
-		list_fv_health,
-		/**
-		 * save-config request
-		 */
-		save_config,
-	}
 }

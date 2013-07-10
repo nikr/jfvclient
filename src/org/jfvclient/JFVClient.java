@@ -281,8 +281,8 @@ public class JFVClient
 	 */
 	public SliceList listSlices() throws IOException, JFVErrorResponseException
 	{
-		FVRpcRequest lsr = new FVRpcRequest(
-				FVRpcRequest.NoParamType.list_slices);
+		EmptyFVRpcRequest lsr = new EmptyFVRpcRequest(
+				EmptyFVRpcRequest.NoParamType.list_slices);
 		String response = send(gson, lsr);
 		Type t = new TypeToken<FVRpcResponse<SliceList>>()
 		{
@@ -305,8 +305,8 @@ public class JFVClient
 	public DataPaths listDatapaths() throws IOException,
 			JFVErrorResponseException
 	{
-		FVRpcRequest lsr = new FVRpcRequest(
-				FVRpcRequest.NoParamType.list_datapaths);
+		EmptyFVRpcRequest lsr = new EmptyFVRpcRequest(
+				EmptyFVRpcRequest.NoParamType.list_datapaths);
 		String response = send(gson, lsr);
 		Type t = new TypeToken<FVRpcResponse<DataPaths>>()
 		{
@@ -378,8 +378,8 @@ public class JFVClient
 	public FVHealth listFVHealth() throws JFVErrorResponseException,
 			IOException
 	{
-		FVRpcRequest lsr = new FVRpcRequest(
-				FVRpcRequest.NoParamType.list_fv_health);
+		EmptyFVRpcRequest lsr = new EmptyFVRpcRequest(
+				EmptyFVRpcRequest.NoParamType.list_fv_health);
 		String response = send(gson, lsr);
 		Type t = new TypeToken<FVRpcResponse<FVHealth>>()
 		{
@@ -557,8 +557,8 @@ public class JFVClient
 	 */
 	public Version getVersion() throws JFVErrorResponseException, IOException
 	{
-		FVRpcRequest lsr = new FVRpcRequest(
-				FVRpcRequest.NoParamType.list_version);
+		EmptyFVRpcRequest lsr = new EmptyFVRpcRequest(
+				EmptyFVRpcRequest.NoParamType.list_version);
 		String response = send(gson, lsr);
 		Type t = new TypeToken<FVRpcResponse<Version>>()
 		{

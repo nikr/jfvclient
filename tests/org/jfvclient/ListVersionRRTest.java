@@ -31,8 +31,8 @@ public class ListVersionRRTest
 		JFVClient c = new JFVClient();
 		Gson gson = JFVClient.getGson();
 
-		FVRpcRequest<Object> lsr = new FVRpcRequest<Object>(
-				FVRpcRequest.NoParamType.list_version);
+		EmptyFVRpcRequest lsr = new EmptyFVRpcRequest(
+				EmptyFVRpcRequest.NoParamType.list_version);
 		String response = c.send(gson, lsr);
 		Type t = new TypeToken<FVRpcResponse<Version>>()
 		{
