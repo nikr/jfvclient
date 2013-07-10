@@ -19,7 +19,7 @@ import org.junit.Ignore;
 public class ListDatapathInfoTest
 {
     ListDatapathInfo instance;
-    
+
     public ListDatapathInfoTest() throws IOException
     {
         String s = TestUtils.readTestInput(ListDatapathInfo.class);
@@ -35,7 +35,7 @@ public class ListDatapathInfoTest
     {
         System.out.println("getDpid");
         String expResult = "00:00:00:ff:f1:01:01:02";
-        String result = instance.getDpid();
+        String result = instance.getDpid().getDpid();
         assertEquals(expResult, result);
     }
 }

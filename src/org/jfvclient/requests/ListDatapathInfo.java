@@ -19,6 +19,7 @@ package org.jfvclient.requests;
 import org.jfvclient.data.Dpid;
 
 /**
+ * A request to get info on a network device.
  *
  * @author Niklas Rehfeld
  */
@@ -26,27 +27,37 @@ public class ListDatapathInfo
 {
 	private Dpid dpid;
 
-	public ListDatapathInfo()
-	{
-	}
-
+	/**
+	 *
+	 * @param d
+	 *            The DPID of the device to query.
+	 */
 	public ListDatapathInfo(Dpid d)
 	{
-		dpid = d;
-	}
-
-	public String getDpid()
-	{
-		return dpid.getDpid();
+//		dpid = d;
+		setDpid(d);
 	}
 
 	/**
 	 *
-	 * @param d The DPID of the datapath to query. Note, this must identify a
+	 * @return the DPID of the device to query.
+	 */
+	public Dpid getDpid()
+	{
+		return dpid;
+	}
+
+	/**
+	 *
+	 * @param d
+	 *            The DPID of the datapath to query. Note, this must identify a
 	 *            unique device, so cannot be "any", "all" or "ALL_DPIDS"
 	 */
 	public void setDpid(Dpid d)
 	{
+		if (!d.isRealDpid())
+			throw new IllegalArgumentException(
+					"Argument must be a real (unique) DPID, not " + d.getDpid());
 		dpid = d;
 	}
 }

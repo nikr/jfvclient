@@ -12,6 +12,7 @@ import java.net.MalformedURLException;
 import org.jfvclient.data.Dpid;
 import org.jfvclient.requests.ListDatapathInfo;
 import org.jfvclient.responses.DatapathInfo;
+import org.jfvclient.responses.ErrorResponse;
 import org.jfvclient.testing.TestUtils;
 import org.junit.Test;
 
@@ -67,7 +68,7 @@ public class ListDatapathInfoRRTest
         res = g.fromJson(resp, respType);
         assertTrue("Expected an error response, got " + res, res.isError());
         //expect a "invalid parameters" error (-32602) .
-        assertEquals("Expected ErrorResponse code -32602, got " + res.getError().getCode(), res.getError().getCode(), -32602 );
+        assertEquals("Expected ErrorResponse code -32602, got " + res.getError().getCode(), res.getError().getCode(), ErrorResponse.INVALID_PARAMS);
 //        if (res.isError())
 //        {
 //        	fail("result should not be an error.");
