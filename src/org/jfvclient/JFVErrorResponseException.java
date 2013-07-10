@@ -17,9 +17,11 @@ package org.jfvclient;
 
 import org.jfvclient.responses.ErrorResponse;
 
-//import java.io.Exception;
 
 /**
+ * Exception that is thrown when JFVClient receives an error response from the
+ * FlowVisor server. It contains the response that is returned by the FlowVisor.
+ *
  * @author Niklas Rehfeld
  *
  */
@@ -28,11 +30,17 @@ public class JFVErrorResponseException extends Exception
 
 	private ErrorResponse error;
 
+	/**
+	 * @param cause The response that caused the error.
+	 */
 	public JFVErrorResponseException(ErrorResponse cause)
 	{
-		this.error = error;
+		this.error = cause;
 	}
 
+	/**
+	 * @return the error response
+	 */
 	public ErrorResponse getError()
 	{
 		return error;
