@@ -52,11 +52,11 @@ public class ListDatapathRRTest
 		// first dpid shoud be 00::06.
 		// assertEquals(d.get(0), new Dpid(Dpid.toDpid(6)));
 		assertTrue("Should contain DPID 00::05",
-				d.contains(new Dpid(Dpid.toDpid(5))));
+				d.contains(new Dpid(5L)));
 		assertTrue("Should contain DPID 00::06",
-				d.contains(new Dpid(Dpid.toDpid(6))));
+				d.contains(new Dpid(6L)));
 		assertTrue("Should contain DPID 00::07",
-				d.contains(new Dpid(Dpid.toDpid(7))));
+				d.contains(new Dpid(7L)));
 		assertEquals("Unexpected number of DPIDs in results", d.size(), 3);
 
 	}

@@ -49,9 +49,9 @@ public class FlowspaceRRTests
 	}.getType();
 
 	/**
-	 * removes the flowspaces that were created by running the tests.
-	 * This method may be necessary, because it's not predictable in which
-	 * order the tests will run.
+	 * removes the flowspaces that were created by running the tests. This
+	 * method may be necessary, because it's not predictable in which order the
+	 * tests will run.
 	 */
 	@AfterClass
 	public static void cleanup()
@@ -68,6 +68,7 @@ public class FlowspaceRRTests
 
 	/**
 	 * test addition of a single flowspace.
+	 *
 	 * @throws IOException
 	 */
 	@Test
@@ -77,10 +78,10 @@ public class FlowspaceRRTests
 		// m.put("in_port", "all");
 		SliceAction a = new SliceAction("fvadmin", 6);
 
-//		Gson gson = TestUtils.getGson();
-//		JFVClient c = new JFVClient();
+		// Gson gson = TestUtils.getGson();
+		// JFVClient c = new JFVClient();
 
-		Flowspace fs = new Flowspace("flowspace_foo", new Dpid(Dpid.toDpid(5)),
+		Flowspace fs = new Flowspace("flowspace_foo", new Dpid(5L),
 				new Integer(10), m, Collections.singletonList(a));
 		AddFlowspace afs = new AddFlowspace();
 		afs.add(fs);
@@ -103,7 +104,7 @@ public class FlowspaceRRTests
 	{
 		// create a new one if it's not there.
 		checkAndCreateTestFlowspace();
-		Flowspace fs = new Flowspace("flowspace_foo", new Dpid(Dpid.toDpid(5)));
+		Flowspace fs = new Flowspace("flowspace_foo", new Dpid(5L));
 
 		MatchStruct m = new MatchStruct();
 		m.put("in_port", 2);
@@ -120,6 +121,7 @@ public class FlowspaceRRTests
 
 	/**
 	 * test removal of an existing, valid flowspace.
+	 *
 	 * @throws IOException
 	 * @throws JFVErrorResponseException
 	 */
@@ -128,7 +130,7 @@ public class FlowspaceRRTests
 			JFVErrorResponseException
 	{
 
-		Flowspace fs = new Flowspace("flowspace_foo", new Dpid(Dpid.toDpid(5)));
+		Flowspace fs = new Flowspace("flowspace_foo", new Dpid(5L));
 		// create a new one if it's not there.
 		checkAndCreateTestFlowspace();
 
@@ -141,7 +143,9 @@ public class FlowspaceRRTests
 	}
 
 	/**
-	 * creates a new flowspace called <code>flowspace_foo</code> if it doesn't already exist.
+	 * creates a new flowspace called <code>flowspace_foo</code> if it doesn't
+	 * already exist.
+	 *
 	 * @throws IOException
 	 * @throws JFVErrorResponseException
 	 */
@@ -153,7 +157,7 @@ public class FlowspaceRRTests
 		Gson gson = TestUtils.getGson();
 		JFVClient c = new JFVClient();
 
-		Flowspace fs = new Flowspace("flowspace_foo", new Dpid(Dpid.toDpid(5)),
+		Flowspace fs = new Flowspace("flowspace_foo", new Dpid(5L),
 				new Integer(10), m, Collections.singletonList(a));
 
 		if (!c.listAllFlowspaces(true).contains(fs))
