@@ -27,43 +27,59 @@ import org.jfvclient.deserialisers.DpidDeserialiser;
 import org.jfvclient.serialisers.DpidSerialiser;
 
 /**
- *Useful methods for reading in test data and suchlike.
- * 
- * 
+ * Useful methods for reading in test data and suchlike.
+ *
+ *
  * @author Niklas Rehfeld
  */
-public class TestUtils {
+public class TestUtils
+{
 
-    static File testDataFolder = new File("test-data");
-    
-    public static String readTestInput(Class testclass) throws IOException
-    {
-        if (!testDataFolderValid())
-            throw new IOException("Test data folder " + testDataFolder.getAbsolutePath() + "is not a readable directory.");
-        File f = new File(testDataFolder, testclass.getSimpleName() + ".in");
-        BufferedReader r = new BufferedReader(new FileReader(f));
-        String out = "";
-        while (r.ready())
-        {
-            out += r.readLine();
-        }
-        return out;
-    }
-    
-    private static boolean testDataFolderValid()
-    {
-        return (testDataFolder.isDirectory() && testDataFolder.canRead());
-    }
-    
-    /**
-     * 
-     * @return a Gson instance set up with the correct serialisers and deserialisers.
-     */
-    public static Gson getGson()
-    {
-             GsonBuilder gb = new GsonBuilder();
-        gb.registerTypeAdapter(Dpid.class, new DpidDeserialiser());
-        gb.registerTypeAdapter(Dpid.class, new DpidSerialiser());
-        return gb.create();
-    }
+	static File testDataFolder = new File("test-data");
+
+	/**
+	 * Reads the test input corresponding to the class under test.
+	 *
+	 * For instance if the class being tested is Dpid, then it will read in a
+	 * file called Dpid.in.
+	 *
+	 * @param testclass
+	 *            the class to be tested
+	 * @return a String containing the contents of the test input.
+	 * @throws IOException
+	 */
+	public static String readTestInput(Class<?> testclass) throws IOException
+	{
+		if (!testDataFolderValid())
+			throw new IOException("Test data folder "
+					+ testDataFolder.getAbsolutePath()
+					+ "is not a readable directory.");
+		File f = new File(testDataFolder, testclass.getSimpleName() + ".in");
+		BufferedReader r = new BufferedReader(new FileReader(f));
+		String out = "";
+		while (r.ready())
+		{
+			out += r.readLine();
+		}
+		r.close();
+		return out;
+	}
+
+	private static boolean testDataFolderValid()
+	{
+		return (testDataFolder.isDirectory() && testDataFolder.canRead());
+	}
+
+	/**
+	 *
+	 * @return a Gson instance set up with the correct serialisers and
+	 *         deserialisers.
+	 */
+	public static Gson getGson()
+	{
+		GsonBuilder gb = new GsonBuilder();
+		gb.registerTypeAdapter(Dpid.class, new DpidDeserialiser());
+		gb.registerTypeAdapter(Dpid.class, new DpidSerialiser());
+		return gb.create();
+	}
 }

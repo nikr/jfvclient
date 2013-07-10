@@ -3,11 +3,12 @@
  */
 package org.jfvclient;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.net.MalformedURLException;
 
 import org.jfvclient.requests.AddSlice;
 import org.jfvclient.requests.RemoveSlice;
@@ -40,6 +41,9 @@ public class SliceOperationsRRTest
 	private String slicename = "testslice123";
 	private JFVClient c = new JFVClient();
 
+	/**
+	 * creates booleanresponsetype.
+	 */
 	@BeforeClass
 	public static void setup()
 	{
@@ -48,6 +52,12 @@ public class SliceOperationsRRTest
 		}.getType();
 	}
 
+	/**
+	 * cleans up slices that were created by the tests.
+	 *
+	 * @throws IOException
+	 * @throws JFVErrorResponseException
+	 */
 	@AfterClass
 	public static void cleanup() throws IOException, JFVErrorResponseException
 	{
@@ -63,6 +73,11 @@ public class SliceOperationsRRTest
 		c.removeSlice(PASSWORDTESTSLICE);
 	}
 
+	/**
+	 * test adding a new slice.
+	 *
+	 * @throws IOException
+	 */
 	@Test
 	public void testAddNew() throws IOException
 	{
@@ -78,6 +93,11 @@ public class SliceOperationsRRTest
 		assertTrue("Expected 'true' result", b.booleanValue());
 	}
 
+	/**
+	 * test adding a slice that already exists.
+	 *
+	 * @throws IOException
+	 */
 	@Test
 	public void testAddDuplicate() throws IOException
 	{
@@ -96,6 +116,11 @@ public class SliceOperationsRRTest
 
 	}
 
+	/**
+	 * test updating avalid slice.
+	 *
+	 * @throws IOException
+	 */
 	@Test
 	public void testUpdateValid() throws IOException
 	{
@@ -112,6 +137,11 @@ public class SliceOperationsRRTest
 
 	}
 
+	/**
+	 * test removing a valid slice.
+	 *
+	 * @throws IOException
+	 */
 	@Test
 	public void testRemoveValidSlice() throws IOException
 	{
@@ -128,16 +158,29 @@ public class SliceOperationsRRTest
 
 	}
 
+	/**
+	 * test updating a valid slice's password.
+	 *
+	 * @throws IOException
+	 */
 	@Test
 	public void testUpdateSlicePassword() throws IOException
 	{
 		addSlice(PASSWORDTESTSLICE);
-		FVRpcResponse<Boolean> response = updateSlicePassword(PASSWORDTESTSLICE, "newpassword");
+		FVRpcResponse<Boolean> response = updateSlicePassword(
+				PASSWORDTESTSLICE, "newpassword");
 		assertFalse("Should not be an error response.", response.isError());
 		assertTrue("Password change did not return true.", response.getResult());
 
 	}
 
+	/**
+	 * check if a slice of the given name exists in the flowvisor.
+	 *
+	 * @param slicename
+	 *            the name of the slice.
+	 * @return true if list-slices contains the slice name.
+	 */
 	private boolean checkExists(String slicename)
 	{
 		try

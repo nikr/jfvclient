@@ -30,16 +30,28 @@ public class Slice
 	@SerializedName("admin-status")
 	private boolean admin_status;
 
+	/**
+	 * creates a new slice instance.
+	 * @param name the name of the slice.
+	 */
 	public Slice(String name)
 	{
 		this.slice_name = name;
 	}
 
+	/**
+	 *
+	 * @return the slice name
+	 */
 	public String getSlice_name()
 	{
 		return slice_name;
 	}
 
+	/**
+	 *
+	 * @return if the slice has admin status set.
+	 */
 	public boolean isAdmin_status()
 	{
 		return admin_status;

@@ -21,6 +21,7 @@ import java.util.Map;
 import org.jfvclient.data.Dpid;
 
 /**
+ * Contains information about a network device.
  *
  * @author Niklas Rehfeld
  */
@@ -38,35 +39,58 @@ public class DatapathInfo
     @SerializedName("current-flowmod-usage")
     private Map<String, Integer> currentFlowmodUsage;
 
+    /**
+     * @return The DPID of this device.
+     */
     public String getDpid()
     {
         return dpid.getDpid();
     }
 
+    /**
+     * Gets the number of ports that this device has.
+     * @return the number of ports on this device.
+     */
     public int getNumPorts()
     {
         return numPorts;
     }
 
+    /**
+     * Gets an ordered list of the ports on this device.
+     * @return the list of ports on this device.
+     */
     public List<Integer> getPortList()
     {
         return portList;
     }
 
+    /**
+     * Gets the names of the ports on this device.
+     * @return a list of port names in the same order as in {@link #getPortList()}
+     */
     public List<String> getPortNames()
     {
         return portNames;
     }
 
+    /**
+     *
+     * @return the connection ID.
+     */
     public String getConnection()
     {
         return connection;
     }
 
+    /**
+     * gets the current flowmod usage.
+     * @return the current flowmod usage.
+     */
     public Map<String, Integer> getCurrentFlowmodUsage()
     {
         return currentFlowmodUsage;
     }
-    
-    
+
+
 }

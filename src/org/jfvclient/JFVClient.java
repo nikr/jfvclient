@@ -63,7 +63,8 @@ import com.google.gson.reflect.TypeToken;
 import org.jfvclient.requests.RemoveFlowspace;
 
 /**
- *
+ * This class can be used to for most operations. It contains methods for sending
+ * FlowVisor monitoring and control messages.
  *
  * @author Niklas Rehfeld
  */
@@ -81,6 +82,9 @@ public class JFVClient
 	{
 	}.getType();
 
+	/**
+	 * Creates a new JFVClient.
+	 */
 	public JFVClient()
 	{
 		config = getProps();
@@ -139,6 +143,11 @@ public class JFVClient
 		return con;
 	}
 
+    /**
+     * Send a message through to the FlowVisor.
+     * This is called by the various user methods.
+     *
+     */
 	protected String send(Gson g, Object request) throws IOException
 
 	{
@@ -181,6 +190,11 @@ public class JFVClient
 		return response;
 	}
 
+    /**
+     * An authenticator which gets the username and password from a properties file.
+     * This is used to log into the FlowVisor instance.
+     *
+     */
 	protected class PropertiesFileAuth extends Authenticator
 	{
 		private String uname;
@@ -199,6 +213,11 @@ public class JFVClient
 		}
 	}
 
+    /**
+     * Gets a properly initialised GSON object, to use for parsing JSON.
+     *
+     * @return a Gson object that can be used to properly serialise/deserialise the JSON messages used.
+     */
 	protected static Gson getGson()
 	{
 		GsonBuilder gb = new GsonBuilder();
@@ -230,12 +249,13 @@ public class JFVClient
 	}
 
 	/**
-	 * Add a slice to the flowvisor.
+	 * Add a slice to the FlowVisor.
+	 *{@link AddSlice}
 	 *
-	 * @param s
-	 * @return
+	 * @param s A the slice to be added.
+	 * @return true if the slice was added sucessfully (I think)
 	 * @throws IOException
-	 * @throws JFVErrorResponseException
+	 * @throws JFVErrorResponseException if the response is an error response
 	 */
 	public boolean addSlice(AddSlice s) throws IOException,
 			JFVErrorResponseException
@@ -252,6 +272,13 @@ public class JFVClient
 		return resp.getResult().booleanValue();
 	}
 
+	/**
+	 * Gets the list of slices from the FlowVisor.
+	 *
+	 * @return a list of Slices.
+	 * @throws IOException
+	 * @throws JFVErrorResponseException if the response is an error response
+	 */
 	public SliceList listSlices() throws IOException, JFVErrorResponseException
 	{
 		FVRpcRequest lsr = new FVRpcRequest(
@@ -268,6 +295,13 @@ public class JFVClient
 		return resp.getResult();
 	}
 
+	/**
+	 * Gets the devices that the FlowVisor can see.
+	 *
+	 * @return a list of Dpids.
+	 * @throws IOException
+	 * @throws JFVErrorResponseException if the response is an error response
+	 */
 	public DataPaths listDatapaths() throws IOException,
 			JFVErrorResponseException
 	{
@@ -285,6 +319,14 @@ public class JFVClient
 		return resp.getResult();
 	}
 
+	/**
+	 * Returns the information about a device.
+	 *
+	 * @param d the Dpid of the device to query.
+	 * @return Information about the device.
+	 * @throws IOException
+	 * @throws JFVErrorResponseException if the response is an error response
+	 */
 	public DatapathInfo listDataPathInfo(Dpid d) throws IOException,
 			JFVErrorResponseException
 	{
@@ -301,6 +343,14 @@ public class JFVClient
 		return resp.getResult();
 	}
 
+	/**
+	 * Gets information about a slice.
+	 *
+	 * @param sliceName the name of the slice to get information about.
+	 * @return Information about a slice.
+	 * @throws IOException
+	 * @throws JFVErrorResponseException if the response is an error response
+	 */
 	public SliceInfo listSliceInfo(String sliceName) throws IOException,
 			JFVErrorResponseException
 	{
@@ -318,6 +368,13 @@ public class JFVClient
 		return resp.getResult();
 	}
 
+	/**
+	 * Gets information about the health of the FlowVisor, such as the number
+	 * of active DB sessions, the number of idle DB sessions, the average delay etc.
+	 * @return Information about the health of the running FlowVisor.
+	 * @throws JFVErrorResponseException if the response is an error response
+	 * @throws IOException
+	 */
 	public FVHealth listFVHealth() throws JFVErrorResponseException,
 			IOException
 	{
@@ -335,6 +392,14 @@ public class JFVClient
 		return resp.getResult();
 	}
 
+	/**
+	 * Get the health of a slice.
+	 *
+	 * @param sliceName the name of the slice
+	 * @return information about the health of the slice.
+	 * @throws JFVErrorResponseException if the response is an error response
+	 * @throws IOException
+	 */
 	public SliceHealth listSliceHealth(String sliceName)
 			throws JFVErrorResponseException, IOException
 	{
@@ -352,6 +417,14 @@ public class JFVClient
 		return resp.getResult();
 	}
 
+	/**
+	 * Get statistics about a slice.
+	 *
+	 * @param sliceName the name of the slice.
+	 * @return statistics about a slice.
+	 * @throws JFVErrorResponseException if the response is an error response
+	 * @throws IOException
+	 */
 	public SliceStats listSliceStats(String sliceName)
 			throws JFVErrorResponseException, IOException
 	{
@@ -369,6 +442,14 @@ public class JFVClient
 		return resp.getResult();
 	}
 
+	/**
+	 * Updates a slice with new parameters.
+	 *
+	 * @param u the changes to the slice.
+	 * @return true if the slice was successfully updated.
+	 * @throws JFVErrorResponseException if the response is an error response
+	 * @throws IOException
+	 */
 	public boolean updateSlice(UpdateSlice u) throws JFVErrorResponseException,
 			IOException
 	{
@@ -383,6 +464,13 @@ public class JFVClient
 		return resp.getResult().booleanValue();
 	}
 
+	/**
+	 * Removes a slice.
+	 * @param sliceName the name of the slice to be removed.
+	 * @return true if the slice was successfully removed.
+	 * @throws IOException
+	 * @throws JFVErrorResponseException if the response is an error response
+	 */
 	public boolean removeSlice(String sliceName) throws IOException,
 			JFVErrorResponseException
 	{
@@ -398,6 +486,14 @@ public class JFVClient
 		return resp.getResult().booleanValue();
 	}
 
+	/**
+	 * Add new flowspaces.
+	 *
+	 * @param fs A list of flowspaces to add.
+	 * @return the id of the flowspace request.
+	 * @throws IOException
+	 * @throws JFVErrorResponseException if the response is an error response.
+	 */
 	public int addFlowspace(AddFlowspace fs) throws IOException,
 			JFVErrorResponseException
 	{
@@ -416,10 +512,10 @@ public class JFVClient
 	/**
 	 * convenience method for adding a single flowspace.
 	 *
-	 * @param f
-	 * @return
+	 * @param f the flowspace definition
+	 * @return the id of the flowspace request.
 	 * @throws IOException
-	 * @throws JFVErrorResponseException
+	 * @throws JFVErrorResponseException if the response is an error response.
 	 */
 	public int addFlowspace(Flowspace f) throws IOException,
 			JFVErrorResponseException
@@ -433,7 +529,7 @@ public class JFVClient
 	 * Remove a single flowspace.
 	 *
 	 * @param flowspaceName the name of the flowspace
-	 * @return
+	 * @return the id of the flowspace request.
 	 * @throws JFVErrorResponseException
 	 * @throws IOException
 	 */
@@ -453,6 +549,12 @@ public class JFVClient
 		return resp.getResult().intValue();
 	}
 
+	/**
+	 * Gets the version information of the FlowVisor instance.
+	 * @return version information.
+	 * @throws JFVErrorResponseException if the response is an error response.
+	 * @throws IOException
+	 */
 	public Version getVersion() throws JFVErrorResponseException, IOException
 	{
 		FVRpcRequest lsr = new FVRpcRequest(
@@ -529,6 +631,14 @@ public class JFVClient
 		return resp.getResult();
 	}
 
+	/**
+	 * Updates the password for a slice.
+	 * @param sliceName the name of the slice.
+	 * @param password the new password.
+	 * @return true if the password was successfully updated.
+	 * @throws IOException
+	 * @throws JFVErrorResponseException if the response is an error response.
+	 */
 	public boolean updateSlicePassword(String sliceName, String password)
 			throws IOException, JFVErrorResponseException
 	{
@@ -545,6 +655,14 @@ public class JFVClient
 
 	}
 
+	/**
+	 * Update flowspaces.
+	 *
+	 * @param flowspaces a list of flowspaces to update.
+	 * @return the id of the flowspace request.
+	 * @throws IOException
+	 * @throws JFVErrorResponseException if the response is an error response.
+	 */
 	public int updateFlowspace(UpdateFlowspace flowspaces)
 			throws IOException, JFVErrorResponseException
 	{
@@ -561,6 +679,13 @@ public class JFVClient
 		return resp.getResult().intValue();
 	}
 
+	/**
+	 * Update a single flowspace.
+	 * @param flowspace flowspace
+	 * @return the id of the flowspace request.
+	 * @throws IOException
+	 * @throws JFVErrorResponseException if the response is an error response.
+	 */
 	public int updateFlowspace(Flowspace flowspace) throws IOException,
 			JFVErrorResponseException
 	{

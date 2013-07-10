@@ -26,65 +26,82 @@ import org.jfvclient.data.Dpid;
 public class Link
 {
 
-    @SerializedName("srcDPID")
-    private Dpid src_dpid;
-    @SerializedName("srcPort")
-    private int src_port;
-    @SerializedName("dstDPID")
-    private Dpid dst_dpid;
-    @SerializedName("dstPort")
-    private int dst_port;
+	@SerializedName("srcDPID")
+	private Dpid src_dpid;
+	@SerializedName("srcPort")
+	private int src_port;
+	@SerializedName("dstDPID")
+	private Dpid dst_dpid;
+	@SerializedName("dstPort")
+	private int dst_port;
 
-    public Dpid getSrc_dpid()
-    {
-        return src_dpid;
-    }
+	/**
+	 * @return the source DPID
+	 */
+	public Dpid getSrc_dpid()
+	{
+		return src_dpid;
+	}
 
-    public int getSrc_port()
-    {
-        return src_port;
-    }
+	/**
+	 * @return the source port
+	 */
+	public int getSrc_port()
+	{
+		return src_port;
+	}
 
-    public Dpid getDst_dpid()
-    {
-        return dst_dpid;
-    }
+	/**
+	 * @return the destination DPID
+	 */
+	public Dpid getDst_dpid()
+	{
+		return dst_dpid;
+	}
 
-    public int getDst_port()
-    {
-        return dst_port;
-    }
+	/**
+	 * @return the destination port.
+	 */
+	public int getDst_port()
+	{
+		return dst_port;
+	}
 
-    @Override
-    public String toString()
-    {
+	/**
+	 * @return " src_dpid:src_port --> dst_dpid:dst_port "
+	 */
+	@Override
+	public String toString()
+	{
+		String out = src_dpid.getDpid() + ":";
+		out += src_port + "-->";
+		out += dst_dpid.getDpid() + ":";
+		out += dst_port;
+		return out;
+	}
 
-        String out = src_dpid.getDpid() + ":";
-        out += src_port + "-->";
-        out += dst_dpid.getDpid() + ":";
-        out += dst_port;
-        return out;
-    }
+	/**
+	 * @return true iff all of the destination and source dpids and ports are
+	 *         the same.
+	 */
+	@Override
+	public boolean equals(Object o)
+	{
+		if (!(o instanceof Link))
+		{
+			return false;
+		}
+		Link other = (Link) o;
+		return (other.dst_dpid == dst_dpid && other.dst_port == dst_port
+				&& other.src_dpid == src_dpid && other.src_port == src_port);
+	}
 
-    @Override
-    public boolean equals(Object o)
-    {
-        if (!(o instanceof Link))
-        {
-            return false;
-        }
-        Link other = (Link) o;
-        return (other.dst_dpid == dst_dpid
-                && other.dst_port == dst_port
-                && other.src_dpid == src_dpid
-                && other.src_port == src_port);
-    }
+	@Override
+	public int hashCode()
+	{
+		// not sure about this one...
+		return dst_dpid.hashCode() + src_dpid.hashCode() + dst_port
+				+ (src_port << 4);
 
-    @Override
-    public int hashCode()
-    {
-        //not sure about this one...
-        return dst_dpid.hashCode() + src_dpid.hashCode() + dst_port + (src_port << 4);
-
-    }
+	}
 }

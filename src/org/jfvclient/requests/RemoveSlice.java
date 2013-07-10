@@ -33,6 +33,10 @@ public class RemoveSlice
 {
 	@SerializedName("slice-name") private String sliceName;
 
+	/**
+	 * creates a new remove-slice request.
+	 * @param name the name of the slice to remove.
+	 */
 	public RemoveSlice(String name)
 	{
 		this.setSliceName(name);

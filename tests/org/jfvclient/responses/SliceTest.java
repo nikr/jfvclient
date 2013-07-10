@@ -11,13 +11,18 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
+ * tests reading in valid Slice responses.
  *
  * @author Niklas Rehfeld
  */
 public class SliceTest
 {
     Slice instance;
-    
+
+    /**
+     * reads input from Slice.in
+     * @throws IOException
+     */
     public SliceTest() throws IOException
     {
         String s = TestUtils.readTestInput(Slice.class);

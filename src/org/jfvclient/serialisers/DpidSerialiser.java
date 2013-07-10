@@ -26,26 +26,29 @@ import org.jfvclient.data.Dpid;
 /**
  * A Serialiser for the DPID class. The dpid is really a string, but it needs to
  * be of the form
- * <code>hh:hh:hh:hh:hh:hh:hh:hh</code>,
- * <code>any</code>,
- * <code>all</code>, or
- * <code>ALL_DPIDS</code> in order to be a valid DPID.
+ * <ul>
+ * <li/><code>hh:hh:hh:hh:hh:hh:hh:hh</code>,
+ * <li/><code>any</code>,
+ * <li/><code>all</code>, or
+ * <li/><code>ALL_DPIDS</code>
+ * </ul>
+ * in order to be a valid DPID.
  *
- * {@see DpidDeserialiser}
+ * @see org.jfvclient.deserialisers.DpidDeserialiser
  * @author Niklas Rehfeld
  */
 public class DpidSerialiser implements JsonSerializer<Dpid>
 {
 
-    @Override
-    public JsonElement serialize(Dpid src, Type typeOfSrc,
-                                 JsonSerializationContext context)
-    {
-        if (!src.isValid())
-        {
-            throw new JsonParseException("invalid DPID" + src.getDpid());
-        }
+	@Override
+	public JsonElement serialize(Dpid src, Type typeOfSrc,
+			JsonSerializationContext context)
+	{
+		if (!src.isValid())
+		{
+			throw new JsonParseException("invalid DPID" + src.getDpid());
+		}
 
-        return new JsonPrimitive(src.getDpid());
-    }
+		return new JsonPrimitive(src.getDpid());
+	}
 }

@@ -28,6 +28,11 @@ public class ListDatapathInfoRRTest
 
 	private JFVClient c = new JFVClient();
 
+	/**
+	 * tests getting info on a valid, existant device.
+	 * @throws MalformedURLException
+	 * @throws IOException
+	 */
 	@Test
 	public void testExisting() throws MalformedURLException, IOException
 	{
@@ -53,6 +58,11 @@ public class ListDatapathInfoRRTest
 
 	}
 
+	/**
+	 * tests getting info on a nonexistant device.
+	 * @throws MalformedURLException
+	 * @throws IOException
+	 */
 	@Test
 	public void testNonExisting() throws MalformedURLException, IOException
 	{

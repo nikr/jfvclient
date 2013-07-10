@@ -17,24 +17,35 @@ package org.jfvclient.requests;
 
 import com.google.gson.annotations.SerializedName;
 
-
 /**
  *
  *
- * <pre>{
- "slice-name" : &lt;name&gt;,
- "password" : &lt;password&gt;
-}</pre>
+ * <pre>
+ * {
+ *  "slice-name" : &lt;name&gt;,
+ *  "password" : &lt;password&gt;
+ * }
+ * </pre>
  *
- *returns a boolean.
+ * returns a boolean.
+ *
  * @author Niklas Rehfeld
  *
  */
 public class UpdateSlicePassword
 {
-	@SerializedName("slice-name") private String sliceName;
+	@SerializedName("slice-name")
+	private String sliceName;
 	private String password;
 
+	/**
+	 * creates a new UpdateSlicePassword request.
+	 *
+	 * @param sliceName
+	 *            the name of the slice.
+	 * @param password
+	 *            the new password.
+	 */
 	public UpdateSlicePassword(String sliceName, String password)
 	{
 		this.sliceName = sliceName;
@@ -58,7 +69,8 @@ public class UpdateSlicePassword
 	}
 
 	/**
-	 * @param sliceName the sliceName to set
+	 * @param sliceName
+	 *            the sliceName to set
 	 */
 	public void setSliceName(String sliceName)
 	{
@@ -66,13 +78,12 @@ public class UpdateSlicePassword
 	}
 
 	/**
-	 * @param password the password to set
+	 * @param password
+	 *            the password to set
 	 */
 	public void setPassword(String password)
 	{
 		this.password = password;
 	}
-
-
 
 }

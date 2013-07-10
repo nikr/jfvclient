@@ -1,6 +1,7 @@
 package org.jfvclient;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -8,18 +9,30 @@ import java.net.MalformedURLException;
 
 import org.jfvclient.data.Dpid;
 import org.jfvclient.responses.DataPaths;
-import org.jfvclient.responses.DatapathInfo;
 import org.jfvclient.testing.TestUtils;
 import org.junit.Test;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+/**
+ *
+ * @author Niklas Rehfeld
+ *
+ */
 public class ListDatapathRRTest
 {
 
 	JFVClient c = new JFVClient();
 
+
+	/**
+	 * test listing the devices on the test network.
+	 *
+	 * @see org.jfvclient.RequestResponseTests for details on the test network.
+	 * @throws MalformedURLException
+	 * @throws IOException
+	 */
 	@Test
 	public void testValidRequest() throws MalformedURLException, IOException
 	{

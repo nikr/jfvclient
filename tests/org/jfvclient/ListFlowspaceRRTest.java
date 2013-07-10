@@ -12,10 +12,18 @@ import org.junit.Test;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
+/**
+ *
+ * @author Niklas Rehfeld
+ *
+ */
 public class ListFlowspaceRRTest
 {
 
+	/**
+	 * tests llisting all of the flowspaces including disabled ones.
+	 * @throws IOException
+	 */
 	@Test
 	public void testListAllFlowspacesIncludingDisabled() throws IOException
 	{
@@ -32,6 +40,10 @@ public class ListFlowspaceRRTest
 
 	}
 
+	/**
+	 * tests listing all flowspaces, except disabled ones.
+	 * @throws IOException
+	 */
 	@Test
 	public void testListAllFlowspacesExcludingDisabled() throws IOException
 	{
@@ -47,6 +59,11 @@ public class ListFlowspaceRRTest
 		assertFalse("should not be an error response", resp.isError());
 
 	}
+
+	/**
+	 * test listing non-existent flowspaces.
+	 * @throws IOException
+	 */
 	@Test
 	public void testListNonexistantFlowspaces() throws IOException
 	{

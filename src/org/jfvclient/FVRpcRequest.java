@@ -15,9 +15,6 @@
  */
 package org.jfvclient;
 
-import java.util.List;
-
-import org.jfvclient.data.Flowspace;
 import org.jfvclient.requests.AddFlowspace;
 import org.jfvclient.requests.AddSlice;
 import org.jfvclient.requests.ListDatapathInfo;
@@ -46,7 +43,7 @@ import com.google.gson.JsonNull;
  * </pre>
  *
  * @param <V>
- *            the &lt;request paramerters &gt; type.
+ *            the &lt;request parameters &gt; type.
  * @author Niklas Rehfeld
  */
 public class FVRpcRequest<V>
@@ -55,8 +52,18 @@ public class FVRpcRequest<V>
 	private String method;
 	private String id;
 	private V params;
+	@SuppressWarnings("unused")
 	private final String jsonrpc = "2.0";
 
+	/**
+	 *
+	 * @param method
+	 *            The JSON-RPC method
+	 * @param id
+	 *            the request ID
+	 * @param params
+	 *            the parameters.
+	 */
 	public FVRpcRequest(String method, String id, V params)
 	{
 		this.method = method;
@@ -65,21 +72,42 @@ public class FVRpcRequest<V>
 
 	}
 
+	/**
+	 *
+	 * @return The request ID
+	 */
 	public String getID()
 	{
 		return id;
 	}
 
+	/**
+	 *
+	 * @return the JSON_RPC method name
+	 */
 	public String getMethod()
 	{
 		return method;
 	}
 
+	/**
+	 *
+	 * @return the request parameters
+	 */
 	public V getParam()
 	{
 		return params;
 	}
 
+	/**
+	 * Creates a request with a generated ID. The ID is "method-xxx", where xxx
+	 * is a random number.
+	 *
+	 * @param method
+	 *            the JSON-RPC method
+	 * @param params
+	 *            the parameters
+	 */
 	public FVRpcRequest(String method, V params)
 	{
 		this(method, method + Math.round(Math.random() * 1000), params);
@@ -91,7 +119,7 @@ public class FVRpcRequest<V>
 	 * ones where multiple types can have the same type of parameters. Also not
 	 * for ones with no parameters.
 	 *
-	 * So maybe not that useful, and more likely to be a source of errors...
+	 * It will also generate a random request ID, the same as {@link #FVRpcRequest(String, Object)}
 	 *
 	 * @param params
 	 *            The parameters object that is the body of the request.
@@ -111,48 +139,37 @@ public class FVRpcRequest<V>
 		} else if (params instanceof ListDatapathInfo)
 		{
 			this.method = "list-datapath-info";
-		}
-		else if (params instanceof ListSliceInfo)
+		} else if (params instanceof ListSliceInfo)
 		{
 			this.method = "list-slice-info";
-		}
-		else if (params instanceof ListSliceHealth)
+		} else if (params instanceof ListSliceHealth)
 		{
 			this.method = "list-slice-health";
-		}
-		else if (params instanceof ListSliceStats)
+		} else if (params instanceof ListSliceStats)
 		{
 			this.method = "list-slice-stats";
-		}
-		else if (params instanceof UpdateSlice)
+		} else if (params instanceof UpdateSlice)
 		{
-			this.method =  "update-slice";
-		}
-		else if (params instanceof RemoveSlice)
+			this.method = "update-slice";
+		} else if (params instanceof RemoveSlice)
 		{
-			this.method =  "remove-slice";
-		}
-		else if (params instanceof AddFlowspace)
+			this.method = "remove-slice";
+		} else if (params instanceof AddFlowspace)
 		{
 			this.method = "add-flowspace";
-		}
-		else if (params instanceof ListFlowspace)
+		} else if (params instanceof ListFlowspace)
 		{
 			this.method = "list-flowspace";
-		}
-		else if (params instanceof UpdateSlicePassword)
+		} else if (params instanceof UpdateSlicePassword)
 		{
 			this.method = "update-slice-password";
-		}
-		else if (params instanceof UpdateFlowspace)
+		} else if (params instanceof UpdateFlowspace)
 		{
 			this.method = "update-flowspace";
-		}
-		else if (params instanceof RemoveFlowspace)
+		} else if (params instanceof RemoveFlowspace)
 		{
 			this.method = "remove-flowspace";
-		}
-		else
+		} else
 		{
 			throw new IllegalArgumentException("Unknown type: "
 					+ params.getClass().getCanonicalName());
@@ -207,9 +224,13 @@ public class FVRpcRequest<V>
 
 	}
 
+	/**
+	 * Creates a new request with no parameters and a generated request ID.
+	 * @param t
+	 */
 	public FVRpcRequest(NoParamType t)
 	{
-		this(t,t.name() + Math.round(Math.random()*1000));
+		this(t, t.name() + Math.round(Math.random() * 1000));
 	}
 
 	/**

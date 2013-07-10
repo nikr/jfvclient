@@ -18,7 +18,6 @@ package org.jfvclient.data;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 
 import org.jfvclient.requests.ListFlowspace;
 
@@ -142,11 +141,18 @@ public class MatchStruct extends HashMap<String, Object>
 		MATCH_KEYS.add("wildcards"); // wildcards.
 	}
 
+	/**
+	 * default constructor
+	 */
 	public MatchStruct()
 	{
 
 	}
 
+	/**
+	 * Only puts the key-value pair if the key is a valid match key.
+	 *
+	 */
 	@Override
 	public Object put(String key, Object value)
 	{

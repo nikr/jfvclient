@@ -13,9 +13,6 @@ import org.junit.Test;
  */
 public class DpidTest
 {
-
-
-
 	/**
 	 * Test method for {@link org.jfvclient.data.Dpid#Dpid(long)}.
 	 */

@@ -20,6 +20,10 @@ public class ListDatapathInfoTest
 {
     ListDatapathInfo instance;
 
+    /**
+     * reads test input from ListDatapathInfo.in
+     * @throws IOException
+     */
     public ListDatapathInfoTest() throws IOException
     {
         String s = TestUtils.readTestInput(ListDatapathInfo.class);

@@ -1,15 +1,12 @@
 package org.jfvclient;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.MalformedURLException;
-import java.util.List;
 
-import org.jfvclient.data.Dpid;
-import org.jfvclient.responses.DataPaths;
-import org.jfvclient.responses.Link;
 import org.jfvclient.responses.LinksList;
 import org.jfvclient.testing.TestUtils;
 import org.junit.Test;
@@ -17,6 +14,10 @@ import org.junit.Test;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+/**
+ * @author Niklas Rehfeld
+ *
+ */
 public class ListLinksRRTest
 {
 

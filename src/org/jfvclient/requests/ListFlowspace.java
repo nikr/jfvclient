@@ -29,27 +29,36 @@ import com.google.gson.annotations.SerializedName;
  * }
  * </pre>
  *
- *returns a {@link Flowspace} structure.
- *@see Flowspace
+ * returns a list of {@link Flowspace} structures.
+ *
+ * @see Flowspace
  * @author Niklas Rehfeld
  *
  */
 public class ListFlowspace
 {
-	@SerializedName("slice-name") private String sliceName;
-	@SerializedName("show-disabled") private boolean showDisabled;
+	@SerializedName("slice-name")
+	private String sliceName;
+	@SerializedName("show-disabled")
+	private boolean showDisabled;
 
+	/**
+	 * Create a new ListFlowspace request.
+	 *
+	 * @param sliceName
+	 *            the name of the slice for which to list the flowspaces.
+	 * @param showDisabled whether to show disabled flowspaces
+	 */
 	public ListFlowspace(String sliceName, boolean showDisabled)
 	{
 		this.sliceName = sliceName;
 		this.showDisabled = showDisabled;
 	}
 
-	public ListFlowspace()
-	{
 
-	}
-
+	/**
+	 * @param showDisabled whether to show disabled flowspaces
+	 */
 	public ListFlowspace(boolean showDisabled)
 	{
 		this.showDisabled = showDisabled;
@@ -62,6 +71,7 @@ public class ListFlowspace
 	{
 		return sliceName;
 	}
+
 	/**
 	 * @return whether to show disabled slices
 	 */
@@ -69,20 +79,23 @@ public class ListFlowspace
 	{
 		return showDisabled;
 	}
+
 	/**
-	 * @param sliceName the name of the slice
+	 * @param sliceName
+	 *            the name of the slice
 	 */
 	public void setSliceName(String sliceName)
 	{
 		this.sliceName = sliceName;
 	}
+
 	/**
-	 * @param showDisabled whether to show disabled slices or not.
+	 * @param showDisabled
+	 *            whether to show disabled slices or not.
 	 */
 	public void setShowDisabled(boolean showDisabled)
 	{
 		this.showDisabled = showDisabled;
 	}
-
 
 }

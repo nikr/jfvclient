@@ -25,6 +25,10 @@ public class ListSliceInfo
 {
 	@SerializedName("slice-name") private String sliceName;
 
+	/**
+	 * creates a new ListSliceInfo request.
+	 * @param name the name of the slice.
+	 */
 	public ListSliceInfo(String name)
 	{
 		this.sliceName = name;

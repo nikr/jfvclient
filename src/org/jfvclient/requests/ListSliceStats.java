@@ -23,28 +23,33 @@ import com.google.gson.annotations.SerializedName;
  */
 public class ListSliceStats
 {
- @SerializedName("slice-name")
-private String sliceName;
+	@SerializedName("slice-name")
+	private String sliceName;
 
-public ListSliceStats(String sliceName)
-{
-	this.sliceName = sliceName;
-}
+	/**
+	 *create new ListSliceStats request.
+	 * @param sliceName the name of the slice to query
+	 */
+	public ListSliceStats(String sliceName)
+	{
+		this.sliceName = sliceName;
+	}
 
-/**
- * @return the sliceName
- */
-public String getSliceName()
-{
-	return sliceName;
-}
+	/**
+	 * @return the sliceName
+	 */
+	public String getSliceName()
+	{
+		return sliceName;
+	}
 
-/**
- * @param sliceName the sliceName to set
- */
-public void setSliceName(String sliceName)
-{
-	this.sliceName = sliceName;
-}
+	/**
+	 * @param sliceName
+	 *            the sliceName to set
+	 */
+	public void setSliceName(String sliceName)
+	{
+		this.sliceName = sliceName;
+	}
 
 }

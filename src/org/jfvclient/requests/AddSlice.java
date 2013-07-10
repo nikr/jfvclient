@@ -72,7 +72,7 @@ public class AddSlice
 	 *
 	 * @param sliceName
 	 *            the name of the slice.
-	 * @param controllerURL
+	 * @param controllerUrl
 	 *            the url of the controller. must be in format
 	 *            {@code proto:host[:port]} where {@code proto} is usually TCP
 	 *            or UDP.

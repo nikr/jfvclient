@@ -17,6 +17,11 @@ import org.junit.Test;
 public class ListSliceInfoRRTest
 {
 
+	/**
+	 * test if the 'fvadmin' slice exists.
+	 * @throws IOException
+	 * @throws JFVErrorResponseException
+	 */
 	@Test
 	public void test() throws IOException, JFVErrorResponseException
 	{

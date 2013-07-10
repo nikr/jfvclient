@@ -23,6 +23,10 @@ import com.google.gson.reflect.TypeToken;
 public class ListSliceHealthRRTest
 {
 
+	/**
+	 * test.
+	 * @throws IOException
+	 */
 	@Test
 	public void test() throws IOException
 	{

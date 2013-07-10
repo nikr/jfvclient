@@ -1,6 +1,17 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2013 Niklas Rehfeld.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jfvclient.responses;
 
@@ -21,13 +32,17 @@ import static org.junit.Assert.*;
 public class DatapathInfoTest
 {
 
-    DatapathInfo instance;
+    private DatapathInfo instance;
 
+    /**
+     * reads in DataPathInfo.in
+     * @throws IOException
+     */
     public DatapathInfoTest() throws IOException
     {
         String input = TestUtils.readTestInput(DatapathInfo.class);
 //        Gson g = new Gson();
-   
+
         Gson g = TestUtils.getGson();
         instance = g.fromJson(input, DatapathInfo.class);
     }
@@ -68,7 +83,7 @@ public class DatapathInfoTest
         List<Integer> expResult = Arrays.asList(new Integer[] {2, 32});
         List<Integer> result = instance.getPortList();
 
-        
+
         assertEquals(expResult, result);
 //        assertArrayEquals(expResult, result.toArray());
     }
@@ -80,7 +95,7 @@ public class DatapathInfoTest
     public void testGetPortNames()
     {
         System.out.println("getPortNames");
-    
+
         List<String> expResult = Arrays.asList(new String[] {"s1-eth0", "s1-eth1"});
         List<String> result = instance.getPortNames();
 //        assertArrayEquals(expResult, result.toArray());
@@ -106,13 +121,11 @@ public class DatapathInfoTest
     public void testGetCurrentFlowmodUsage()
     {
         System.out.println("getCurrentFlowmodUsage");
-        
+
         Map<String, Integer> expResult = new HashMap<String, Integer>();
         expResult.put("Slice1", 23);
         expResult.put("fvadmin", 2);
         Map<String, Integer> result = instance.getCurrentFlowmodUsage();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
     }
 }

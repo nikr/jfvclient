@@ -22,12 +22,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import java.lang.reflect.Type;
 import org.jfvclient.data.Dpid;
-import org.jfvclient.serialisers.DpidSerialiser;
 
 /**
  * Deserialiser for Dpids.
  *
- * @see DpidSerialiser
+ * @see org.jfvclient.serialisers.DpidSerialiser
  *
  * @author Niklas Rehfeld
  */

@@ -18,7 +18,7 @@ package org.jfvclient.requests;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * @author rehfelnikl
+ * @author Niklas Rehfeld
  *
  */
 public class ListSliceHealth
@@ -26,6 +26,9 @@ public class ListSliceHealth
 	@SerializedName("slice-name")
 	private String SliceName;
 
+	/**
+	 * @param sliceName the name of the slice
+	 */
 	public ListSliceHealth(String sliceName)
 	{
 		this.SliceName = sliceName;

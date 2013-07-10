@@ -28,7 +28,11 @@ import org.jfvclient.data.Dpid;
 public class DataPaths extends ArrayList<Dpid>{
 //private List<Dpid> dpids;
 //
-    public List<Dpid> getDpids()
+  /**
+   *
+   * @return a list of DPIDs.
+   */
+	public List<Dpid> getDpids()
     {
         return this;
     }

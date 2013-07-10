@@ -20,6 +20,11 @@ import org.junit.Test;
 public class ListSlicesRRTest
 {
 
+	/**
+	 * test if the 'fvadmin' slice is in the list returned by list-slices.
+	 * @throws IOException
+	 * @throws JFVErrorResponseException
+	 */
 	@Test
 	public void test() throws IOException, JFVErrorResponseException
 	{
