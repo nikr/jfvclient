@@ -16,7 +16,8 @@
 
 package org.jfvclient;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -138,7 +139,7 @@ public class FlowspaceRRTests
 			JFVErrorResponseException
 	{
 
-		Flowspace fs = new Flowspace("flowspace_foo", new Dpid(5L));
+//		Flowspace fs = new Flowspace("flowspace_foo", new Dpid(5L));
 		// create a new one if it's not there.
 		checkAndCreateTestFlowspace();
 
@@ -162,7 +163,7 @@ public class FlowspaceRRTests
 	{
 		MatchStruct m = new MatchStruct();
 		SliceAction a = new SliceAction("fvadmin", 6);
-		Gson gson = TestUtils.getGson();
+//		Gson gson = TestUtils.getGson();
 		JFVClient c = new JFVClient();
 
 		Flowspace fs = new Flowspace("flowspace_foo", new Dpid(5L),

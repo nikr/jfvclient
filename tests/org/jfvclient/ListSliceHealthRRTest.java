@@ -13,7 +13,6 @@ import org.jfvclient.responses.SliceHealth;
 import org.junit.Test;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 /**
@@ -32,7 +31,7 @@ public class ListSliceHealthRRTest
 	{
 		Gson gson =JFVClient.getGson();
 		JFVClient c = new JFVClient();
-		JsonObject o = new JsonObject();
+//		JsonObject o = new JsonObject();
 		FVRpcRequest<ListSliceHealth> lsr = new FVRpcRequest<ListSliceHealth>("list-slice-health"
 				,new ListSliceHealth("fvadmin"));
 		String response = c.send(gson, lsr);

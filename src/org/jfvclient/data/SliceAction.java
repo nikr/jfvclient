@@ -15,7 +15,6 @@
  */
 package org.jfvclient.data;
 
-
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -93,18 +92,16 @@ public class SliceAction
 	{
 
 		this.sliceName = slicename;
-		if (!isValidPermission(permission))
-		{
-			throw new IllegalArgumentException("invalid permission: " + permission);
-		}
-		this.permission = permission;
+
+		this.setPermission(permission);
 	}
 
 	/**
 	 * Not entirely sure about this one. do some of these permissions make
-	 * sense, e.g.g read+delegate? or read+write, as write already has the read permissions?
+	 * sense, e.g read+delegate? or read+write, as write already has the read
+	 * permissions?
 	 *
-	 *TODO find out what permissions are actually valid.
+	 * TODO find out what permissions are actually valid.
 	 *
 	 * @param perm
 	 *            permission
@@ -113,5 +110,42 @@ public class SliceAction
 	private boolean isValidPermission(int perm)
 	{
 		return (perm <= 6);
+	}
+
+	/**
+	 * @return the permission
+	 */
+	public int getPermission()
+	{
+		return permission;
+	}
+
+	/**
+	 * @param permission the permission to set
+	 */
+	public void setPermission(int permission)
+	{
+		if (!isValidPermission(permission))
+		{
+			throw new IllegalArgumentException("invalid permission: "
+					+ permission);
+		}
+		this.permission = permission;
+	}
+
+	/**
+	 * @return the sliceName
+	 */
+	public String getSliceName()
+	{
+		return sliceName;
+	}
+
+	/**
+	 * @param sliceName the sliceName to set
+	 */
+	public void setSliceName(String sliceName)
+	{
+		this.sliceName = sliceName;
 	}
 }

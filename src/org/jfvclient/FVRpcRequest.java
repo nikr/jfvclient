@@ -28,8 +28,6 @@ import org.jfvclient.requests.UpdateFlowspace;
 import org.jfvclient.requests.UpdateSlice;
 import org.jfvclient.requests.UpdateSlicePassword;
 
-import com.google.gson.JsonNull;
-
 /**
  * This class represents a JSON-RPC request. it takes the form
  *
