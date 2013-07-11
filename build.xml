@@ -56,7 +56,7 @@
 			<fileset dir="." includes="TEST-*" />
 		</delete>
 		<junit printsummary="yes" haltonfailure="no" haltonerror="no"
-			fork="yes">
+			fork="yes" dir="${basedir}">
 			<jvmarg value="-Djavax.net.ssl.trustStore=${trustStore}" />
 
 			<jvmarg value="-Djavax.net.ssl.trustStorePass=${trustStorePass}" />
@@ -66,8 +66,8 @@
 				<pathelement location="${lib}/junit.jar" />
 				<pathelement location="${lib}/gson-2.1.jar" />
 			</classpath>
-			<!-- <formatter type="brief" usefile="no"/> -->
-			<batchtest>
+			<formatter type="plain" usefile="no"/>
+			<batchtest >
 				<fileset dir="${test.src}">
 					<include name="**/*.java" />
 					<exclude name="**/RequestResponseTests.java" />

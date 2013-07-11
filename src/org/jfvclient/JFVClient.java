@@ -25,7 +25,6 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.net.Authenticator;
 import java.net.MalformedURLException;
-import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.List;
 import java.util.Properties;
@@ -60,6 +59,9 @@ import org.jfvclient.serialisers.DpidSerialiser;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jfvclient.requests.RemoveFlowspace;
 
 /**
@@ -78,9 +80,13 @@ public class JFVClient
 	private String hostName;
 	private String hostPort;
 
+        private boolean ignoreHostAuth;
+        
 	private static Type booleanResponseType = new TypeToken<FVRpcResponse<Boolean>>()
 	{
 	}.getType();
+        
+        private Logger logger;
 
 	/**
 	 * Creates a new JFVClient.
@@ -90,7 +96,12 @@ public class JFVClient
 		config = getProps();
 		hostName = config.getProperty("hostname");
 		hostPort = config.getProperty("port");
+                ignoreHostAuth = Boolean.getBoolean(config.getProperty("ignore-hostname-auth"));
 		gson = getGson();
+                logger = Logger.getLogger(JFVClient.class.getCanonicalName());
+                logger.setLevel(Level.parse(config.getProperty("verbosity",
+                        "WARNING")));      
+                
 
 	}
 
@@ -106,14 +117,11 @@ public class JFVClient
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	private HttpsURLConnection connect() throws MalformedURLException,
+	private HttpsURLConnection connect() throws 
 			IOException
 	{
-		Authenticator.setDefault(new PropertiesFileAuth());
-
-		// String hostname = config.getProperty("hostname");
-		// String port = config.getProperty("port");
-
+		Authenticator.setDefault(new PropertiesFileAuthenticator(new File("resources/visor.properties")));
+                
 		HttpsURLConnection con = (HttpsURLConnection) new URL("https://"
 				+ hostName + ":" + hostPort).openConnection();
 		con.setRequestMethod("POST");
@@ -124,6 +132,9 @@ public class JFVClient
 		// This is bad. it bypasses the Hostname Verifier, and makes things
 		// insecure.
 		// FIXME remove this from the production code.
+                if (ignoreHostAuth)
+                {
+                    logger.log(Level.WARNING, "Ignoring hostname verification.");
 		con.setHostnameVerifier(new HostnameVerifier()
 		{
 
@@ -132,14 +143,12 @@ public class JFVClient
 			{
 				if (!session.getPeerHost().equalsIgnoreCase(hostname))
 				{
-					System.err.println("WARNING: SSL session hostname ("
-							+ session.getPeerHost()
-							+ ") is different to actual host name (" + hostname
-							+ ")");
+					logger.log(Level.WARNING, "SSL session hostname ({0}) is different to actual host name ({1})", new Object[]{session.getPeerHost(), hostname});
 				}
 				return true;
 			}
 		});
+                }
 		return con;
 	}
 
@@ -151,6 +160,8 @@ public class JFVClient
 	protected String send(Gson g, Object request) throws IOException
 
 	{
+            // have to get a new connection each time, as you can't write to 
+            // a HttpsUrlConnection once it's been read from. 
 		HttpsURLConnection connection = connect();
 		OutputStream os = connection.getOutputStream();
 		BufferedWriter w = new BufferedWriter(new OutputStreamWriter(os));
@@ -165,9 +176,7 @@ public class JFVClient
 
 		if (connection.getResponseCode() != 200)
 		{
-			System.err.println("Response is not OK -- "
-					+ connection.getResponseCode() + "  "
-					+ connection.getResponseMessage());
+			logger.log(Level.SEVERE, "Response is not OK -- {0}  {1}", new Object[]{connection.getResponseCode(), connection.getResponseMessage()});
 			BufferedReader iw = new BufferedReader(new InputStreamReader(
 					connection.getInputStream()));
 			String in = "";
@@ -190,28 +199,6 @@ public class JFVClient
 		return response;
 	}
 
-    /**
-     * An authenticator which gets the username and password from a properties file.
-     * This is used to log into the FlowVisor instance.
-     *
-     */
-	protected class PropertiesFileAuth extends Authenticator
-	{
-		private String uname;
-		private String pw;
-
-		public PropertiesFileAuth()
-		{
-			uname = config.getProperty("username");
-			pw = config.getProperty("password");
-		}
-
-		@Override
-		public PasswordAuthentication getPasswordAuthentication()
-		{
-			return new PasswordAuthentication(uname, pw.toCharArray());
-		}
-	}
 
     /**
      * Gets a properly initialised GSON object, to use for parsing JSON.
@@ -234,8 +221,7 @@ public class JFVClient
 			props.load(new FileInputStream("resources/visor.properties"));
 		} catch (Exception e)
 		{
-			System.err.println("Properties file not loaded: "
-					+ e.getLocalizedMessage());
+			Logger.getLogger(JFVClient.class.getCanonicalName()).log(Level.WARNING, "Properties file not loaded: {0}, using defaults.", e.getLocalizedMessage());
 			props = new Properties();
 			props.put("hostname", "localhost");
 			props.put("port", 8080);
