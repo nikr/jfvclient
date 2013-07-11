@@ -86,7 +86,7 @@ public class JFVClient
 	{
 	}.getType();
         
-        private Logger logger;
+        private static final Logger logger = Logger.getLogger(JFVClient.class.getCanonicalName());
 
 	/**
 	 * Creates a new JFVClient.
@@ -98,7 +98,6 @@ public class JFVClient
 		hostPort = config.getProperty("port");
                 ignoreHostAuth = Boolean.getBoolean(config.getProperty("ignore-hostname-auth"));
 		gson = getGson();
-                logger = Logger.getLogger(JFVClient.class.getCanonicalName());
                 logger.setLevel(Level.parse(config.getProperty("verbosity",
                         "WARNING")));      
                 
@@ -221,7 +220,7 @@ public class JFVClient
 			props.load(new FileInputStream("resources/visor.properties"));
 		} catch (Exception e)
 		{
-			Logger.getLogger(JFVClient.class.getCanonicalName()).log(Level.WARNING, "Properties file not loaded: {0}, using defaults.", e.getLocalizedMessage());
+			logger.log(Level.WARNING, "Properties file not loaded: {0}, using defaults.", e.getLocalizedMessage());
 			props = new Properties();
 			props.put("hostname", "localhost");
 			props.put("port", 8080);
