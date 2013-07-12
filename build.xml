@@ -1,89 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="JFVClient" default="dist" basedir=".">
-	<description>
-		Java client to control FlowVisor
-	</description>
+    <description>
+        Java client to control FlowVisor
+    </description>
 
-	<!-- set global properties for this build. These should probably go into
-		a properties file. -->
-	<property name="src" location="src" />
-	<property name="test.src" location="tests" />
-	<property name="build" location="build" />
-	<property name="test.build" location="${build}/tests/" />
-	<property name="dist" location="dist" />
-	<property name="doc" location="${dist}/doc" />
-	<property name="lib" location="lib" />
-	<property name="jar.file" location="${dist}/jfvclient.jar" />
-	<property name="test.jar.file" location="${dist}/tests.jar" />
+    <!-- set global properties for this build. These should probably go into
+    a properties file. -->
+    <property name="src" location="src" />
+    <property name="test.src" location="tests" />
+    <property name="build" location="build" />
+    <property name="test.build" location="${build}/tests/" />
+    <property name="dist" location="dist" />
+    <property name="doc" location="${dist}/doc" />
+    <property name="lib" location="lib" />
+    <property name="jar.file" location="${dist}/jfvclient.jar" />
+    <property name="test.jar.file" location="${dist}/tests.jar" />
 
-	<!-- These should be set to values that make sense for your installation. -->
-	<property name="trustStore" value="${user.home}/.keystore" />
-	<property name="trustStorePass" value="blabla" />
+    <!-- These should be set to values that make sense for your installation. -->
+    <property name="trustStore" value="${user.home}/.keystore" />
+    <property name="trustStorePass" value="blabla" />
 
 
-	<target name="init">
-		<!-- Create the time stamp -->
-		<tstamp />
-		<!-- Create the build directory structure used by compile -->
-		<mkdir dir="${build}" />
-	</target>
+    <target name="init">
+        <!-- Create the time stamp -->
+        <tstamp />
+        <!-- Create the build directory structure used by compile -->
+        <mkdir dir="${build}" />
+    </target>
 
-	<target name="compile" depends="init" description="compile the source ">
-		<!-- Compile the java code from ${src} into ${build} -->
-		<javac srcdir="${src}" destdir="${build}" classpath="${lib}/gson-2.1.jar" />
-	</target>
+    <target name="compile" depends="init" description="compile the source ">
+        <!-- Compile the java code from ${src} into ${build} -->
+        <javac srcdir="${src}" destdir="${build}" classpath="${lib}/gson-2.1.jar" />
+    </target>
 
-	<target name="dist" depends="compile" description="generate the distribution">
-		<!-- Create the distribution directory -->
-		<mkdir dir="${dist}" />
+    <target name="dist" depends="compile" description="generate the distribution">
+        <!-- Create the distribution directory -->
+        <mkdir dir="${dist}" />
 
-		<!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
-		<jar jarfile="${jar.file}" basedir="${build}" />
-	</target>
+        <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
+        <jar jarfile="${jar.file}" basedir="${build}" />
+    </target>
 
-	<target name="make-tests" depends="dist">
-		<!-- need to build it into a separate directory -->
-		<mkdir dir="${test.build}" />
-		<javac srcdir="${test.src}" destdir="${test.build}"
-			classpath="${jar.file}:${lib}/gson-2.1.jar:${lib}/junit.jar" />
-		<jar jarfile="${test.jar.file}" basedir="${test.build}" />
-	</target>
+    <target name="make-tests" depends="dist">
+        <!-- need to build it into a separate directory -->
+        <mkdir dir="${test.build}" />
+        <javac srcdir="${test.src}" destdir="${test.build}"
+                       classpath="${jar.file}:${lib}/gson-2.1.jar:${lib}/junit.jar" />
+        <jar jarfile="${test.jar.file}" basedir="${test.build}" />
+    </target>
 
-	<!-- should probably break the "test" target into two, those that need a
-		running FlowVisor, and those that work by themselves. -->
-	<target name="test" depends="dist,make-tests" description="run unit tests">
-		<delete verbose="yes">
-			<fileset dir="." includes="TEST-*" />
-		</delete>
-		<junit printsummary="yes" haltonfailure="no" haltonerror="no"
-			fork="yes" dir="${basedir}">
-			<jvmarg value="-Djavax.net.ssl.trustStore=${trustStore}" />
+    <!-- should probably break the "test" target into two, those that need a
+    running FlowVisor, and those that work by themselves. -->
+    <target name="test-all" depends="test-local,test-remote" description="run unit tests">
+        
+    </target>
+        
+    <target name="test-local" depends="dist,make-tests" 
+            description="run unit tests that don't need a running FlowVisor.">
+        
+        <junit printsummary="yes" haltonfailure="no" haltonerror="no"
+                       fork="yes" dir="${basedir}">
+            <jvmarg value="-Djavax.net.ssl.trustStore=${trustStore}" />
 
-			<jvmarg value="-Djavax.net.ssl.trustStorePass=${trustStorePass}" />
-			<classpath>
-				<pathelement location="${test.jar.file}" />
-				<pathelement location="${jar.file}" />
-				<pathelement location="${lib}/junit.jar" />
-				<pathelement location="${lib}/gson-2.1.jar" />
-			</classpath>
-			<formatter type="plain" usefile="no"/>
-			<batchtest >
-				<fileset dir="${test.src}">
-					<include name="**/*.java" />
-					<exclude name="**/RequestResponseTests.java" />
-					<exclude name="**/TestUtils.java" />
-				</fileset>
-			</batchtest>
-		</junit>
-	</target>
+            <jvmarg value="-Djavax.net.ssl.trustStorePass=${trustStorePass}" />
+            <classpath>
+                <pathelement location="${test.jar.file}" />
+                <pathelement location="${jar.file}" />
+                <pathelement location="${lib}/junit.jar" />
+                <pathelement location="${lib}/gson-2.1.jar" />
+            </classpath>
+            <formatter type="plain" usefile="no"/>
+            <batchtest >
+                <fileset dir="${test.src}">
+                    <include name="**/data/*.java" />
+                    <include name="**/requests/*.java" />
+                    <include name="**/responses/*.java" />
+                </fileset>
+            </batchtest>
+        </junit>
 
-	<target name="clean" description="clean up">
-		<!-- Delete the ${build} and ${dist} directory trees -->
-		<delete dir="${build}" />
-		<delete dir="${dist}" />
-		<!-- delete the various test results. -->
-		<delete verbose="yes">
-			<fileset dir="." includes="TEST-*" />
-		</delete>
-	</target>
+    </target>
+
+    <target name="test-remote" depends="dist, make-tests"
+        description="run unit tests that need a running FlowVisor.">
+        
+        <junit printsummary="yes" haltonfailure="no" haltonerror="no"
+                       fork="yes" dir="${basedir}">
+            <jvmarg value="-Djavax.net.ssl.trustStore=${trustStore}" />
+
+            <jvmarg value="-Djavax.net.ssl.trustStorePass=${trustStorePass}" />
+            <classpath>
+                <pathelement location="${test.jar.file}" />
+                <pathelement location="${jar.file}" />
+                <pathelement location="${lib}/junit.jar" />
+                <pathelement location="${lib}/gson-2.1.jar" />
+            </classpath>
+            <formatter type="plain" usefile="no"/>
+            <test name="org.jfvclient.RequestResponseTests">
+                
+            </test>
+        </junit>
+
+    </target>
+
+    <target name="clean" description="clean up">
+        <!-- Delete the ${build} and ${dist} directory trees -->
+        <delete dir="${build}" />
+        <delete dir="${dist}" />
+        <!-- delete the various test results. -->
+        <delete verbose="yes">
+            <fileset dir="." includes="TEST-*" />
+        </delete>
+    </target>
 </project>
