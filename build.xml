@@ -105,11 +105,20 @@
 
     <target name="clean" description="clean up">
         <!-- Delete the ${build} and ${dist} directory trees -->
-        <delete dir="${build}" />
-        <delete dir="${dist}" />
+        <delete dir="${build}" verbose="true" />
+        <delete dir="${dist}"  verbose="true"/>
         <!-- delete the various test results. -->
         <delete verbose="yes">
             <fileset dir="." includes="TEST-*" />
         </delete>
     </target>
+
+	<target name="doc" description="make javadoc">
+            <mkdir dir="doc"/>
+            <javadoc destdir="doc" sourcepath="${src}" author="true">
+                <classpath>
+                    <pathelement location="${lib}/gson-2.1.jar" />
+                </classpath>
+            </javadoc>
+        </target>
 </project>
