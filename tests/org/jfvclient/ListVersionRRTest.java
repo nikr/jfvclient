@@ -48,7 +48,7 @@ public class ListVersionRRTest
 
 		EmptyFVRpcRequest lsr = new EmptyFVRpcRequest(
 				EmptyFVRpcRequest.NoParamType.list_version);
-		String response = c.send(gson, lsr);
+		String response = c.send(lsr);
 		Type t = new TypeToken<FVRpcResponse<Version>>()
 		{
 		}.getType();

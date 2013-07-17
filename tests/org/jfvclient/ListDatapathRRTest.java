@@ -54,7 +54,7 @@ public class ListDatapathRRTest
 		Gson g = TestUtils.getGson();
 		EmptyFVRpcRequest ldiRequest = new EmptyFVRpcRequest(
 				EmptyFVRpcRequest.NoParamType.list_datapaths);
-		String resp = c.send(g, ldiRequest);
+		String resp = c.send(ldiRequest);
 
 		FVRpcResponse<DataPaths> res = null;
 		Type respType = new TypeToken<FVRpcResponse<DataPaths>>()

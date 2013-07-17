@@ -215,7 +215,7 @@ public class SliceOperationsRRTest
 				"testpassword");
 		Gson g = TestUtils.getGson();
 		FVRpcRequest<AddSlice> asr = new FVRpcRequest<AddSlice>(a);
-		String res = c.send(g, asr);
+		String res = c.send(asr);
 
 		return g.fromJson(res, booleanResponseType);
 
@@ -227,7 +227,7 @@ public class SliceOperationsRRTest
 		u.setAdminStatus(false);
 		Gson g = TestUtils.getGson();
 		FVRpcRequest<UpdateSlice> asr = new FVRpcRequest<UpdateSlice>(u);
-		String res = c.send(g, asr);
+		String res = c.send(asr);
 
 		return g.fromJson(res, booleanResponseType);
 
@@ -238,7 +238,7 @@ public class SliceOperationsRRTest
 		RemoveSlice rs = new RemoveSlice(name);
 		Gson g = TestUtils.getGson();
 		FVRpcRequest<RemoveSlice> asr = new FVRpcRequest<RemoveSlice>(rs);
-		String res = c.send(g, asr);
+		String res = c.send(asr);
 
 		return g.fromJson(res, booleanResponseType);
 
@@ -250,7 +250,7 @@ public class SliceOperationsRRTest
 		Gson g = TestUtils.getGson();
 		FVRpcRequest<UpdateSlicePassword> usp = new FVRpcRequest<UpdateSlicePassword>(
 				new UpdateSlicePassword(sliceName, password));
-		String response = c.send(g, usp);
+		String response = c.send(usp);
 		return g.fromJson(response, booleanResponseType);
 
 	}

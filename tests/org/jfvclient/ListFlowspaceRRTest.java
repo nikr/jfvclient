@@ -46,7 +46,7 @@ public class ListFlowspaceRRTest
 		Gson gson = JFVClient.getGson();
 		ListFlowspace f = new ListFlowspace(true);
 		FVRpcRequest<ListFlowspace> afr = new FVRpcRequest<ListFlowspace>(f);
-		String response = c.send(gson, afr);
+		String response = c.send(afr);
 		Type t = new TypeToken<FVRpcResponse<List<Flowspace>>>()
 		{
 		}.getType();
@@ -66,7 +66,7 @@ public class ListFlowspaceRRTest
 		Gson gson = JFVClient.getGson();
 		ListFlowspace f = new ListFlowspace(false);
 		FVRpcRequest<ListFlowspace> afr = new FVRpcRequest<ListFlowspace>(f);
-		String response = c.send(gson, afr);
+		String response = c.send(afr);
 		Type t = new TypeToken<FVRpcResponse<List<Flowspace>>>()
 		{
 		}.getType();
@@ -86,7 +86,7 @@ public class ListFlowspaceRRTest
 		Gson gson = JFVClient.getGson();
 		ListFlowspace f = new ListFlowspace("NonexistantFlowspaceNameHopefully", true);
 		FVRpcRequest<ListFlowspace> afr = new FVRpcRequest<ListFlowspace>(f);
-		String response = c.send(gson, afr);
+		String response = c.send(afr);
 		Type t = new TypeToken<FVRpcResponse<List<Flowspace>>>()
 		{
 		}.getType();

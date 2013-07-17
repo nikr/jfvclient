@@ -75,7 +75,6 @@ public class JFVClient
 {
 
 	Properties config;
-	// HttpsURLConnection connection;
 	Gson gson;
 
 	private String hostName;
@@ -111,7 +110,7 @@ public class JFVClient
 	 * once the connection has been read from, it cannot be written to again.
 	 *
 	 * So this really needs to be called at the beginning of
-	 * {@link #send(Gson, Object)} each time.
+	 * {@link #send(Object)} each time.
 	 *
 	 * @return A properly initialised HttpsURLConnection.
 	 * @throws IOException
@@ -151,10 +150,8 @@ public class JFVClient
 	/**
 	 * Send a message through to the FlowVisor. This is called by the various
 	 * user methods.
-	 *
-	 * TODO: remove the Gson object from the signature, as it's a field anyway...
 	 */
-	protected String send(Gson g, Object request) throws IOException
+	protected String send(Object request) throws IOException
 
 	{
 		// have to get a new connection each time, as you can't write to
@@ -162,7 +159,7 @@ public class JFVClient
 		HttpsURLConnection connection = connect();
 		OutputStream os = connection.getOutputStream();
 		BufferedWriter w = new BufferedWriter(new OutputStreamWriter(os));
-		String req = g.toJson(request);
+		String req = gson.toJson(request);
 
 		w.write(req);
 		w.flush();
@@ -253,7 +250,7 @@ public class JFVClient
 	{
 		// Gson g = getGson();
 		FVRpcRequest<AddSlice> asr = new FVRpcRequest<AddSlice>(s);
-		String response = send(gson, asr);
+		String response = send(asr);
 		FVRpcResponse<Boolean> resp = gson.fromJson(response,
 				booleanResponseType);
 		if (resp.isError())
@@ -275,7 +272,7 @@ public class JFVClient
 	{
 		EmptyFVRpcRequest lsr = new EmptyFVRpcRequest(
 				EmptyFVRpcRequest.NoParamType.list_slices);
-		String response = send(gson, lsr);
+		String response = send(lsr);
 		Type t = new TypeToken<FVRpcResponse<SliceList>>()
 		{
 		}.getType();
@@ -300,7 +297,7 @@ public class JFVClient
 	{
 		EmptyFVRpcRequest lsr = new EmptyFVRpcRequest(
 				EmptyFVRpcRequest.NoParamType.list_datapaths);
-		String response = send(gson, lsr);
+		String response = send(lsr);
 		Type t = new TypeToken<FVRpcResponse<DataPaths>>()
 		{
 		}.getType();
@@ -326,7 +323,7 @@ public class JFVClient
 			JFVErrorResponseException
 	{
 		FVRpcRequest<Dpid> lsr = new FVRpcRequest<Dpid>(d);
-		String response = send(gson, lsr);
+		String response = send(lsr);
 		Type t = new TypeToken<FVRpcResponse<DatapathInfo>>()
 		{
 		}.getType();
@@ -353,7 +350,7 @@ public class JFVClient
 	{
 		FVRpcRequest<ListSliceInfo> lsr = new FVRpcRequest<ListSliceInfo>(
 				new ListSliceInfo(sliceName));
-		String response = send(gson, lsr);
+		String response = send(lsr);
 		Type t = new TypeToken<FVRpcResponse<SliceInfo>>()
 		{
 		}.getType();
@@ -380,7 +377,7 @@ public class JFVClient
 	{
 		EmptyFVRpcRequest lsr = new EmptyFVRpcRequest(
 				EmptyFVRpcRequest.NoParamType.list_fv_health);
-		String response = send(gson, lsr);
+		String response = send(lsr);
 		Type t = new TypeToken<FVRpcResponse<FVHealth>>()
 		{
 		}.getType();
@@ -407,7 +404,7 @@ public class JFVClient
 	{
 		FVRpcRequest<ListSliceHealth> lsr = new FVRpcRequest<ListSliceHealth>(
 				new ListSliceHealth(sliceName));
-		String response = send(gson, lsr);
+		String response = send(lsr);
 		Type t = new TypeToken<FVRpcResponse<SliceHealth>>()
 		{
 		}.getType();
@@ -434,7 +431,7 @@ public class JFVClient
 	{
 		FVRpcRequest<ListSliceStats> lsr = new FVRpcRequest<ListSliceStats>(
 				new ListSliceStats(sliceName));
-		String response = send(gson, lsr);
+		String response = send(lsr);
 		Type t = new TypeToken<FVRpcResponse<SliceStats>>()
 		{
 		}.getType();
@@ -460,7 +457,7 @@ public class JFVClient
 			IOException
 	{
 		FVRpcRequest<UpdateSlice> lsr = new FVRpcRequest<UpdateSlice>(u);
-		String response = send(gson, lsr);
+		String response = send(lsr);
 		FVRpcResponse<Boolean> resp = gson.fromJson(response,
 				booleanResponseType);
 		if (resp.isError())
@@ -485,7 +482,7 @@ public class JFVClient
 	{
 		FVRpcRequest<RemoveSlice> rsr = new FVRpcRequest<RemoveSlice>(
 				new RemoveSlice(sliceName));
-		String response = send(gson, rsr);
+		String response = send(rsr);
 		FVRpcResponse<Boolean> resp = gson.fromJson(response,
 				booleanResponseType);
 		if (resp.isError())
@@ -510,7 +507,7 @@ public class JFVClient
 	{
 
 		FVRpcRequest<AddFlowspace> afr = new FVRpcRequest<AddFlowspace>(fs);
-		String response = send(gson, afr);
+		String response = send(afr);
 		FVRpcResponse<Integer> resp = gson.fromJson(response,
 				new TypeToken<FVRpcResponse<Integer>>()
 				{
@@ -555,7 +552,7 @@ public class JFVClient
 		RemoveFlowspace fs = new RemoveFlowspace(flowspaceName);
 		FVRpcRequest<RemoveFlowspace> afr = new FVRpcRequest<RemoveFlowspace>(
 				fs);
-		String response = send(gson, afr);
+		String response = send(afr);
 		FVRpcResponse<Integer> resp = gson.fromJson(response,
 				new TypeToken<FVRpcResponse<Integer>>()
 				{
@@ -579,7 +576,7 @@ public class JFVClient
 	{
 		EmptyFVRpcRequest lsr = new EmptyFVRpcRequest(
 				EmptyFVRpcRequest.NoParamType.list_version);
-		String response = send(gson, lsr);
+		String response = send(lsr);
 		Type t = new TypeToken<FVRpcResponse<Version>>()
 		{
 		}.getType();
@@ -610,7 +607,7 @@ public class JFVClient
 	{
 		FVRpcRequest<ListFlowspace> lfs = new FVRpcRequest<ListFlowspace>(
 				new ListFlowspace(sliceName, includeDisabled));
-		String response = send(gson, lfs);
+		String response = send(lfs);
 		Type responseType = new TypeToken<FVRpcResponse<List<Flowspace>>>()
 		{
 		}.getType();
@@ -638,7 +635,7 @@ public class JFVClient
 	{
 		FVRpcRequest<ListFlowspace> lfs = new FVRpcRequest<ListFlowspace>(
 				new ListFlowspace(includeDisabled));
-		String response = send(gson, lfs);
+		String response = send(lfs);
 		Type responseType = new TypeToken<FVRpcResponse<List<Flowspace>>>()
 		{
 		}.getType();
@@ -668,7 +665,7 @@ public class JFVClient
 	{
 		FVRpcRequest<UpdateSlicePassword> usp = new FVRpcRequest<UpdateSlicePassword>(
 				new UpdateSlicePassword(sliceName, password));
-		String response = send(gson, usp);
+		String response = send(usp);
 		FVRpcResponse<Boolean> resp = gson.fromJson(response,
 				booleanResponseType);
 		if (resp.isError())
@@ -695,7 +692,7 @@ public class JFVClient
 
 		FVRpcRequest<UpdateFlowspace> ufs = new FVRpcRequest<UpdateFlowspace>(
 				flowspaces);
-		String response = send(gson, ufs);
+		String response = send(ufs);
 		FVRpcResponse<Integer> resp = gson.fromJson(response,
 				new TypeToken<FVRpcResponse<Integer>>()
 				{

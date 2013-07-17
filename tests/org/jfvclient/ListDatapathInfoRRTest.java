@@ -52,7 +52,7 @@ public class ListDatapathInfoRRTest
 		//list datapath info for device 0::0:06
 		ListDatapathInfo ldi = new ListDatapathInfo(new Dpid(6L));
 		FVRpcRequest<ListDatapathInfo> ldiRequest = new FVRpcRequest<ListDatapathInfo>("list-datapath-info", "ldpi1", ldi);
-		String resp = c.send(g,ldiRequest);
+		String resp = c.send(ldiRequest);
 
 		FVRpcResponse<DatapathInfo> res = null;
         Type respType = new TypeToken<FVRpcResponse<DatapathInfo>>()
@@ -81,7 +81,7 @@ public class ListDatapathInfoRRTest
 		Gson g = TestUtils.getGson();
 		ListDatapathInfo ldi = new ListDatapathInfo(new Dpid(23L));
 		FVRpcRequest<ListDatapathInfo> ldiRequest = new FVRpcRequest<ListDatapathInfo>("list-datapath-info", "ldpi23", ldi);
-		String resp = c.send(g,ldiRequest);
+		String resp = c.send(ldiRequest);
 
 		FVRpcResponse<DatapathInfo> res = null;
         Type respType = new TypeToken<FVRpcResponse<DatapathInfo>>()

@@ -186,7 +186,7 @@ public class FlowspaceRRTests
 		JFVClient c = new JFVClient();
 		FVRpcRequest<UpdateFlowspace> ufs = new FVRpcRequest<UpdateFlowspace>(
 				flowspaces);
-		String response = c.send(gson, ufs);
+		String response = c.send(ufs);
 		return gson.fromJson(response, new TypeToken<FVRpcResponse<Integer>>()
 		{
 		}.getType());
@@ -200,7 +200,7 @@ public class FlowspaceRRTests
 		JFVClient c = new JFVClient();
 		FVRpcRequest<AddFlowspace> afr = new FVRpcRequest<AddFlowspace>(
 				flowspaces);
-		String response = c.send(gson, afr);
+		String response = c.send(afr);
 		return gson.fromJson(response, new TypeToken<FVRpcResponse<Integer>>()
 		{
 		}.getType());
@@ -213,7 +213,7 @@ public class FlowspaceRRTests
 		JFVClient c = new JFVClient();
 		FVRpcRequest<RemoveFlowspace> afr = new FVRpcRequest<RemoveFlowspace>(
 				flowspaces);
-		String response = c.send(gson, afr);
+		String response = c.send(afr);
 		return gson.fromJson(response, booleanResponseType);
 	}
 

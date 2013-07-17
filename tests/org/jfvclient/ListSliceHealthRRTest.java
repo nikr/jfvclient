@@ -46,7 +46,7 @@ public class ListSliceHealthRRTest
 //		JsonObject o = new JsonObject();
 		FVRpcRequest<ListSliceHealth> lsr = new FVRpcRequest<ListSliceHealth>("list-slice-health"
 				,new ListSliceHealth("fvadmin"));
-		String response = c.send(gson, lsr);
+		String response = c.send(lsr);
 		Type t = new TypeToken<FVRpcResponse<SliceHealth>>()
 		{
 		}.getType();
