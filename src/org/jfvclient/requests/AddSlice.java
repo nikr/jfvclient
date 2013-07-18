@@ -42,7 +42,28 @@ import com.google.gson.annotations.SerializedName;
  * </pre>
  *
  * and returns a boolean.
- *
+ *<p>
+ * The <code> fvctl </code> help states the following: <br/>
+ * 
+ * Creates a new slice. <br/>
+ * The slicename can contain any character except except the newline (Note: slicenames are case insensitive). <br/>
+ * The controller url is of the form tcp:hostname:port, so for example tcp:example.com:12345 is a valid
+ * controller url. <br/>
+ * The admin email is used for administrative purposes if there is a problem with 
+ * the slice The remaining parameters are optional.<br/>
+ * The drop policy, defines what kind of rule should be pushed to the switch if there is
+ * no response from the controller (this includes if there is no controller
+ * connected). Currently two modes are supported,  'exact' and 'rule', 'exact'
+ * matches the packet exactly and 'rule' matches the rule that the packet
+ * triggered. <br/>
+ * Flowmod limit limits the number of flowmods this slice can emit.<br/>
+ * The rate limits the number of OpenFlow messages that can be sent to the
+ * switches from this slice. <br/>
+ * You may also set the slice to receive unknown LLDP messages. <br/>
+ * Optionally, you may set this slice as disabled initially, this is
+ * then changed via an update-slice call. <br/>
+ * Finally, the password is the slice password.
+ *</p>
  * @author Niklas Rehfeld
  *
  */
