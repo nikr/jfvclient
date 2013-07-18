@@ -123,13 +123,19 @@ public class AddSlice
 
     /**
      * This one's a bit dangerous. Make sure you set all the relevant fields
-     * before you send it.
+     * before you send it. (i.e. call {@link #isValidRequest() })
      */
     public AddSlice()
     {
         setDefaults();
     }
 
+    /**
+     * Checks if all the mandatory fields are filled in and that they are
+     * well-formed.
+     *
+     * @return
+     */
     public boolean isValidRequest()
     {
         return isValidControllerUrl(this.controllerURL)
