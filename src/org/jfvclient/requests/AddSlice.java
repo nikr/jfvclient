@@ -121,9 +121,26 @@ public class AddSlice
         setDefaults();
     }
 
+    /**
+     * This one's a bit dangerous. Make sure you set all the relevant fields
+     * before you send it.
+     */
+    public AddSlice()
+    {
+        setDefaults();
+    }
+
+    public boolean isValidRequest()
+    {
+        return isValidControllerUrl(this.controllerURL)
+                && (sliceName != null)
+                && (adminContact != null)
+                && (password != null);
+    }
+
     private boolean isValidControllerUrl(String url)
     {
-        return url.matches("(tcp|udp):\\w+(:\\d+)?");
+        return (url != null && url.matches("(tcp|udp):\\w+(:\\d+)?"));
     }
 
     private void setDefaults()
