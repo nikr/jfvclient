@@ -74,651 +74,631 @@ import org.jfvclient.requests.RemoveFlowspace;
 public class JFVClient
 {
 
-	Properties config;
-	Gson gson;
+    Properties config;
+    Gson gson;
+    private String hostName;
+    private String hostPort;
+    private boolean ignoreHostVerification;
+    private static Type booleanResponseType = new TypeToken<FVRpcResponse<Boolean>>()
+    {
+    }.getType();
+    private static final Logger logger = Logger.getLogger(JFVClient.class
+            .getCanonicalName());
 
-	private String hostName;
-	private String hostPort;
+    /**
+     * Creates a new JFVClient.
+     */
+    public JFVClient()
+    {
+        config = getProps();
+        hostName = config.getProperty("hostname");
+        hostPort = config.getProperty("port");
+        ignoreHostVerification = Boolean.parseBoolean(config.getProperty(
+                "ignoreHostVerification", "false"));
+        gson = getGson();
+        logger.setLevel(Level.parse(config.getProperty("verbosity", "WARNING")));
 
-	private boolean ignoreHostVerification;
+    }
 
-	private static Type booleanResponseType = new TypeToken<FVRpcResponse<Boolean>>()
-	{
-	}.getType();
+    /**
+     * Creates a {@link HttpsURLConnection} that can be used to do a request. A
+     * new {@link HttpsURLConnection} needs to be created for each request, as
+     * once the connection has been read from, it cannot be written to again.
+     *
+     * So this really needs to be called at the beginning of
+     * {@link #send(Object)} each time.
+     *
+     * @return A properly initialised HttpsURLConnection.
+     * @throws IOException
+     */
+    private HttpsURLConnection connect() throws IOException
+    {
+        Authenticator.setDefault(new PropertiesFileAuthenticator(new File(
+                "resources/visor.properties")));
 
-	private static final Logger logger = Logger.getLogger(JFVClient.class
-			.getCanonicalName());
+        HttpsURLConnection con = (HttpsURLConnection) new URL("https://"
+                + hostName + ":" + hostPort).openConnection();
+        con.setRequestMethod("POST");
+        con.setRequestProperty("User-Agent", "jfvclient");
+        con.setRequestProperty("Content-Type", "application/json");
+        con.setDoOutput(true);
+        con.setDoInput(true);
+        // This is bad. it bypasses the Hostname Verifier, and makes things
+        // insecure.
+        if (ignoreHostVerification)
+        {
+            logger.log(Level.WARNING, "Ignoring hostname verification.");
+            con.setHostnameVerifier(new HostnameVerifier()
+            {
+                @Override
+                public boolean verify(String hostname, SSLSession session)
+                {
+                    logger.log(Level.SEVERE, "Hostname '" + hostname
+                            + "' doesn't match certificate. ");
 
-	/**
-	 * Creates a new JFVClient.
-	 */
-	public JFVClient()
-	{
-		config = getProps();
-		hostName = config.getProperty("hostname");
-		hostPort = config.getProperty("port");
-		ignoreHostVerification = Boolean.parseBoolean(config.getProperty(
-				"ignoreHostVerification", "false"));
-		gson = getGson();
-		logger.setLevel(Level.parse(config.getProperty("verbosity", "WARNING")));
+                    return true;
+                }
+            });
+        }
+        return con;
+    }
 
-	}
+    /**
+     * Send a message through to the FlowVisor. This is called by the various
+     * user methods.
+     */
+    protected String send(Object request) throws IOException
+    {
+        // have to get a new connection each time, as you can't write to
+        // a HttpsUrlConnection once it's been read from.
+        HttpsURLConnection connection = connect();
+        OutputStream os = connection.getOutputStream();
+        BufferedWriter w = new BufferedWriter(new OutputStreamWriter(os));
+        String req = gson.toJson(request);
 
-	/**
-	 * Creates a {@link HttpsURLConnection} that can be used to do a request. A
-	 * new {@link HttpsURLConnection} needs to be created for each request, as
-	 * once the connection has been read from, it cannot be written to again.
-	 *
-	 * So this really needs to be called at the beginning of
-	 * {@link #send(Object)} each time.
-	 *
-	 * @return A properly initialised HttpsURLConnection.
-	 * @throws IOException
-	 */
-	private HttpsURLConnection connect() throws IOException
-	{
-		Authenticator.setDefault(new PropertiesFileAuthenticator(new File(
-				"resources/visor.properties")));
+        w.write(req);
+        w.flush();
+        w.close();
 
-		HttpsURLConnection con = (HttpsURLConnection) new URL("https://"
-				+ hostName + ":" + hostPort).openConnection();
-		con.setRequestMethod("POST");
-		con.setRequestProperty("User-Agent", "jfvclient");
-		con.setRequestProperty("Content-Type", "application/json");
-		con.setDoOutput(true);
-		con.setDoInput(true);
-		// This is bad. it bypasses the Hostname Verifier, and makes things
-		// insecure.
-		if (ignoreHostVerification)
-		{
-			logger.log(Level.WARNING, "Ignoring hostname verification.");
-			con.setHostnameVerifier(new HostnameVerifier()
-			{
-				@Override
-				public boolean verify(String hostname, SSLSession session)
-				{
-					logger.log(Level.SEVERE, "Hostname '" + hostname
-							+ "' doesn't match certificate. ");
+        // TODO remove this
+        // System.out.println("request: " + req);
 
-					return true;
-				}
-			});
-		}
-		return con;
-	}
+        if (connection.getResponseCode() != 200)
+        {
+            logger.log(
+                    Level.SEVERE,
+                    "Response is not OK -- {0}  {1}",
+                    new Object[]
+            {
+                connection.getResponseCode(),
+                connection.getResponseMessage()
+            });
+            BufferedReader iw = new BufferedReader(new InputStreamReader(
+                    connection.getInputStream()));
+            String in = "";
+            while ((in = iw.readLine()) != null)
+            {
+                System.err.println(in);
+            }
+        }
+        BufferedReader iw = new BufferedReader(new InputStreamReader(
+                connection.getInputStream()));
+        String response = "";
+        String in;
+        while ((in = iw.readLine()) != null)
+        {
+            response += in;
+        }
+        iw.close();
 
-	/**
-	 * Send a message through to the FlowVisor. This is called by the various
-	 * user methods.
-	 */
-	protected String send(Object request) throws IOException
+        // TODO remove this.
+        // System.out.println("response: " + response);
 
-	{
-		// have to get a new connection each time, as you can't write to
-		// a HttpsUrlConnection once it's been read from.
-		HttpsURLConnection connection = connect();
-		OutputStream os = connection.getOutputStream();
-		BufferedWriter w = new BufferedWriter(new OutputStreamWriter(os));
-		String req = gson.toJson(request);
+        return response;
+    }
 
-		w.write(req);
-		w.flush();
-		w.close();
+    /**
+     * Gets a properly initialised GSON object, to use for parsing JSON.
+     *
+     * @return a Gson object that can be used to properly serialise/deserialise
+     * the JSON messages used.
+     */
+    protected static Gson getGson()
+    {
+        GsonBuilder gb = new GsonBuilder();
+        gb.registerTypeAdapter(Dpid.class, new DpidSerialiser());
+        gb.registerTypeAdapter(Dpid.class, new DpidDeserialiser());
+        return gb.create();
+    }
 
-		// TODO remove this
-		// System.out.println("request: " + req);
+    private static Properties getProps()
+    {
+        Properties props = new Properties();
+        try
+        {
+            props.load(new FileInputStream("resources/visor.properties"));
+        } catch (Exception e)
+        {
+            logger.log(Level.WARNING,
+                    "Properties file not loaded: {0}, using defaults.",
+                    e.getLocalizedMessage());
+            props = new Properties();
+            props.put("hostname", "localhost");
+            props.put("port", 8080);
+            props.put("password", "");
+            props.put("username", "fvadmin");
+            // props.put("truststore", "~/.keystore");
+            // props.put("truststorepw", "changeme");
+        }
 
-		if (connection.getResponseCode() != 200)
-		{
-			logger.log(
-					Level.SEVERE,
-					"Response is not OK -- {0}  {1}",
-					new Object[]
-						{ connection.getResponseCode(),
-								connection.getResponseMessage() });
-			BufferedReader iw = new BufferedReader(new InputStreamReader(
-					connection.getInputStream()));
-			String in = "";
-			while ((in = iw.readLine()) != null)
-				System.err.println(in);
-		}
-		BufferedReader iw = new BufferedReader(new InputStreamReader(
-				connection.getInputStream()));
-		String response = "";
-		String in;
-		while ((in = iw.readLine()) != null)
-		{
-			response += in;
-		}
-		iw.close();
+        return props;
+    }
 
-		// TODO remove this.
-		// System.out.println("response: " + response);
+    /**
+     * Add a slice to the FlowVisor. {@link AddSlice}
+     *
+     * @param s A the slice to be added.
+     * @return true if the slice was added sucessfully (I think)
+     * @throws IOException
+     * @throws JFVErrorResponseException if the response is an error response
+     */
+    public boolean addSlice(AddSlice s) throws IOException,
+            JFVErrorResponseException
+    {
+        // Gson g = getGson();
+        FVRpcRequest<AddSlice> asr = new FVRpcRequest<AddSlice>(s);
+        String response = send(asr);
+        FVRpcResponse<Boolean> resp = gson.fromJson(response,
+                booleanResponseType);
+        if (resp.isError())
+        {
+            throw new JFVErrorResponseException(resp.getError());
+        }
+        return resp.getResult().booleanValue();
+    }
 
-		return response;
-	}
+    /**
+     * Gets the list of slices from the FlowVisor.
+     *
+     * @return a list of Slices.
+     * @throws IOException
+     * @throws JFVErrorResponseException if the response is an error response
+     */
+    public SliceList listSlices() throws IOException, JFVErrorResponseException
+    {
+        EmptyFVRpcRequest lsr = new EmptyFVRpcRequest(
+                EmptyFVRpcRequest.NoParamType.list_slices);
+        String response = send(lsr);
+        Type t = new TypeToken<FVRpcResponse<SliceList>>()
+        {
+        }.getType();
+        FVRpcResponse<SliceList> resp = gson.fromJson(response, t);
+        if (resp.isError())
+        {
+            throw new JFVErrorResponseException(resp.getError());
+        }
+        return resp.getResult();
+    }
 
-	/**
-	 * Gets a properly initialised GSON object, to use for parsing JSON.
-	 *
-	 * @return a Gson object that can be used to properly serialise/deserialise
-	 *         the JSON messages used.
-	 */
-	protected static Gson getGson()
-	{
-		GsonBuilder gb = new GsonBuilder();
-		gb.registerTypeAdapter(Dpid.class, new DpidSerialiser());
-		gb.registerTypeAdapter(Dpid.class, new DpidDeserialiser());
-		return gb.create();
-	}
+    /**
+     * Gets the devices that the FlowVisor can see.
+     *
+     * @return a list of Dpids.
+     * @throws IOException
+     * @throws JFVErrorResponseException if the response is an error response
+     */
+    public DataPaths listDatapaths() throws IOException,
+            JFVErrorResponseException
+    {
+        EmptyFVRpcRequest lsr = new EmptyFVRpcRequest(
+                EmptyFVRpcRequest.NoParamType.list_datapaths);
+        String response = send(lsr);
+        Type t = new TypeToken<FVRpcResponse<DataPaths>>()
+        {
+        }.getType();
+        FVRpcResponse<DataPaths> resp = gson.fromJson(response, t);
+        if (resp.isError())
+        {
+            throw new JFVErrorResponseException(resp.getError());
+        }
+        return resp.getResult();
+    }
 
-	private static Properties getProps()
-	{
-		Properties props = new Properties();
-		try
-		{
-			props.load(new FileInputStream("resources/visor.properties"));
-		} catch (Exception e)
-		{
-			logger.log(Level.WARNING,
-					"Properties file not loaded: {0}, using defaults.",
-					e.getLocalizedMessage());
-			props = new Properties();
-			props.put("hostname", "localhost");
-			props.put("port", 8080);
-			props.put("password", "");
-			props.put("username", "fvadmin");
-			// props.put("truststore", "~/.keystore");
-			// props.put("truststorepw", "changeme");
-		}
+    /**
+     * Returns the information about a device.
+     *
+     * @param d the Dpid of the device to query.
+     * @return Information about the device.
+     * @throws IOException
+     * @throws JFVErrorResponseException if the response is an error response
+     */
+    public DatapathInfo listDataPathInfo(Dpid d) throws IOException,
+            JFVErrorResponseException
+    {
+        FVRpcRequest<Dpid> lsr = new FVRpcRequest<Dpid>(d);
+        String response = send(lsr);
+        Type t = new TypeToken<FVRpcResponse<DatapathInfo>>()
+        {
+        }.getType();
+        FVRpcResponse<DatapathInfo> resp = gson.fromJson(response, t);
+        if (resp.isError())
+        {
+            throw new JFVErrorResponseException(resp.getError());
+        }
+        return resp.getResult();
+    }
 
-		return props;
-	}
+    /**
+     * Gets information about a slice.
+     *
+     * @param sliceName the name of the slice to get information about.
+     * @return Information about a slice.
+     * @throws IOException
+     * @throws JFVErrorResponseException if the response is an error response
+     */
+    public SliceInfo listSliceInfo(String sliceName) throws IOException,
+            JFVErrorResponseException
+    {
+        FVRpcRequest<ListSliceInfo> lsr = new FVRpcRequest<ListSliceInfo>(
+                new ListSliceInfo(sliceName));
+        String response = send(lsr);
+        Type t = new TypeToken<FVRpcResponse<SliceInfo>>()
+        {
+        }.getType();
+        FVRpcResponse<SliceInfo> resp = gson.fromJson(response, t);
+        if (resp.isError())
+        {
+            throw new JFVErrorResponseException(resp.getError());
+        }
+        return resp.getResult();
+    }
 
-	/**
-	 * Add a slice to the FlowVisor. {@link AddSlice}
-	 *
-	 * @param s
-	 *            A the slice to be added.
-	 * @return true if the slice was added sucessfully (I think)
-	 * @throws IOException
-	 * @throws JFVErrorResponseException
-	 *             if the response is an error response
-	 */
-	public boolean addSlice(AddSlice s) throws IOException,
-			JFVErrorResponseException
-	{
-		// Gson g = getGson();
-		FVRpcRequest<AddSlice> asr = new FVRpcRequest<AddSlice>(s);
-		String response = send(asr);
-		FVRpcResponse<Boolean> resp = gson.fromJson(response,
-				booleanResponseType);
-		if (resp.isError())
-		{
-			throw new JFVErrorResponseException(resp.getError());
-		}
-		return resp.getResult().booleanValue();
-	}
+    /**
+     * Gets information about the health of the FlowVisor, such as the number of
+     * active DB sessions, the number of idle DB sessions, the average delay
+     * etc.
+     *
+     * @return Information about the health of the running FlowVisor.
+     * @throws JFVErrorResponseException if the response is an error response
+     * @throws IOException
+     */
+    public FVHealth listFVHealth() throws JFVErrorResponseException,
+            IOException
+    {
+        EmptyFVRpcRequest lsr = new EmptyFVRpcRequest(
+                EmptyFVRpcRequest.NoParamType.list_fv_health);
+        String response = send(lsr);
+        Type t = new TypeToken<FVRpcResponse<FVHealth>>()
+        {
+        }.getType();
+        FVRpcResponse<FVHealth> resp = gson.fromJson(response, t);
+        if (resp.isError())
+        {
+            throw new JFVErrorResponseException(resp.getError());
+        }
+        return resp.getResult();
+    }
 
-	/**
-	 * Gets the list of slices from the FlowVisor.
-	 *
-	 * @return a list of Slices.
-	 * @throws IOException
-	 * @throws JFVErrorResponseException
-	 *             if the response is an error response
-	 */
-	public SliceList listSlices() throws IOException, JFVErrorResponseException
-	{
-		EmptyFVRpcRequest lsr = new EmptyFVRpcRequest(
-				EmptyFVRpcRequest.NoParamType.list_slices);
-		String response = send(lsr);
-		Type t = new TypeToken<FVRpcResponse<SliceList>>()
-		{
-		}.getType();
-		FVRpcResponse<SliceList> resp = gson.fromJson(response, t);
-		if (resp.isError())
-		{
-			throw new JFVErrorResponseException(resp.getError());
-		}
-		return resp.getResult();
-	}
+    /**
+     * Get the health of a slice.
+     *
+     * @param sliceName the name of the slice
+     * @return information about the health of the slice.
+     * @throws JFVErrorResponseException if the response is an error response
+     * @throws IOException
+     */
+    public SliceHealth listSliceHealth(String sliceName)
+            throws JFVErrorResponseException, IOException
+    {
+        FVRpcRequest<ListSliceHealth> lsr = new FVRpcRequest<ListSliceHealth>(
+                new ListSliceHealth(sliceName));
+        String response = send(lsr);
+        Type t = new TypeToken<FVRpcResponse<SliceHealth>>()
+        {
+        }.getType();
+        FVRpcResponse<SliceHealth> resp = gson.fromJson(response, t);
+        if (resp.isError())
+        {
+            throw new JFVErrorResponseException(resp.getError());
+        }
+        return resp.getResult();
+    }
 
-	/**
-	 * Gets the devices that the FlowVisor can see.
-	 *
-	 * @return a list of Dpids.
-	 * @throws IOException
-	 * @throws JFVErrorResponseException
-	 *             if the response is an error response
-	 */
-	public DataPaths listDatapaths() throws IOException,
-			JFVErrorResponseException
-	{
-		EmptyFVRpcRequest lsr = new EmptyFVRpcRequest(
-				EmptyFVRpcRequest.NoParamType.list_datapaths);
-		String response = send(lsr);
-		Type t = new TypeToken<FVRpcResponse<DataPaths>>()
-		{
-		}.getType();
-		FVRpcResponse<DataPaths> resp = gson.fromJson(response, t);
-		if (resp.isError())
-		{
-			throw new JFVErrorResponseException(resp.getError());
-		}
-		return resp.getResult();
-	}
+    /**
+     * Get statistics about a slice.
+     *
+     * @param sliceName the name of the slice.
+     * @return statistics about a slice.
+     * @throws JFVErrorResponseException if the response is an error response
+     * @throws IOException
+     */
+    public SliceStats listSliceStats(String sliceName)
+            throws JFVErrorResponseException, IOException
+    {
+        FVRpcRequest<ListSliceStats> lsr = new FVRpcRequest<ListSliceStats>(
+                new ListSliceStats(sliceName));
+        String response = send(lsr);
+        Type t = new TypeToken<FVRpcResponse<SliceStats>>()
+        {
+        }.getType();
+        FVRpcResponse<SliceStats> resp = gson.fromJson(response, t);
+        if (resp.isError())
+        {
+            throw new JFVErrorResponseException(resp.getError());
+        }
+        return resp.getResult();
+    }
 
-	/**
-	 * Returns the information about a device.
-	 *
-	 * @param d
-	 *            the Dpid of the device to query.
-	 * @return Information about the device.
-	 * @throws IOException
-	 * @throws JFVErrorResponseException
-	 *             if the response is an error response
-	 */
-	public DatapathInfo listDataPathInfo(Dpid d) throws IOException,
-			JFVErrorResponseException
-	{
-		FVRpcRequest<Dpid> lsr = new FVRpcRequest<Dpid>(d);
-		String response = send(lsr);
-		Type t = new TypeToken<FVRpcResponse<DatapathInfo>>()
-		{
-		}.getType();
-		FVRpcResponse<DatapathInfo> resp = gson.fromJson(response, t);
-		if (resp.isError())
-		{
-			throw new JFVErrorResponseException(resp.getError());
-		}
-		return resp.getResult();
-	}
+    /**
+     * Updates a slice with new parameters.
+     *
+     * @param u the changes to the slice.
+     * @return true if the slice was successfully updated.
+     * @throws JFVErrorResponseException if the response is an error response
+     * @throws IOException
+     */
+    public boolean updateSlice(UpdateSlice u) throws JFVErrorResponseException,
+            IOException
+    {
+        FVRpcRequest<UpdateSlice> lsr = new FVRpcRequest<UpdateSlice>(u);
+        String response = send(lsr);
+        FVRpcResponse<Boolean> resp = gson.fromJson(response,
+                booleanResponseType);
+        if (resp.isError())
+        {
+            throw new JFVErrorResponseException(resp.getError());
+        }
+        return resp.getResult().booleanValue();
+    }
 
-	/**
-	 * Gets information about a slice.
-	 *
-	 * @param sliceName
-	 *            the name of the slice to get information about.
-	 * @return Information about a slice.
-	 * @throws IOException
-	 * @throws JFVErrorResponseException
-	 *             if the response is an error response
-	 */
-	public SliceInfo listSliceInfo(String sliceName) throws IOException,
-			JFVErrorResponseException
-	{
-		FVRpcRequest<ListSliceInfo> lsr = new FVRpcRequest<ListSliceInfo>(
-				new ListSliceInfo(sliceName));
-		String response = send(lsr);
-		Type t = new TypeToken<FVRpcResponse<SliceInfo>>()
-		{
-		}.getType();
-		FVRpcResponse<SliceInfo> resp = gson.fromJson(response, t);
-		if (resp.isError())
-		{
-			throw new JFVErrorResponseException(resp.getError());
-		}
-		return resp.getResult();
-	}
+    /**
+     * Removes a slice.
+     *
+     * @param sliceName the name of the slice to be removed.
+     * @return true if the slice was successfully removed.
+     * @throws IOException
+     * @throws JFVErrorResponseException if the response is an error response
+     */
+    public boolean removeSlice(String sliceName) throws IOException,
+            JFVErrorResponseException
+    {
+        FVRpcRequest<RemoveSlice> rsr = new FVRpcRequest<RemoveSlice>(
+                new RemoveSlice(sliceName));
+        String response = send(rsr);
+        FVRpcResponse<Boolean> resp = gson.fromJson(response,
+                booleanResponseType);
+        if (resp.isError())
+        {
+            throw new JFVErrorResponseException(resp.getError());
+        }
+        return resp.getResult().booleanValue();
+    }
 
-	/**
-	 * Gets information about the health of the FlowVisor, such as the number of
-	 * active DB sessions, the number of idle DB sessions, the average delay
-	 * etc.
-	 *
-	 * @return Information about the health of the running FlowVisor.
-	 * @throws JFVErrorResponseException
-	 *             if the response is an error response
-	 * @throws IOException
-	 */
-	public FVHealth listFVHealth() throws JFVErrorResponseException,
-			IOException
-	{
-		EmptyFVRpcRequest lsr = new EmptyFVRpcRequest(
-				EmptyFVRpcRequest.NoParamType.list_fv_health);
-		String response = send(lsr);
-		Type t = new TypeToken<FVRpcResponse<FVHealth>>()
-		{
-		}.getType();
-		FVRpcResponse<FVHealth> resp = gson.fromJson(response, t);
-		if (resp.isError())
-		{
-			throw new JFVErrorResponseException(resp.getError());
-		}
-		return resp.getResult();
-	}
+    /**
+     * Add new flowspaces.
+     *
+     * @param fs A list of flowspaces to add.
+     * @return the id of the flowspace request.
+     * @throws IOException
+     * @throws JFVErrorResponseException if the response is an error response.
+     */
+    public int addFlowspace(AddFlowspace fs) throws IOException,
+            JFVErrorResponseException
+    {
 
-	/**
-	 * Get the health of a slice.
-	 *
-	 * @param sliceName
-	 *            the name of the slice
-	 * @return information about the health of the slice.
-	 * @throws JFVErrorResponseException
-	 *             if the response is an error response
-	 * @throws IOException
-	 */
-	public SliceHealth listSliceHealth(String sliceName)
-			throws JFVErrorResponseException, IOException
-	{
-		FVRpcRequest<ListSliceHealth> lsr = new FVRpcRequest<ListSliceHealth>(
-				new ListSliceHealth(sliceName));
-		String response = send(lsr);
-		Type t = new TypeToken<FVRpcResponse<SliceHealth>>()
-		{
-		}.getType();
-		FVRpcResponse<SliceHealth> resp = gson.fromJson(response, t);
-		if (resp.isError())
-		{
-			throw new JFVErrorResponseException(resp.getError());
-		}
-		return resp.getResult();
-	}
+        FVRpcRequest<AddFlowspace> afr = new FVRpcRequest<AddFlowspace>(fs);
+        String response = send(afr);
+        FVRpcResponse<Integer> resp = gson.fromJson(response,
+                new TypeToken<FVRpcResponse<Integer>>()
+        {
+        }.getType());
+        if (resp.isError())
+        {
+            throw new JFVErrorResponseException(resp.getError());
+        }
+        return resp.getResult().intValue();
+    }
 
-	/**
-	 * Get statistics about a slice.
-	 *
-	 * @param sliceName
-	 *            the name of the slice.
-	 * @return statistics about a slice.
-	 * @throws JFVErrorResponseException
-	 *             if the response is an error response
-	 * @throws IOException
-	 */
-	public SliceStats listSliceStats(String sliceName)
-			throws JFVErrorResponseException, IOException
-	{
-		FVRpcRequest<ListSliceStats> lsr = new FVRpcRequest<ListSliceStats>(
-				new ListSliceStats(sliceName));
-		String response = send(lsr);
-		Type t = new TypeToken<FVRpcResponse<SliceStats>>()
-		{
-		}.getType();
-		FVRpcResponse<SliceStats> resp = gson.fromJson(response, t);
-		if (resp.isError())
-		{
-			throw new JFVErrorResponseException(resp.getError());
-		}
-		return resp.getResult();
-	}
+    /**
+     * convenience method for adding a single flowspace.
+     *
+     * According to
+     * <code>fvctl help add-flowspace</code> AddFlowspace: <BR/>
+     * Creates a new rule in the flowspace with the given name. <br/>
+     * Queues can be assigned to the slice by passing a comma seperated list of
+     * queue ids, for example '-q 1,2,3'. <br/>
+     * If a forced queue is defined, then any flowmod matching this rule will
+     * see its OUTPUT actions replaced with the queue id given in the forced
+     * queue option. Note: The forced queue should be defined in the queue
+     * option and all these queue ids should be defined with the appropriate
+     * port on the switch. <br/>
+     * See the fvctl man page for information on the format of <dpid>, <match>,
+     * and
+     * <slice-perm>.
+     * <p/>
+     *
+     * @param f the flowspace definition
+     * @return the id of the flowspace request.
+     * @throws IOException
+     * @throws JFVErrorResponseException if the response is an error response.
+     */
+    public int addFlowspace(Flowspace f) throws IOException,
+            JFVErrorResponseException
+    {
+        AddFlowspace a = new AddFlowspace();
+        a.add(f);
+        return addFlowspace(a);
+    }
 
-	/**
-	 * Updates a slice with new parameters.
-	 *
-	 * @param u
-	 *            the changes to the slice.
-	 * @return true if the slice was successfully updated.
-	 * @throws JFVErrorResponseException
-	 *             if the response is an error response
-	 * @throws IOException
-	 */
-	public boolean updateSlice(UpdateSlice u) throws JFVErrorResponseException,
-			IOException
-	{
-		FVRpcRequest<UpdateSlice> lsr = new FVRpcRequest<UpdateSlice>(u);
-		String response = send(lsr);
-		FVRpcResponse<Boolean> resp = gson.fromJson(response,
-				booleanResponseType);
-		if (resp.isError())
-		{
-			throw new JFVErrorResponseException(resp.getError());
-		}
-		return resp.getResult().booleanValue();
-	}
+    /**
+     * Remove a single flowspace.
+     *
+     * @param flowspaceName the name of the flowspace
+     * @return the id of the flowspace request.
+     * @throws JFVErrorResponseException
+     * @throws IOException
+     */
+    public int removeFlowspace(String flowspaceName)
+            throws JFVErrorResponseException, IOException
+    {
+        RemoveFlowspace fs = new RemoveFlowspace(flowspaceName);
+        FVRpcRequest<RemoveFlowspace> afr = new FVRpcRequest<RemoveFlowspace>(
+                fs);
+        String response = send(afr);
+        FVRpcResponse<Integer> resp = gson.fromJson(response,
+                new TypeToken<FVRpcResponse<Integer>>()
+        {
+        }.getType());
+        if (resp.isError())
+        {
+            throw new JFVErrorResponseException(resp.getError());
+        }
+        return resp.getResult().intValue();
+    }
 
-	/**
-	 * Removes a slice.
-	 *
-	 * @param sliceName
-	 *            the name of the slice to be removed.
-	 * @return true if the slice was successfully removed.
-	 * @throws IOException
-	 * @throws JFVErrorResponseException
-	 *             if the response is an error response
-	 */
-	public boolean removeSlice(String sliceName) throws IOException,
-			JFVErrorResponseException
-	{
-		FVRpcRequest<RemoveSlice> rsr = new FVRpcRequest<RemoveSlice>(
-				new RemoveSlice(sliceName));
-		String response = send(rsr);
-		FVRpcResponse<Boolean> resp = gson.fromJson(response,
-				booleanResponseType);
-		if (resp.isError())
-		{
-			throw new JFVErrorResponseException(resp.getError());
-		}
-		return resp.getResult().booleanValue();
-	}
+    /**
+     * Gets the version information of the FlowVisor instance.
+     *
+     * @return version information.
+     * @throws JFVErrorResponseException if the response is an error response.
+     * @throws IOException
+     */
+    public Version getVersion() throws JFVErrorResponseException, IOException
+    {
+        EmptyFVRpcRequest lsr = new EmptyFVRpcRequest(
+                EmptyFVRpcRequest.NoParamType.list_version);
+        String response = send(lsr);
+        Type t = new TypeToken<FVRpcResponse<Version>>()
+        {
+        }.getType();
+        FVRpcResponse<Version> resp = gson.fromJson(response, t);
+        if (resp.isError())
+        {
+            throw new JFVErrorResponseException(resp.getError());
+        }
+        return resp.getResult();
+    }
 
-	/**
-	 * Add new flowspaces.
-	 *
-	 * @param fs
-	 *            A list of flowspaces to add.
-	 * @return the id of the flowspace request.
-	 * @throws IOException
-	 * @throws JFVErrorResponseException
-	 *             if the response is an error response.
-	 */
-	public int addFlowspace(AddFlowspace fs) throws IOException,
-			JFVErrorResponseException
-	{
+    /**
+     * Lists the flowspaces associated with a slice.
+     *
+     * @param sliceName The name of the slice.
+     * @param includeDisabled defaults to true if sliceName is not null.
+     * @return A list of the flowspaces associated with the slice.
+     * @throws IOException If something bad happens on the network.
+     * @throws JFVErrorResponseException If the response is an error.
+     */
+    public List<Flowspace> listFlowspaces(String sliceName,
+                                          boolean includeDisabled) throws IOException,
+            JFVErrorResponseException
+    {
+        FVRpcRequest<ListFlowspace> lfs = new FVRpcRequest<ListFlowspace>(
+                new ListFlowspace(sliceName, includeDisabled));
+        String response = send(lfs);
+        Type responseType = new TypeToken<FVRpcResponse<List<Flowspace>>>()
+        {
+        }.getType();
+        FVRpcResponse<List<Flowspace>> resp = gson.fromJson(response,
+                responseType);
+        if (resp.isError())
+        {
+            throw new JFVErrorResponseException(resp.getError());
+        }
+        return resp.getResult();
+    }
 
-		FVRpcRequest<AddFlowspace> afr = new FVRpcRequest<AddFlowspace>(fs);
-		String response = send(afr);
-		FVRpcResponse<Integer> resp = gson.fromJson(response,
-				new TypeToken<FVRpcResponse<Integer>>()
-				{
-				}.getType());
-		if (resp.isError())
-		{
-			throw new JFVErrorResponseException(resp.getError());
-		}
-		return resp.getResult().intValue();
-	}
+    /**
+     * Lists the flowspaces for all slices.
+     *
+     * @param includeDisabled whether or not to include disabled slices.
+     * Defaults to
+     * <b>false</b>
+     * @return A list of all flowspaces.
+     * @throws IOException
+     * @throws JFVErrorResponseException
+     */
+    public List<Flowspace> listAllFlowspaces(boolean includeDisabled)
+            throws IOException, JFVErrorResponseException
+    {
+        FVRpcRequest<ListFlowspace> lfs = new FVRpcRequest<ListFlowspace>(
+                new ListFlowspace(includeDisabled));
+        String response = send(lfs);
+        Type responseType = new TypeToken<FVRpcResponse<List<Flowspace>>>()
+        {
+        }.getType();
+        FVRpcResponse<List<Flowspace>> resp = gson.fromJson(response,
+                responseType);
+        if (resp.isError())
+        {
+            throw new JFVErrorResponseException(resp.getError());
+        }
+        return resp.getResult();
+    }
 
-	/**
-	 * convenience method for adding a single flowspace.
-	 *
-	 * @param f
-	 *            the flowspace definition
-	 * @return the id of the flowspace request.
-	 * @throws IOException
-	 * @throws JFVErrorResponseException
-	 *             if the response is an error response.
-	 */
-	public int addFlowspace(Flowspace f) throws IOException,
-			JFVErrorResponseException
-	{
-		AddFlowspace a = new AddFlowspace();
-		a.add(f);
-		return addFlowspace(a);
-	}
+    /**
+     * Updates the password for a slice.
+     *
+     * @param sliceName the name of the slice.
+     * @param password the new password.
+     * @return true if the password was successfully updated.
+     * @throws IOException
+     * @throws JFVErrorResponseException if the response is an error response.
+     */
+    public boolean updateSlicePassword(String sliceName, String password)
+            throws IOException, JFVErrorResponseException
+    {
+        FVRpcRequest<UpdateSlicePassword> usp = new FVRpcRequest<UpdateSlicePassword>(
+                new UpdateSlicePassword(sliceName, password));
+        String response = send(usp);
+        FVRpcResponse<Boolean> resp = gson.fromJson(response,
+                booleanResponseType);
+        if (resp.isError())
+        {
+            throw new JFVErrorResponseException(resp.getError());
+        }
+        return resp.getResult();
 
-	/**
-	 * Remove a single flowspace.
-	 *
-	 * @param flowspaceName
-	 *            the name of the flowspace
-	 * @return the id of the flowspace request.
-	 * @throws JFVErrorResponseException
-	 * @throws IOException
-	 */
-	public int removeFlowspace(String flowspaceName)
-			throws JFVErrorResponseException, IOException
-	{
-		RemoveFlowspace fs = new RemoveFlowspace(flowspaceName);
-		FVRpcRequest<RemoveFlowspace> afr = new FVRpcRequest<RemoveFlowspace>(
-				fs);
-		String response = send(afr);
-		FVRpcResponse<Integer> resp = gson.fromJson(response,
-				new TypeToken<FVRpcResponse<Integer>>()
-				{
-				}.getType());
-		if (resp.isError())
-		{
-			throw new JFVErrorResponseException(resp.getError());
-		}
-		return resp.getResult().intValue();
-	}
+    }
 
-	/**
-	 * Gets the version information of the FlowVisor instance.
-	 *
-	 * @return version information.
-	 * @throws JFVErrorResponseException
-	 *             if the response is an error response.
-	 * @throws IOException
-	 */
-	public Version getVersion() throws JFVErrorResponseException, IOException
-	{
-		EmptyFVRpcRequest lsr = new EmptyFVRpcRequest(
-				EmptyFVRpcRequest.NoParamType.list_version);
-		String response = send(lsr);
-		Type t = new TypeToken<FVRpcResponse<Version>>()
-		{
-		}.getType();
-		FVRpcResponse<Version> resp = gson.fromJson(response, t);
-		if (resp.isError())
-		{
-			throw new JFVErrorResponseException(resp.getError());
-		}
-		return resp.getResult();
-	}
+    /**
+     * Update flowspaces.
+     *
+     * @param flowspaces a list of flowspaces to update.
+     * @return the id of the flowspace request.
+     * @throws IOException
+     * @throws JFVErrorResponseException if the response is an error response.
+     */
+    public int updateFlowspace(UpdateFlowspace flowspaces) throws IOException,
+            JFVErrorResponseException
+    {
 
-	/**
-	 * Lists the flowspaces associated with a slice.
-	 *
-	 * @param sliceName
-	 *            The name of the slice.
-	 * @param includeDisabled
-	 *            defaults to true if sliceName is not null.
-	 * @return A list of the flowspaces associated with the slice.
-	 * @throws IOException
-	 *             If something bad happens on the network.
-	 * @throws JFVErrorResponseException
-	 *             If the response is an error.
-	 */
-	public List<Flowspace> listFlowspaces(String sliceName,
-			boolean includeDisabled) throws IOException,
-			JFVErrorResponseException
-	{
-		FVRpcRequest<ListFlowspace> lfs = new FVRpcRequest<ListFlowspace>(
-				new ListFlowspace(sliceName, includeDisabled));
-		String response = send(lfs);
-		Type responseType = new TypeToken<FVRpcResponse<List<Flowspace>>>()
-		{
-		}.getType();
-		FVRpcResponse<List<Flowspace>> resp = gson.fromJson(response,
-				responseType);
-		if (resp.isError())
-		{
-			throw new JFVErrorResponseException(resp.getError());
-		}
-		return resp.getResult();
-	}
+        FVRpcRequest<UpdateFlowspace> ufs = new FVRpcRequest<UpdateFlowspace>(
+                flowspaces);
+        String response = send(ufs);
+        FVRpcResponse<Integer> resp = gson.fromJson(response,
+                new TypeToken<FVRpcResponse<Integer>>()
+        {
+        }.getType());
+        if (resp.isError())
+        {
+            throw new JFVErrorResponseException(resp.getError());
+        }
+        return resp.getResult().intValue();
+    }
 
-	/**
-	 * Lists the flowspaces for all slices.
-	 *
-	 * @param includeDisabled
-	 *            whether or not to include disabled slices. Defaults to
-	 *            <b>false</b>
-	 * @return A list of all flowspaces.
-	 * @throws IOException
-	 * @throws JFVErrorResponseException
-	 */
-	public List<Flowspace> listAllFlowspaces(boolean includeDisabled)
-			throws IOException, JFVErrorResponseException
-	{
-		FVRpcRequest<ListFlowspace> lfs = new FVRpcRequest<ListFlowspace>(
-				new ListFlowspace(includeDisabled));
-		String response = send(lfs);
-		Type responseType = new TypeToken<FVRpcResponse<List<Flowspace>>>()
-		{
-		}.getType();
-		FVRpcResponse<List<Flowspace>> resp = gson.fromJson(response,
-				responseType);
-		if (resp.isError())
-		{
-			throw new JFVErrorResponseException(resp.getError());
-		}
-		return resp.getResult();
-	}
-
-	/**
-	 * Updates the password for a slice.
-	 *
-	 * @param sliceName
-	 *            the name of the slice.
-	 * @param password
-	 *            the new password.
-	 * @return true if the password was successfully updated.
-	 * @throws IOException
-	 * @throws JFVErrorResponseException
-	 *             if the response is an error response.
-	 */
-	public boolean updateSlicePassword(String sliceName, String password)
-			throws IOException, JFVErrorResponseException
-	{
-		FVRpcRequest<UpdateSlicePassword> usp = new FVRpcRequest<UpdateSlicePassword>(
-				new UpdateSlicePassword(sliceName, password));
-		String response = send(usp);
-		FVRpcResponse<Boolean> resp = gson.fromJson(response,
-				booleanResponseType);
-		if (resp.isError())
-		{
-			throw new JFVErrorResponseException(resp.getError());
-		}
-		return resp.getResult();
-
-	}
-
-	/**
-	 * Update flowspaces.
-	 *
-	 * @param flowspaces
-	 *            a list of flowspaces to update.
-	 * @return the id of the flowspace request.
-	 * @throws IOException
-	 * @throws JFVErrorResponseException
-	 *             if the response is an error response.
-	 */
-	public int updateFlowspace(UpdateFlowspace flowspaces) throws IOException,
-			JFVErrorResponseException
-	{
-
-		FVRpcRequest<UpdateFlowspace> ufs = new FVRpcRequest<UpdateFlowspace>(
-				flowspaces);
-		String response = send(ufs);
-		FVRpcResponse<Integer> resp = gson.fromJson(response,
-				new TypeToken<FVRpcResponse<Integer>>()
-				{
-				}.getType());
-		if (resp.isError())
-		{
-			throw new JFVErrorResponseException(resp.getError());
-		}
-		return resp.getResult().intValue();
-	}
-
-	/**
-	 * Update a single flowspace.
-	 *
-	 * @param flowspace
-	 *            flowspace
-	 * @return the id of the flowspace request.
-	 * @throws IOException
-	 * @throws JFVErrorResponseException
-	 *             if the response is an error response.
-	 */
-	public int updateFlowspace(Flowspace flowspace) throws IOException,
-			JFVErrorResponseException
-	{
-		UpdateFlowspace l = new UpdateFlowspace();
-		l.add(flowspace);
-		return updateFlowspace(l);
-	}
+    /**
+     * Update a single flowspace.
+     *
+     * @param flowspace flowspace
+     * @return the id of the flowspace request.
+     * @throws IOException
+     * @throws JFVErrorResponseException if the response is an error response.
+     */
+    public int updateFlowspace(Flowspace flowspace) throws IOException,
+            JFVErrorResponseException
+    {
+        UpdateFlowspace l = new UpdateFlowspace();
+        l.add(flowspace);
+        return updateFlowspace(l);
+    }
 }

@@ -52,12 +52,24 @@ import com.google.gson.annotations.SerializedName;
  * ]
  * </pre>
  *
- *
  * returns a number, which is the request number used in
  * <code>list-fs-status</code> requests.
- *
+ * 
  * <p/>
  *
+ * According to <code>fvctl help add-flowspace</code> AddFlowspace:
+ * Creates a new rule in the flowspace with the given name. <br/>
+ * Queues can be assigned to the slice by passing a comma seperated list of 
+ * queue ids, for example '-q 1,2,3'. <br/>
+ * If a forced queue is defined, then any flowmod matching this rule will see 
+ * its OUTPUT actions replaced with the queue id given in the forced queue 
+ * option. Note: The forced queue should be defined in the queue option and 
+ * all these queue ids should be defined with the appropriate port on the 
+ * switch. <br/>
+ * See the fvctl man page for information on the format of <dpid>, <match>, and 
+ * <slice-perm>.
+ * <p/>
+ * 
  * update-flowspace request (the same, but most fields are optional) :
  *
  * <pre>
