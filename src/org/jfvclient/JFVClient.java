@@ -78,6 +78,7 @@ public class JFVClient
     Gson gson;
     private String hostName;
     private String hostPort;
+    private URL hostUrl;
     private boolean ignoreHostVerification;
     private static Type booleanResponseType = new TypeToken<FVRpcResponse<Boolean>>()
     {
@@ -88,11 +89,13 @@ public class JFVClient
     /**
      * Creates a new JFVClient.
      */
-    public JFVClient()
+    public JFVClient() throws MalformedURLException
     {
         config = getProps();
         hostName = config.getProperty("hostname");
         hostPort = config.getProperty("port");
+        hostUrl = new URL("https://" + hostName + ":" + hostPort);
+        
         ignoreHostVerification = Boolean.parseBoolean(config.getProperty(
                 "ignoreHostVerification", "false"));
         gson = getGson();
@@ -111,13 +114,12 @@ public class JFVClient
      * @return A properly initialised HttpsURLConnection.
      * @throws IOException
      */
-    private HttpsURLConnection connect() throws IOException
+    private HttpsURLConnection connect() throws IOException 
     {
         Authenticator.setDefault(new PropertiesFileAuthenticator(new File(
                 "resources/visor.properties")));
 
-        HttpsURLConnection con = (HttpsURLConnection) new URL("https://"
-                + hostName + ":" + hostPort).openConnection();
+        HttpsURLConnection con = (HttpsURLConnection) hostUrl.openConnection();
         con.setRequestMethod("POST");
         con.setRequestProperty("User-Agent", "jfvclient");
         con.setRequestProperty("Content-Type", "application/json");
