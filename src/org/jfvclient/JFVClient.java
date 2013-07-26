@@ -24,14 +24,12 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.net.Authenticator;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Properties;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
 
 import org.jfvclient.data.Dpid;
@@ -64,6 +62,7 @@ import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jfvclient.requests.RemoveFlowspace;
+import sun.net.www.protocol.https.DefaultHostnameVerifier;
 
 /**
  * This class can be used to for most operations. It contains methods for
@@ -102,6 +101,52 @@ public class JFVClient
         logger.setLevel(Level.parse(config.getProperty("verbosity", "WARNING")));
 
     }
+    
+    /**
+     * Set this to true if you want to ignore hostname verification. 
+     * 
+     * <h3> WARNING </h3> this is not secure, and should only be used while 
+     * testing. 
+     * 
+     * @param ignore if you want to ignore hostname verification.
+     */
+    public void setIgnoreHostVerification(boolean ignore)
+    {
+        ignoreHostVerification = ignore;
+        // This is bad. it bypasses the Hostname Verifier, and makes things
+        // insecure.
+        if (ignore)
+        {
+            logger.log(Level.WARNING, "Ignoring hostname verification.");
+            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier()
+            {
+                @Override
+                public boolean verify(String hostname, SSLSession session)
+                {
+                    logger.log(Level.SEVERE, "Hostname '" + hostname
+                            + "' doesn't match certificate. ");
+
+                    return true;
+                }
+            });
+        }
+        else
+        {
+            HttpsURLConnection.setDefaultHostnameVerifier(new DefaultHostnameVerifier());
+        }
+    }
+    
+    /**
+     * Returns whether hostname verification is turned off. 
+     * 
+     * @see #setIgnoreHostVerification(boolean) 
+     * 
+     * @return true if hostname verification is off. 
+     */
+    public boolean isIgnoringHostVerification()
+    {
+        return ignoreHostVerification;
+    }
 
     /**
      * Creates a {@link HttpsURLConnection} that can be used to do a request. A
@@ -125,23 +170,7 @@ public class JFVClient
         con.setRequestProperty("Content-Type", "application/json");
         con.setDoOutput(true);
         con.setDoInput(true);
-        // This is bad. it bypasses the Hostname Verifier, and makes things
-        // insecure.
-        if (ignoreHostVerification)
-        {
-            logger.log(Level.WARNING, "Ignoring hostname verification.");
-            con.setHostnameVerifier(new HostnameVerifier()
-            {
-                @Override
-                public boolean verify(String hostname, SSLSession session)
-                {
-                    logger.log(Level.SEVERE, "Hostname '" + hostname
-                            + "' doesn't match certificate. ");
-
-                    return true;
-                }
-            });
-        }
+        
         return con;
     }
 
