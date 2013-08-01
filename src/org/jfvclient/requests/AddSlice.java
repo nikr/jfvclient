@@ -16,6 +16,8 @@
 package org.jfvclient.requests;
 
 import com.google.gson.annotations.SerializedName;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Implementation of an add-slice command.
@@ -138,15 +140,28 @@ public class AddSlice
      */
     public boolean isValidRequest()
     {
-        return isValidControllerUrl(this.controllerURL)
+        
+        if (isValidControllerUrl(this.controllerURL)
                 && (sliceName != null)
                 && (adminContact != null)
-                && (password != null);
+                && (password != null))
+        {
+            return true;
+        }
+        Logger.getLogger(AddSlice.class.getName()).info("Invalid Request: ");
+        Logger.getLogger(AddSlice.class.getName()).log(Level.INFO, "Controller URL: {0}, Name; {1}, Contact: {2}, Password: {3}", new Object[]{controllerURL, sliceName, adminContact, password});
+        return false;
     }
 
     private boolean isValidControllerUrl(String url)
     {
-        return (url != null && url.matches("(tcp|udp):\\w+(:\\d+)?"));
+        
+        if (url != null && url.matches("(tcp|udp):\\w+(:\\d+)?"))
+        {
+            return true;
+        }
+        Logger.getLogger(AddSlice.class.getName()).log(Level.INFO, "Invalid URL: {0}", url);
+        return false;
     }
 
     private void setDefaults()
