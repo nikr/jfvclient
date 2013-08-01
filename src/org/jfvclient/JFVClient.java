@@ -59,6 +59,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import java.io.File;
+import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jfvclient.requests.RemoveFlowspace;
@@ -88,12 +89,21 @@ public class JFVClient
     /**
      * Creates a new JFVClient.
      */
-    public JFVClient() throws MalformedURLException
+    public JFVClient() 
     {
         config = getProps();
         hostName = config.getProperty("hostname");
         hostPort = config.getProperty("port");
-        hostUrl = new URL("https://" + hostName + ":" + hostPort);
+        
+        //probably should throw an exception, so that it fails fast. 
+        try
+        {
+            hostUrl = new URL("https://" + hostName + ":" + hostPort);
+        } catch (MalformedURLException ex)
+        {
+            Logger.getLogger(JFVClient.class.getName()).log(Level.SEVERE, "Couldn't create host URL.",
+                    ex);
+        }
         
         ignoreHostVerification = Boolean.parseBoolean(config.getProperty(
                 "ignoreHostVerification", "false"));
