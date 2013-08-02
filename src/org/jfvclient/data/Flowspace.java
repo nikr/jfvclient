@@ -338,4 +338,17 @@ public class Flowspace
 		Flowspace other = (Flowspace) o;
 		return (name.equals(other.getName()) && dpid.equals(other.getDpid()));
 	}
+
+        /**
+         * hashCode implementation that should be consistent with equals().
+         * @return 
+         */
+    @Override
+    public int hashCode()
+    {
+        int hash = 7;
+        hash = 23 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 23 * hash + (this.dpid != null ? this.dpid.hashCode() : 0);
+        return hash;
+    }
 }
