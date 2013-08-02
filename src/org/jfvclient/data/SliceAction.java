@@ -148,4 +148,14 @@ public class SliceAction
 	{
 		this.sliceName = sliceName;
 	}
+        
+        /**
+         * formats the slice action as name=permission.
+         * @return  name=permission
+         */
+        @Override
+        public String toString()
+        {
+            return sliceName + "=" + permission;
+        }
 }
