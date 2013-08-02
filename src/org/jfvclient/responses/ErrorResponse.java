@@ -136,6 +136,14 @@ public class ErrorResponse
 		return data;
 	}
 
+        /**
+         * Formats the error as: 
+         * <pre>
+         * Code: "code", Message: "message", Data: "data"
+         * </pre>
+         * 
+         * @return A String representation of the error. 
+         */
 	@Override
 	public String toString()
 	{
