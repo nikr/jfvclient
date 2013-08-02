@@ -161,11 +161,19 @@ public class MatchStruct extends HashMap<String, Object>
 			throw new IllegalArgumentException("Key " + key + "not allowed.");
 		}
 		if ((key.equalsIgnoreCase("in_port") || key
-				.equalsIgnoreCase("wildcards")) && !(value instanceof Number))
-			throw new IllegalArgumentException(
-					"Value must be a number, this is a "
-							+ value.getClass().getCanonicalName());
-		return super.put(key, value);
+				.equalsIgnoreCase("wildcards")))
+                {
+                    if (!(value instanceof Number))
+                    {
+                    	throw new IllegalArgumentException(
+                    			"Value must be a number, this is a "
+                    					+ value.getClass().getCanonicalName());
+                    }   
+                    
+                    //for some reason these are got as doubles...
+                    return super.put(key, ((Number) value).longValue());
+                }
+                return super.put(key, value);
 
 	}
 
