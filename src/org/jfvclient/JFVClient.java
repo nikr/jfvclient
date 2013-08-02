@@ -84,7 +84,7 @@ public class JFVClient
     {
     }.getType();
     private static final Logger logger = Logger.getLogger(JFVClient.class
-            .getCanonicalName());
+            .getName());
 
     /**
      * Creates a new JFVClient.
@@ -94,22 +94,24 @@ public class JFVClient
         config = getProps();
         hostName = config.getProperty("hostname");
         hostPort = config.getProperty("port");
-        
+
+        Level lev = Level.parse(config.getProperty("verbosity", "WARNING"));
+//        System.out.println("level " + lev.getLocalizedName());
+        logger.setLevel(lev);
         //probably should throw an exception, so that it fails fast. 
         try
         {
             hostUrl = new URL("https://" + hostName + ":" + hostPort);
         } catch (MalformedURLException ex)
         {
-            Logger.getLogger(JFVClient.class.getName()).log(Level.SEVERE, "Couldn't create host URL.",
+            logger.log(Level.SEVERE, "Couldn't create host URL.",
                     ex);
         }
         
         ignoreHostVerification = Boolean.parseBoolean(config.getProperty(
                 "ignoreHostVerification", "false"));
         gson = getGson();
-        logger.setLevel(Level.parse(config.getProperty("verbosity", "WARNING")));
-
+        
     }
     
     /**
@@ -196,7 +198,7 @@ public class JFVClient
         OutputStream os = connection.getOutputStream();
         BufferedWriter w = new BufferedWriter(new OutputStreamWriter(os));
         String req = gson.toJson(request);
-
+        logger.log(Level.INFO, "Sending JSON: " + req);
         w.write(req);
         w.flush();
         w.close();
@@ -214,13 +216,13 @@ public class JFVClient
                 connection.getResponseCode(),
                 connection.getResponseMessage()
             });
-            BufferedReader iw = new BufferedReader(new InputStreamReader(
-                    connection.getInputStream()));
-            String in = "";
-            while ((in = iw.readLine()) != null)
-            {
-                System.err.println(in);
-            }
+//            BufferedReader iw = new BufferedReader(new InputStreamReader(
+//                    connection.getInputStream()));
+//            String in = "";
+//            while ((in = iw.readLine()) != null)
+//            {
+////                System.err.println(in);
+//            }
         }
         BufferedReader iw = new BufferedReader(new InputStreamReader(
                 connection.getInputStream()));
@@ -234,7 +236,7 @@ public class JFVClient
 
         // TODO remove this.
         // System.out.println("response: " + response);
-
+        logger.info("Got Response: " + response);
         return response;
     }
 
