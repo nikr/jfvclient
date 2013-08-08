@@ -15,9 +15,11 @@
  */
 package org.jfvclient.data;
 
+import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.logging.Logger;
 
 import org.jfvclient.requests.ListFlowspace;
 
@@ -163,11 +165,15 @@ public class MatchStruct extends HashMap<String, Object>
 		if ((key.equalsIgnoreCase("in_port") || key
 				.equalsIgnoreCase("wildcards")))
                 {
+                    //Should try to turn these into numbers. 
                     if (!(value instanceof Number))
                     {
-                    	throw new IllegalArgumentException(
-                    			"Value must be a number, this is a "
-                    					+ value.getClass().getCanonicalName());
+//                    	throw new IllegalArgumentException(
+//                    			"Value must be a number, this is a "
+//                    					+ value.getClass().getCanonicalName());
+                        //this will throw a NumberFormatException if value=NaN. 
+                        return ( super.put(key, Long.parseLong(value.toString())));
+                        
                     }   
                     
                     //for some reason these are got as doubles...
@@ -177,6 +183,34 @@ public class MatchStruct extends HashMap<String, Object>
 
 	}
 
+        /**
+         * Add all of the matches from a comma-separated string of matches. e.g.
+         * <code>in_port=2,tp_src=80 </code>
+         * @param matches a string of comma-separated matches.
+         * @return the number of entries that were added or updated.
+         */
+        public int putFromString(String matches)
+        {
+            String[] parts = matches.split(",");
+            int added = 0;
+            String[] values;
+            for (String m : parts)
+            {
+                values = m.split("=");
+                if (values.length == 2)
+                {
+                    put (values[0], values[1]);
+                    added++;
+                }
+                else
+                {
+                    Logger.getLogger(MatchStruct.class.getName()).warning("Not a valid match structure: " + m);
+                }
+            }
+            return added;
+        }
+        
+        
 	@Override
 	public String toString()
 	{
