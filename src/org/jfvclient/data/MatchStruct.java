@@ -128,17 +128,20 @@ public class MatchStruct extends HashMap<String, Object>
 
 	static
 	{
-		MATCH_KEYS = new HashSet<String>();
-		MATCH_KEYS.add("in_port");
-		MATCH_KEYS.add("dl_dst");
-		MATCH_KEYS.add("dl_src"); //
-		MATCH_KEYS.add("eth_dst"); // MAC
-		MATCH_KEYS.add("eth_src"); // MAC
-		MATCH_KEYS.add("nw_src"); // ip
-		MATCH_KEYS.add("nw_dst"); // ip
-		MATCH_KEYS.add("ip_src"); // ip
-		MATCH_KEYS.add("ip_dst"); // ip
-		MATCH_KEYS.add("tp_src"); // port
+		MATCH_KEYS = new HashSet<String>(15);
+		MATCH_KEYS.add("in_port"); //switch port
+                MATCH_KEYS.add("dl_type"); // ethertype (number)
+                MATCH_KEYS.add("dl_vlan"); // vlan number
+		MATCH_KEYS.add("dl_dst");// MAC address
+		MATCH_KEYS.add("dl_src"); //MAC address
+		MATCH_KEYS.add("eth_dst"); // MAC address
+		MATCH_KEYS.add("eth_src"); // MAC address
+                MATCH_KEYS.add("nw_proto"); // IP protocol number
+		MATCH_KEYS.add("nw_src"); // ip address
+		MATCH_KEYS.add("nw_dst"); // ip address
+		MATCH_KEYS.add("ip_src"); // ip address
+		MATCH_KEYS.add("ip_dst"); // ip address
+		MATCH_KEYS.add("tp_src"); // port 
 		MATCH_KEYS.add("tp_dst"); // port
 		MATCH_KEYS.add("wildcards"); // wildcards.
 	}
