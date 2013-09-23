@@ -89,7 +89,7 @@ public class JFVClient
     /**
      * Creates a new JFVClient.
      */
-    public JFVClient() 
+    public JFVClient()
     {
         config = getProps();
         hostName = config.getProperty("hostname");
@@ -98,7 +98,7 @@ public class JFVClient
         Level lev = Level.parse(config.getProperty("verbosity", "WARNING"));
 //        System.out.println("level " + lev.getLocalizedName());
         logger.setLevel(lev);
-        //probably should throw an exception, so that it fails fast. 
+        //probably should throw an exception, so that it fails fast.
         try
         {
             hostUrl = new URL("https://" + hostName + ":" + hostPort);
@@ -107,19 +107,20 @@ public class JFVClient
             logger.log(Level.SEVERE, "Couldn't create host URL.",
                     ex);
         }
-        
+
         ignoreHostVerification = Boolean.parseBoolean(config.getProperty(
                 "ignoreHostVerification", "false"));
+        setIgnoreHostVerification(ignoreHostVerification);
         gson = getGson();
-        
+
     }
-    
+
     /**
-     * Set this to true if you want to ignore hostname verification. 
-     * 
-     * <h3> WARNING </h3> this is not secure, and should only be used while 
-     * testing. 
-     * 
+     * Set this to true if you want to ignore hostname verification.
+     *
+     * <h3> WARNING </h3> this is not secure, and should only be used while
+     * testing.
+     *
      * @param ignore if you want to ignore hostname verification.
      */
     public void setIgnoreHostVerification(boolean ignore)
@@ -147,13 +148,13 @@ public class JFVClient
             HttpsURLConnection.setDefaultHostnameVerifier(new DefaultHostnameVerifier());
         }
     }
-    
+
     /**
-     * Returns whether hostname verification is turned off. 
-     * 
-     * @see #setIgnoreHostVerification(boolean) 
-     * 
-     * @return true if hostname verification is off. 
+     * Returns whether hostname verification is turned off.
+     *
+     * @see #setIgnoreHostVerification(boolean)
+     *
+     * @return true if hostname verification is off.
      */
     public boolean isIgnoringHostVerification()
     {
@@ -171,7 +172,7 @@ public class JFVClient
      * @return A properly initialised HttpsURLConnection.
      * @throws IOException
      */
-    private HttpsURLConnection connect() throws IOException 
+    private HttpsURLConnection connect() throws IOException
     {
         Authenticator.setDefault(new PropertiesFileAuthenticator(new File(
                 "resources/visor.properties")));
@@ -182,7 +183,7 @@ public class JFVClient
         con.setRequestProperty("Content-Type", "application/json");
         con.setDoOutput(true);
         con.setDoInput(true);
-        
+
         return con;
     }
 
@@ -203,9 +204,6 @@ public class JFVClient
         w.flush();
         w.close();
 
-        // TODO remove this
-        // System.out.println("request: " + req);
-
         if (connection.getResponseCode() != 200)
         {
             logger.log(
@@ -216,13 +214,6 @@ public class JFVClient
                 connection.getResponseCode(),
                 connection.getResponseMessage()
             });
-//            BufferedReader iw = new BufferedReader(new InputStreamReader(
-//                    connection.getInputStream()));
-//            String in = "";
-//            while ((in = iw.readLine()) != null)
-//            {
-////                System.err.println(in);
-//            }
         }
         BufferedReader iw = new BufferedReader(new InputStreamReader(
                 connection.getInputStream()));
@@ -234,8 +225,6 @@ public class JFVClient
         }
         iw.close();
 
-        // TODO remove this.
-        // System.out.println("response: " + response);
         logger.info("Got Response: " + response);
         return response;
     }
@@ -257,9 +246,11 @@ public class JFVClient
     private static Properties getProps()
     {
         Properties props = new Properties();
+        FileInputStream f = null;
         try
         {
-            props.load(new FileInputStream("resources/visor.properties"));
+        	f = new FileInputStream("resources/visor.properties");
+            props.load(f);
         } catch (Exception e)
         {
             logger.log(Level.WARNING,
@@ -273,6 +264,16 @@ public class JFVClient
             // props.put("truststore", "~/.keystore");
             // props.put("truststorepw", "changeme");
         }
+        finally
+        {
+        	try
+			{
+				f.close();
+			} catch (IOException e)
+			{
+				logger.warning("Couldn't close properties file: " + e.getLocalizedMessage());
+			}
+        }
 
         return props;
     }
@@ -281,14 +282,13 @@ public class JFVClient
      * Add a slice to the FlowVisor. {@link AddSlice}
      *
      * @param s A the slice to be added.
-     * @return true if the slice was added sucessfully (I think)
+     * @return true if the slice was added successfully (I think)
      * @throws IOException
      * @throws JFVErrorResponseException if the response is an error response
      */
     public boolean addSlice(AddSlice s) throws IOException,
             JFVErrorResponseException
     {
-        // Gson g = getGson();
         FVRpcRequest<AddSlice> asr = new FVRpcRequest<AddSlice>(s);
         String response = send(asr);
         FVRpcResponse<Boolean> resp = gson.fromJson(response,
